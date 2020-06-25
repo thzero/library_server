@@ -134,8 +134,8 @@ class FirebaseAuthAdminService extends Service {
 			results.user = userResponse.results;
 
 			results.claims = userResponse.results.claims;
-			const auth = this._config.get('auth');
-			if (auth.claims && auth.claims.useDefault && !results.claims)
+			const configAuth = this._config.get('auth');
+			if (configAuth.claims && configAuth.claims.useDefault && !results.claims)
 				results.claims = [ this._defaultClaims() ];
 
 			results.success = true;
