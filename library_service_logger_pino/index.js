@@ -5,12 +5,25 @@ import Utility from '../library/utility';
 import Service from '../library/service/index';
 
 class LoggerService extends Service {
-	constructor() {
-		super();
+	init(injector) {
+		super.init(injector);
 
-		if (Utility.isDev) {
+		const configLogging = this._config.get('logging');
+		const logLevel = configLogging.level || process.env.LOG_LEVEL || null;
+		const prettify = configLogging.prettify || process.env.LOG_PRETTIFY || false;
+		console.log('\n\n-----');
+		console.log(`configLogging.level: ${configLogging.level}`);
+		console.log(`process.env.LOG_LEVEL: ${process.env.LOG_LEVEL}`);
+		console.log(`logLevel: ${logLevel}`);
+		console.log('-----');
+		console.log(`configLogging.prettify: ${configLogging.prettify}`);
+		console.log(`process.env.LOG_PRETTIFY: ${process.env.LOG_PRETTIFY}`);
+		console.log(`prettify: ${prettify}`);
+		console.log('-----\n\n');
+
+		if (prettify) {
 			this._log = pino({
-				level: process.env.LOG_LEVEL,
+				level: logLevel,
 				prettyPrint: {
 					levelFirst: true
 				},
@@ -18,8 +31,11 @@ class LoggerService extends Service {
 				prettifier: require(require.resolve('pino-pretty', { paths: [ require.main.filename ] }))
 			});
 		}
-		else
-			this._log = pino();
+		else {
+			this._log = pino({
+				level: logLevel
+			});
+		}
 	}
 
 	debug(message, data) {
