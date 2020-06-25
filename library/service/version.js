@@ -1,12 +1,10 @@
-import Constants from '../../constants';
+import NotImplementedError from '../errors/notImplemented';
 
 import Service from './index';
 
 class VersionService extends Service {
 	async version(correlationId) {
-		const response = this._initResponse();
-		response.results = Constants.Version;
-		return response;
+		throw new NotImplementedError();
 	}
 }
 

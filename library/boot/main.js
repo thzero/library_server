@@ -26,7 +26,6 @@ import TokenExpiredError from '../errors/tokenExpired';
 require('../utility/string');
 import injector from '../utility/injector';
 
-import apiService from '../service/version';
 import plansService from '../service/plans';
 import usageMetricsService from '../service/usageMetrics';
 
@@ -371,7 +370,7 @@ class BootMain {
 	}
 
 	_initServiceVersion() {
-		return new apiService();
+		throw new NotImplementedError();
 	}
 
 	_initServer(serverHttp) {

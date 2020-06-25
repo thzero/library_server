@@ -8,15 +8,16 @@ class LoggerService extends Service {
 	constructor() {
 		super();
 
-		if (Utility.isDev)
+		if (Utility.isDev) {
 			this._log = pino({
 				level: process.env.LOG_LEVEL,
 				prettyPrint: {
 					levelFirst: true
 				},
 				// eslint-disable-next-line
-				prettifier: require('pino-pretty')
+				prettifier: require(require.resolve('pino-pretty', { paths: [ require.main.filename ] }))
 			});
+		}
 		else
 			this._log = pino();
 	}
