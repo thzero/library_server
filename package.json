@@ -33,7 +33,7 @@
     "decimal.js-light": "^2.5.0",
     "easy-rbac": "^3.1.1",
     "esm": "^3.2.25",
-    "firebase": "^7.15.3",
+    "firebase": "^7.15.4",
     "firebase-admin": "^8.12.1",
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",
@@ -45,14 +45,14 @@
     "reflect-metadata": "^0.1.13",
     "short-uuid": "^3.1.1",
     "swagger2-koa": "^2.0.0",
-    "uuid": "^8.1.0"
+    "uuid": "^8.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.3",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/preset-env": "^7.10.3",
     "babel-loader": "^8.1.0",
-    "eslint": "^7.3.0",
+    "eslint": "^7.3.1",
     "eslint-plugin-node": "^11.1.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
