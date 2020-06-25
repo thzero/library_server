@@ -1,3 +1,3 @@
 # library_server
 
-A library of common functionality to bootstrap a Koa based application.
+An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.
