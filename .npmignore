@@ -1,3 +1,4 @@
 publish.bat
 push.bat
 .npmignore
+.github
