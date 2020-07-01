@@ -53,6 +53,10 @@ class MongoRepository extends Repository {
 		return results.result.ok;
 	}
 
+	async _count(cursor) {
+		return await cursor.count();
+	}
+
 	async _create(collection, userId, value) {
 		const response = this._initResponse();
 

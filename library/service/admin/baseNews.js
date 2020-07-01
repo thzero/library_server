@@ -17,10 +17,6 @@ class BaseNewsAdminService extends BaseAdminService {
 		this._serviceValidationNews = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS);
 	}
 
-	get _dataClass() {
-		throw new NotImplementedError();
-	}
-
 	_initializeData() {
 		throw new NotImplementedError();
 	}

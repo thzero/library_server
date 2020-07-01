@@ -1,8 +1,7 @@
-import { plainToClass } from 'class-transformer';
-
 import NotImplementedError from '../../errors/notImplemented';
 
 import Service from '../index';
+import Utility from '@thzero/library_server/library/utility';
 
 class BaseAdminService extends Service {
 	async create(correlationId, user, requestedValue) {
@@ -72,7 +71,7 @@ class BaseAdminService extends Service {
 		let value = this._initializeData();
 		const fetchRespositoryResponse = await this._repository.fetch(correlationId, id);
 		if (fetchRespositoryResponse.success && fetchRespositoryResponse.results)
-			value = plainToClass(this._dataClass, fetchRespositoryResponse.results);
+			value = Utility.map(this._initializeData(), fetchRespositoryResponse.results, true);
 
 		const validResponse = this._checkUpdatedTimestamp(value, requestedValue, 'value');
 		if (!validResponse.success)
@@ -97,10 +96,6 @@ class BaseAdminService extends Service {
 
 	get _allowsUpdate() {
 		return true
-	}
-
-	get _dataClass() {
-		throw new NotImplementedError()
 	}
 
 	_initializeData() {
