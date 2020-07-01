@@ -61,9 +61,8 @@ class BaseUsersAdminService extends BaseAdminService {
 		let userExisting = this._initializeData();
 		const fetchRespositoryResponse = await this._repository.fetch(correlationId, id);
 		if (fetchRespositoryResponse.success && fetchRespositoryResponse.results)
-			//userExisting = fetchRespositoryResponse.results;
-			userExisting = plainToClass(this._dataClass, fetchRespositoryResponse.results);
-
+			userExisting = Utility.map(this._initializeData(), fetchRespositoryResponse.results, true);
+		
 		const validResponse = this._checkUpdatedTimestamp(userExisting, requestedUser, 'users');
 		if (!validResponse.success)
 			return validResponse;
@@ -94,10 +93,6 @@ class BaseUsersAdminService extends BaseAdminService {
 
 	get _allowsUpdate() {
 		return false
-	}
-
-	get _dataClass() {
-		throw new NotImplementedError();
 	}
 
 	_initializeData() {

@@ -25,7 +25,6 @@
     "@koa/cors": "^3.1.0",
     "@koa/router": "^9.1.0",
     "async-mutex": "^0.2.3",
-    "class-transformer": "^0.2.3",
     "config": "^3.3.1",
     "crc": "^3.8.0",
     "dayjs": "^1.8.28",

@@ -198,6 +198,20 @@ class Utility {
 		return ((value === 'dev') || (value === 'development'));
 	}
 
+	static map(obj1, obj2, resetTimestamps) {
+		if (!obj1 || !obj2)
+			return obj1
+
+		obj1.map(obj2);
+
+		if (resetTimestamps) {
+			obj1.createdTimestamp = obj2.createdTimestamp;
+			obj1.updatedTimestamp = obj2.updatedTimestamp;
+		}
+
+		return obj1;
+	}
+
 	static merge2(x, y) {
 		return _merge(x, y)
 		// return Object.assign(x, y)
