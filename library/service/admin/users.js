@@ -1,5 +1,3 @@
-import { plainToClass } from 'class-transformer';
-
 import LibraryConstants from '../../constants';
 
 import BaseAdminService from './index';
@@ -62,7 +60,7 @@ class BaseUsersAdminService extends BaseAdminService {
 		const fetchRespositoryResponse = await this._repository.fetch(correlationId, id);
 		if (fetchRespositoryResponse.success && fetchRespositoryResponse.results)
 			userExisting = Utility.map(this._initializeData(), fetchRespositoryResponse.results, true);
-		
+
 		const validResponse = this._checkUpdatedTimestamp(userExisting, requestedUser, 'users');
 		if (!validResponse.success)
 			return validResponse;
