@@ -3,12 +3,24 @@ import LibraryConstants from '../constants';
 import Response from '../response';
 
 class Service {
+	constructor() {
+		this._initialized = false;
+	}
+
 	init(injector) {
 		this._injector = injector;
 
 		this._config = this._injector.getService(LibraryConstants.InjectorKeys.CONFIG);
 		this._logger = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
 		this._serviceValidation = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION);
+	}
+
+	get initialized() {
+		this._initialized = false;
+	}
+
+	set initialized(value) {
+		this._initialized = value;
 	}
 
 	_checkUpdatedTimestamp(value, requestedValue, objectType) {

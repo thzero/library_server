@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import _cloneDeep from 'lodash/cloneDeep';
 import _debounce from 'lodash/debounce';
 import _merge from 'lodash/merge'
-// import crc32 from 'crc/crc32';
 
 import LibraryConstants from '../constants';
 
@@ -15,14 +14,6 @@ import Response from '../response/index'
 const uuidTranslator = shortUUID();
 
 class Utility {
-	// checksum(response) {
-	// 	if (!response && !response.results)
-	// 		return;
-
-	// 	response.check = crc32(Utility.stringify(response.results)).toString(16)
-	// 	return response;
-	// }
-
 	static async checksumUpdateCheck(state, commit, name, params) {
 		const internal = {}
 		internal.name = name
