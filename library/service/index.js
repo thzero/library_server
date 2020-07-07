@@ -16,7 +16,7 @@ class Service {
 	}
 
 	get initialized() {
-		this._initialized = false;
+		return this._initialized;
 	}
 
 	set initialized(value) {
