@@ -213,63 +213,70 @@ class BootMain {
 	}
 
 	async _init() {
-		// https://github.com/lorenwest/node-config/wiki
-		this._appConfig = config.get('app');
+		try {
+			// https://github.com/lorenwest/node-config/wiki
+			this._appConfig = config.get('app');
 
-		injector.addSingleton(LibraryConstants.InjectorKeys.CONFIG, this._appConfig);
+			injector.addSingleton(LibraryConstants.InjectorKeys.CONFIG, this._appConfig);
 
-		this._repositories = new Map();
-		this._services = new Map();
-		this.loggerServiceI = this._initServicesLogger();
-		this.usageMetricsServiceI = this._intiServicesUsageMetrics();
+			this._repositories = new Map();
+			this._services = new Map();
+			this.loggerServiceI = this._initServicesLogger();
+			this.usageMetricsServiceI = this._intiServicesUsageMetrics();
 
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
 
-		await this._initRepositories();
-		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_NEWS, this._initRepositoriesAdminNews());
-		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_USERS, this._initRepositoriesAdminUsers());
-		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_NEWS, this._initRepositoriesNews());
-		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_PLANS, this._initRepositoriesPlans());
-		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC, this._initRepositoriesUsageMetrics());
-		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USERS, this._initRepositoriesUsers());
+			await this._initRepositories();
+			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_NEWS, this._initRepositoriesAdminNews());
+			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_USERS, this._initRepositoriesAdminUsers());
+			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_NEWS, this._initRepositoriesNews());
+			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_PLANS, this._initRepositoriesPlans());
+			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC, this._initRepositoriesUsageMetrics());
+			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USERS, this._initRepositoriesUsers());
 
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_ADMIN_NEWS, this._initServicesAdminNews());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_ADMIN_USERS, this._initServicesAdminUsers());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_AUTH, this._initServicesAuth());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_NEWS, this._initServicesNews());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_PLANS, this._initServicesPlans());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS, this._initServicesNewsValidation());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_SECURITY, this._initServicesSecurity());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_USERS, this._initServicesUser());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServiceVersion());
-		await this._initServices();
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_ADMIN_NEWS, this._initServicesAdminNews());
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_ADMIN_USERS, this._initServicesAdminUsers());
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_AUTH, this._initServicesAuth());
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_NEWS, this._initServicesNews());
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_PLANS, this._initServicesPlans());
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS, this._initServicesNewsValidation());
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_SECURITY, this._initServicesSecurity());
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USERS, this._initServicesUser());
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServiceVersion());
+			await this._initServices();
 
-		for (const [key, value] of this._services) {
-			console.log(`services.init - ${key}`);
-			value.init(injector);
-			value.initialized = true;
+			for (const [key, value] of this._services) {
+				console.log(`services.init - ${key}`);
+				value.init(injector);
+			}
+
+			this._services = new Map();
+
+			await this._initServicesSecondary();
+
+			for (const [key, value] of this._services) {
+				if (value.initialized)
+					continue;
+
+				console.log(`services.init.secondary - ${key}`);
+				value.init(injector);
+			}
+
+			for (const [key, value] of this._repositories) {
+				console.log(`repositories.init - ${key}`);
+				value.init(injector);
+			}
+
+			dayjs.locale('en'); // use English locale globally
+			dayjs.extend(localeData);
+			dayjs.extend(localizedFormat);
+			dayjs.extend(utc);
 		}
-
-		await this._initServicesSecondary();
-
-		for (const [key, value] of this._services) {
-			if (value.initialized)
-				continue;
-
-			console.log(`services.init.secondary - ${key}`);
-			value.init(injector);
+		finally {
+			this._repositories = null;
+			this._services = null;
 		}
-
-		for (const [key, value] of this._repositories) {
-			console.log(`repositories.init - ${key}`);
-			value.init(injector);
-		}
-
-		dayjs.locale('en'); // use English locale globally
-		dayjs.extend(localeData);
-		dayjs.extend(localizedFormat);
-		dayjs.extend(utc);
 	}
 
 	_initCleanup(cleanupFuncs) {
