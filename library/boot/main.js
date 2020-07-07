@@ -39,8 +39,8 @@ import versionRoute from '../routes/version';
 const ResponseTime = 'X-Response-Time';
 
 class BootMain {
-	start() {
-		this._init();
+	async start() {
+		await this._init();
 
 		const app = new Koa();
 		// https://github.com/koajs/cors
@@ -154,7 +154,7 @@ class BootMain {
 		this._initRoute(this._initRoutesUsers(),);
 		this._initRoute(this._initRoutesVersion());
 
-		this._initRoutes();
+		await this._initRoutes();
 
 		this._initRoute(this._initRoutesHome());
 
@@ -212,7 +212,7 @@ class BootMain {
 		this.loggerServiceI.info(`Starting HTTP on: `, serverHttp.address());
 	}
 
-	_init() {
+	async _init() {
 		// https://github.com/lorenwest/node-config/wiki
 		this._appConfig = config.get('app');
 
@@ -226,7 +226,7 @@ class BootMain {
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
 
-		this._initRepositories();
+		await this._initRepositories();
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_NEWS, this._initRepositoriesAdminNews());
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_USERS, this._initRepositoriesAdminUsers());
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_NEWS, this._initRepositoriesNews());
@@ -243,15 +243,26 @@ class BootMain {
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_SECURITY, this._initServicesSecurity());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_USERS, this._initServicesUser());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServiceVersion());
-		this._initServices();
+		await this._initServices();
 
 		for (const [key, value] of this._services) {
-			console.log(`services.init - ${key} = ${value}`);
+			console.log(`services.init - ${key}`);
+			value.init(injector);
+			value.initialized = true;
+		}
+
+		await this._initServicesSecondary();
+
+		for (const [key, value] of this._services) {
+			if (value.initialized)
+				continue;
+
+			console.log(`services.init.secondary - ${key}`);
 			value.init(injector);
 		}
 
 		for (const [key, value] of this._repositories) {
-			console.log(`repositories.init - ${key} = ${value}`);
+			console.log(`repositories.init - ${key}`);
 			value.init(injector);
 		}
 
@@ -265,7 +276,7 @@ class BootMain {
 		// your clean logic, like closing database connections
 	}
 
-	_initRepositories() {
+	async _initRepositories() {
 		throw new NotImplementedError();
 	}
 
@@ -297,7 +308,7 @@ class BootMain {
 		this._routes.push(route);
 	}
 
-	_initRoutes() {
+	async _initRoutes() {
 		throw new NotImplementedError();
 	}
 
@@ -325,8 +336,11 @@ class BootMain {
 		return new versionRoute();
 	}
 
-	_initServices() {
+	async _initServices() {
 		throw new NotImplementedError();
+	}
+
+	async _initServicesSecondary() {
 	}
 
 	_initServicesAdminNews() {
