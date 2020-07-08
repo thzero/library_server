@@ -1,13 +1,13 @@
 import { MongoClient } from 'mongodb';
 import { Mutex as asyncMutex } from 'async-mutex';
 
-import RepositoryConstants from '../library_repository_mongo/constants';
+import RepositoryConstants from './constants';
 
-import Utility from '../library/utility';
+import Utility from '../utility';
 
-import Repository from '../library/repository/index';
-import Response from '../library/response';
-import ExtractResponse from '../library/response/extract';
+import Repository from '../repository/index';
+import Response from '../response';
+import ExtractResponse from '../response/extract';
 
 class MongoRepository extends Repository {
 	static _client = {};

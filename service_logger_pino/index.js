@@ -1,8 +1,8 @@
 import pino from 'pino';
 
-import Utility from '../library/utility';
+import Utility from '../utility';
 
-import Service from '../library/service/index';
+import Service from '../service/index';
 
 class LoggerService extends Service {
 	init(injector) {

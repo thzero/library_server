@@ -1,6 +1,6 @@
-import Utility from '../library/utility';
+import Utility from '../utility';
 
-import NotImplementedError from '../library/errors/notImplemented';
+import NotImplementedError from '../errors/notImplemented';
 
 import MongoRepository from './index';
 

@@ -1,4 +1,4 @@
-import NotImplementedError from '../../library/errors/notImplemented';
+import NotImplementedError from '../../errors/notImplemented';
 
 import MongoRepository from '../index';
 

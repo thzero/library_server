@@ -1,6 +1,6 @@
-import Service from '../library/service';
+import Service from '../service';
 
-import NotImplementedError from '../library/errors/notImplemented';
+import NotImplementedError from '../errors/notImplemented';
 
 class BaseCollectionsService extends Service {
 	getClientName() {
