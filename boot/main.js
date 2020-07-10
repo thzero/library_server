@@ -159,7 +159,7 @@ class BootMain {
 		this._initRoute(this._initRoutesHome());
 
 		for (const route of this._routes) {
-			route.init(injector)
+			await route.init(injector)
 			app
 				.use(route.router.routes())
 				.use(route.router.allowedMethods());
@@ -248,7 +248,7 @@ class BootMain {
 
 			for (const [key, value] of this._services) {
 				console.log(`services.init - ${key}`);
-				value.init(injector);
+				await value.init(injector);
 			}
 
 			this._services = new Map();
@@ -260,12 +260,12 @@ class BootMain {
 					continue;
 
 				console.log(`services.init.secondary - ${key}`);
-				value.init(injector);
+				await value.init(injector);
 			}
 
 			for (const [key, value] of this._repositories) {
 				console.log(`repositories.init - ${key}`);
-				value.init(injector);
+				await value.init(injector);
 			}
 
 			dayjs.locale('en'); // use English locale globally

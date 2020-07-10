@@ -1,12 +1,10 @@
 import pino from 'pino';
 
-import Utility from '../utility';
-
 import Service from '../service/index';
 
 class LoggerService extends Service {
-	init(injector) {
-		super.init(injector);
+	async init(injector) {
+		await super.init(injector);
 
 		const configLogging = this._config.get('logging');
 		const logLevel = configLogging.level || process.env.LOG_LEVEL || null;

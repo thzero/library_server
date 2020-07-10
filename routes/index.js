@@ -12,7 +12,7 @@ class BaseRoute {
 		return this._router;
 	}
 
-	init(injector) {
+	async init(injector) {
 		this._injector = injector;
 
 		this._router = new koaRouter({
