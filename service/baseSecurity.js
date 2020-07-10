@@ -9,8 +9,8 @@ class BaseSecurityService extends Service {
 		this._enforcer = null;
 	}
 
-	init(injector) {
-		super.init(injector);
+	aync init(injector) {
+		await super.init(injector);
 
 		const model = this._initModel();
 		this._enforcer = new rbac(model)

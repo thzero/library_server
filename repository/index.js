@@ -1,7 +1,7 @@
 import LibraryConstants from '../constants';
 
 class Repository {
-	init(injector) {
+	async init(injector) {
 		this._injector = injector;
 	}
 

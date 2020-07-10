@@ -9,8 +9,8 @@ class BaseNewsService extends Service {
 		this._serviceValidationNews = null;
 	}
 
-	init(injector) {
-		super.init(injector);
+	async init(injector) {
+		await super.init(injector);
 
 		this._serviceValidationNews = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS);
 	}

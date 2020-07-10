@@ -35,8 +35,8 @@ class FirebaseAuthAdminService extends Service {
 		return this._error();
 	}
 
-	init(injector) {
-		super.init(injector);
+	async init(injector) {
+		await super.init(injector);
 
 		let serviceAccount = process.env.SERVICE_ACCOUNT_KEY;
 		if (serviceAccount)

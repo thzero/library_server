@@ -21,8 +21,8 @@ class MongoRepository extends Repository {
 		this._mutexDb = new asyncMutex();
 	}
 
-	init(injector) {
-		super.init(injector);
+	async init(injector) {
+		await super.init(injector);
 
 		this._collectionsConfig = this._injector.getService(RepositoryConstants.InjectorKeys.SERVICE_REPOSITORY_COLLECTIONS);
 	}

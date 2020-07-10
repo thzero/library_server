@@ -12,8 +12,8 @@ class BaseUsersAdminService extends BaseAdminService {
 		this._serviceUser = null;
 	}
 
-	init(injector) {
-		super.init(injector);
+	async init(injector) {
+		await super.init(injector);
 
 		this._serviceAuth = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
 		this._serviceUser = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);

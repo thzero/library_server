@@ -3,7 +3,7 @@ import LibraryConstants from '../constants';
 import Response from '../response';
 
 class Service {
-	init(injector) {
+	async init(injector) {
 		this._injector = injector;
 
 		this._config = this._injector.getService(LibraryConstants.InjectorKeys.CONFIG);
@@ -75,7 +75,6 @@ class Service {
 	}
 
 	_validateId(id, prefix) {
-		this._logger.debug('id', id);
 		if (String.isNullOrEmpty(id))
 			return this._error('Invalid id');
 
