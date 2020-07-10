@@ -9,7 +9,7 @@ class BaseSecurityService extends Service {
 		this._enforcer = null;
 	}
 
-	aync init(injector) {
+	async init(injector) {
 		await super.init(injector);
 
 		const model = this._initModel();
