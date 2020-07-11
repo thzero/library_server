@@ -2,6 +2,10 @@
 
 An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.
 
+### Installation
+
+[![NPM](https://nodei.co/npm/@thzero/library_server.png?compact=true)](https://npmjs.org/package/@thzero/library_server)
+
 ### Requirements
 
 #### Mongo
