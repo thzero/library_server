@@ -7,6 +7,14 @@ class UsageMetricsService extends Service {
 		super();
 
 		this._ignore = [];
+
+		this._repositoryUsageMetricsI = null;
+	}
+
+	async init(injector) {
+		await super.init(injector);
+
+		this._repositoryUsageMetricsI = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC);
 	}
 
 	async register(context, err) {
