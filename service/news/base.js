@@ -6,11 +6,15 @@ class BaseNewsService extends Service {
 	constructor() {
 		super();
 
+		this._repositoryNewsI = null;
+
 		this._serviceValidationNews = null;
 	}
 
 	async init(injector) {
 		await super.init(injector);
+
+		this._repositoryNewsI = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_NEWS);
 
 		this._serviceValidationNews = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS);
 	}
@@ -38,7 +42,7 @@ class BaseNewsService extends Service {
 	}
 
 	get _repositoryNews() {
-		return this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_NEWS);
+		return this._repositoryNewsI;
 	}
 }
 

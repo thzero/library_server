@@ -8,11 +8,15 @@ class BaseNewsAdminService extends BaseAdminService {
 	constructor() {
 		super();
 
+		this._repositoryNews = null;
+
 		this._serviceValidationNews = null;
 	}
 
 	async init(injector) {
 		await super.init(injector);
+
+		this._repositoryNews = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_NEWS);
 
 		this._serviceValidationNews = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS);
 	}
@@ -22,7 +26,7 @@ class BaseNewsAdminService extends BaseAdminService {
 	}
 
 	get _repository() {
-		return this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_NEWS);
+		return this._repositoryNews;
 	}
 
 	get _validationCreateSchema() {

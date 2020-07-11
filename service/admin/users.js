@@ -8,12 +8,16 @@ class BaseUsersAdminService extends BaseAdminService {
 	constructor() {
 		super();
 
+		this._repositoryUsers = null;
+
 		this._serviceAuth = null;
 		this._serviceUser = null;
 	}
 
 	async init(injector) {
 		await super.init(injector);
+
+		this._repositoryUsers = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_USERS);
 
 		this._serviceAuth = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
 		this._serviceUser = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
@@ -98,7 +102,7 @@ class BaseUsersAdminService extends BaseAdminService {
 	}
 
 	get _repository() {
-		return this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_USERS);
+		return this._repositoryUsers;
 	}
 
 	get _validationCheckKey() {
