@@ -3,15 +3,6 @@ class PriorityQueue {
 		this._values = []
 	}
 
-	//  method that pushes new value onto the end and calls the bubble helper
-	enqueue(value) {
-		this._values.push(value)
-		// calculate parent, if parent is greater swap
-		// while loop or recurse
-		this._bubbleUp();
-		return this._values
-	}
-
 	dequeue() {
 		// swap first and last element
 		this._swap(0, this._values.length - 1);
@@ -22,6 +13,19 @@ class PriorityQueue {
 			this._bubbleDown();
 
 		return poppedNode;
+	}
+
+	//  method that pushes new value onto the end and calls the bubble helper
+	enqueue(value) {
+		this._values.push(value)
+		// calculate parent, if parent is greater swap
+		// while loop or recurse
+		this._bubbleUp();
+		return this._values
+	}
+
+	length() {
+		return this._values.length;
 	}
 
 	_bubbleDown() {
