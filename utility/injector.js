@@ -24,7 +24,7 @@ class Injector {
 		if (this._di[key])
 			return;
 
-		this._di[key] = { singleton: true, dependency: dependency };
+		this._di[key] = { key: key, singleton: true, dependency: dependency };
 	}
 
 	getInjector() {
@@ -43,6 +43,14 @@ class Injector {
 			return result.dependency;
 
 		return new result.dependency.prototype.constructor(args);
+	}
+
+	getServices() {
+		return this._di.values();
+	}
+
+	getSingletons() {
+		return this._di.values().filter(l => l.singleton).map(l => l.dependency);
 	}
 }
 
