@@ -82,6 +82,7 @@ The following setup for configuration is required for an application using this 
 The tool includes a command line interface application that performs a couple of tasks
 
 * Generate short UUIDs
+* Update version information in a package.json
 
 ### Usage
 
@@ -98,6 +99,7 @@ cli <options>
   --patch, --p :: sets the patch, defaults to the current value or 0
   --patch_inc, --pi :: increments the patch by one
   --date, --d :: sets the version date in MM/DD/YYYY format, defaults to current date
+  --package, --pa :: sets the path of the package.json file
 ```
 
 ### Help
