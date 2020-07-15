@@ -88,7 +88,7 @@ function question(q, acceptable) {
 		case 'updateversion':
 			let packagePath = './package.json';
 			if (args.package || args.pa) {
-				packagePath = args.path || args.p;
+				packagePath = args.package || args.pa;
 				if (!packagePath)
 					console.error('Invalid package path.');
 			}
