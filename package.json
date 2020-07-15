@@ -1,6 +1,6 @@
 {
   "name": "@thzero/library_server",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "description": "An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.",
   "author": "thZero",
   "license": "MIT",
@@ -33,7 +33,7 @@
     "easy-rbac": "^3.1.1",
     "esm": "^3.2.25",
     "firebase": "^7.16.0",
-    "firebase-admin": "^8.13.0",
+    "firebase-admin": "^9.0.0",
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",
     "koa-helmet": "^5.2.0",
@@ -47,13 +47,13 @@
     "uuid": "^8.2.0"
   },
   "peerDependencies": {
-    "@babel/core": "^7.10.4",
+    "@babel/core": "^7.10.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
     "babel-loader": "^8.1.0",
     "eslint": "^7.4.0",
     "eslint-plugin-node": "^11.1.0",
-    "pino-pretty": "^4.0.0",
+    "pino-pretty": "^4.0.2",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
   }
