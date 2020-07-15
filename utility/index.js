@@ -94,6 +94,10 @@ class Utility {
 		return Utility.generateShortId();
 	}
 
+	static generateLongId() {
+		return uuidv4();
+	}
+
 	static generateShortId() {
 		return uuidTranslator.fromUUID(uuidv4());
 	}
