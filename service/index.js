@@ -39,6 +39,15 @@ class Service {
 		return this._success();
 	}
 
+	_enforceNotNullAsResponse(value, name) {
+		if (!value)
+			return Response.error(`Invalid ${name}`, null);
+
+		const response = this._initResponse();
+		response.results = value;
+		return response;
+	}
+
 	_error(message, err, code, errors) {
 		if (message)
 			this._logger.error(message);

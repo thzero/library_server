@@ -46,11 +46,11 @@ class Injector {
 	}
 
 	getServices() {
-		return this._di.values();
+		return Object.values(this._di);
 	}
 
 	getSingletons() {
-		return this._di.values().filter(l => l.singleton).map(l => l.dependency);
+		return Object.values(this._di).filter(l => l.singleton).map(l => l.dependency);
 	}
 }
 
