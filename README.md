@@ -77,6 +77,17 @@ The following setup for configuration is required for an application using this 
 }
 ```
 
+##### Development Tool Configuration
+
+* Include the following in the package.json for the application.
+
+```
+  "version_major": #,
+  "version_minor": #,
+  "version_patch": #,
+  "version_date": "MM/DD/YYYY",
+```
+
 ## CLI
 
 The tool includes a command line interface application that performs a couple of tasks
