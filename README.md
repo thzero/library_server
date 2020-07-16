@@ -77,6 +77,17 @@ The following setup for configuration is required for an application using this 
 }
 ```
 
+##### Development Tool Configuration
+
+* Include the following in the package.json for the application.
+
+```
+  "version_major": #,
+  "version_minor": #,
+  "version_patch": #,
+  "version_date": "MM/DD/YYYY",
+```
+
 ## CLI
 
 The tool includes a command line interface application that performs a couple of tasks
@@ -106,12 +117,16 @@ cli <options>
 
 ```
 node -r esm cli.js --help
+// from within an application
+node -r esm ./node_modules/@thzero/library/cli.js --help
 ```
 
 ### Version
 
 ```
 node -r esm cli.js --version
+// from within an application
+node -r esm ./node_modules/@thzero/library/cli.js --version
 ```
 
 ### Generate UUID examples
@@ -119,13 +134,17 @@ node -r esm cli.js --version
 #### Single UUID
 
 ```
-node -r esm cli.js
+node -r esm cli.js --generate
+// from within an application
+node -r esm ./node_modules/@thzero/library/cli.js --generate
 ```
 
 #### Multiple UUIDs
 
 ```
-node -r esm cli.js --n 5
+node -r esm cli.js --generate --n 5
+// from within an application
+node -r esm ./node_modules/@thzero/library/cli.js --generate --n 5
 ```
 
 ### Update Version examples
@@ -134,10 +153,14 @@ node -r esm cli.js --n 5
 
 ```
 node -r esm cli.js --updateversion --pi
+// from within an application
+node -r esm ./node_modules/@thzero/library/cli.js --updateversion --pi --package \"../../../package.json\"
 ```
 
 #### Update date
 
 ```
 node -r esm cli.js --updateversion --d '7/15/2020'
+// from within an application
+node -r esm ./node_modules/@thzero/library/cli.js --updateversion --d '7/15/2020' --package \"../../../package.json\"
 ```
