@@ -16,6 +16,7 @@ const LibraryConstants = {
 		SERVICE_SECURITY: 'serviceSecurity',
 		SERVICE_USAGE_METRIC: 'serviceUsageMetric',
 		SERVICE_USERS: 'serviceUser',
+		SERVICE_UTILITY: 'serviceUtility',
 		SERVICE_VALIDATION: 'serviceValidation',
 		SERVICE_VALIDATION_NEWS: 'serviceNewsValidation',
 		SERVICE_VERSION: 'serviceVersion'

@@ -2,6 +2,8 @@ import pino from 'pino';
 
 import Service from '../service/index';
 
+const CLIENT_PREFIX = 'CLIENT: ';
+
 class LoggerService extends Service {
 	async init(injector) {
 		await super.init(injector);
@@ -36,39 +38,43 @@ class LoggerService extends Service {
 		}
 	}
 
-	debug(message, data) {
-		data = (data === undefined ? null : data);
-		this._log.debug(data, message);
+	_message(message, isClient) {
+		return (isClient ? CLIENT_PREFIX : '') + message;
 	}
 
-	error(message, data) {
+	debug(message, data, isClient) {
 		data = (data === undefined ? null : data);
-		this._log.error(data, message);
+		this._log.debug(data, this._message(message, isClient));
 	}
 
-	exception(ex) {
+	error(message, data, isClient) {
+		data = (data === undefined ? null : data);
+		this._log.error(data, this._message(message, isClient));
+	}
+
+	exception(ex, isClient) {
 		ex = (ex === undefined ? null : ex);
-		this._log.error(ex);
+		this._log.error((isClient ? CLIENT_PREFIX : '') + ex);
 	}
 
-	fatal(ex) {
-		ex = (ex === undefined ? null : ex);
-		this._log.fatal(ex);
-	}
-
-	info(message, data) {
+	fatal(message, data, isClient) {
 		data = (data === undefined ? null : data);
-		this._log.info(data, message);
+		this._log.fatal(data, this._message(message, isClient));
 	}
 
-	trace(message, data) {
+	info(message, data, isClient) {
 		data = (data === undefined ? null : data);
-		this._log.trace(data, message);
+		this._log.info(data, this._message(message, isClient));
 	}
 
-	warn(message, data) {
+	trace(message, data, isClient) {
 		data = (data === undefined ? null : data);
-		this._log.warn(data, message);
+		this._log.trace(data, this._message(message, isClient));
+	}
+
+	warn(message, data, isClient) {
+		data = (data === undefined ? null : data);
+		this._log.warn(data, this._message(message, isClient));
 	}
 }
 

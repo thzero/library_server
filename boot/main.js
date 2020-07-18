@@ -26,15 +26,17 @@ import TokenExpiredError from '../errors/tokenExpired';
 require('../utility/string');
 import injector from '../utility/injector';
 
-import plansService from '../service/plans';
-import usageMetricsService from '../service/usageMetrics';
-
 import adminNewsRoute from '../routes/admin/news';
 import adminUsersRoute from '../routes/admin/users'
 import homeRoute from '../routes/home';
 import newsRoute from '../routes/news';
 import usersRoute from '../routes/users';
+import utilityRoute from '../routes/utility';
 import versionRoute from '../routes/version';
+
+import plansService from '../service/plans';
+import usageMetricsService from '../service/usageMetrics';
+import utilityService from '../service/utility';
 
 const ResponseTime = 'X-Response-Time';
 
@@ -151,7 +153,8 @@ class BootMain {
 		this._initRoute(this._initRoutesAdminNews());
 		this._initRoute(this._initRoutesAdminUsers());
 		this._initRoute(this._initRoutesNews());
-		this._initRoute(this._initRoutesUsers(),);
+		this._initRoute(this._initRoutesUsers());
+		this._initRoute(this._initRoutesUtility());
 		this._initRoute(this._initRoutesVersion());
 
 		await this._initRoutes();
@@ -163,6 +166,8 @@ class BootMain {
 			app
 				.use(route.router.routes())
 				.use(route.router.allowedMethods());
+			console.log(route.router.stack.map(i => i.path));
+			console.log(route.router.stack.map(i => i.methods));
 		}
 
 		this.port = this._appConfig.get('port');
@@ -243,6 +248,7 @@ class BootMain {
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS, this._initServicesNewsValidation());
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_SECURITY, this._initServicesSecurity());
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USERS, this._initServicesUser());
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_UTILITY, this._initServicesUtility());
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServiceVersion());
 			await this._initServices();
 
@@ -339,6 +345,10 @@ class BootMain {
 		return new usersRoute();
 	}
 
+	_initRoutesUtility() {
+		return new utilityRoute();
+	}
+
 	_initRoutesVersion() {
 		return new versionRoute();
 	}
@@ -388,6 +398,10 @@ class BootMain {
 
 	_initServicesUser() {
 		throw new NotImplementedError();
+	}
+
+	_initServicesUtility() {
+		return new utilityService();
 	}
 
 	_initServiceVersion() {
