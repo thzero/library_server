@@ -1,9 +1,9 @@
 {
   "name": "@thzero/library_server",
-  "version": "0.6.19",
+  "version": "0.6.20",
   "version_major": 0,
   "version_minor": 6,
-  "version_patch": 19,
+  "version_patch": 20,
   "version_date": "07/18/2020",
   "description": "An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.",
   "author": "thZero",
@@ -20,7 +20,7 @@
     "node": ">=13.0.1"
   },
   "scripts": {
-    "cli-update": "node -r esm ./cli.js --updateversion --pi",
+    "cli-update": "./node_modules/.bin/library-cli --updateversion --pi",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -36,7 +36,6 @@
     "dayjs-plugin-utc": "^0.1.2",
     "decimal.js-light": "^2.5.0",
     "easy-rbac": "^3.1.1",
-    "esm": "^3.2.25",
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",
     "koa-helmet": "^5.2.0",
@@ -48,15 +47,14 @@
     "uuid": "^8.2.0"
   },
   "devDependencies": {
-    "esm": "^3.2.25",
-    "minimist": "^1.2.5"
+    "@thzero/library_cli": "^0.6.16"
   },
   "peerDependencies": {
     "@babel/core": "^7.10.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
     "babel-loader": "^8.1.0",
-    "eslint": "^7.4.0",
+    "eslint": "^7.5.0",
     "eslint-plugin-node": "^11.1.0",
     "pino-pretty": "^4.0.3",
     "webpack": "^4.43.0",
