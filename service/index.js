@@ -48,6 +48,13 @@ class Service {
 		return response;
 	}
 
+	_enforceResponse(response, name) {
+		if (!response && !response.success)
+			throw response;
+
+		return response;
+	}
+
 	_error(message, err, code, errors) {
 		if (message)
 			this._logger.error(message);
