@@ -4,10 +4,15 @@ class BootPlugin {
 		this._injector = injector;
 
 	}
+
 	async initRoutes(routes) {
 		this._routes = routes;
 
+		await this._initRoutesPre();
+
 		await this._initRoutes();
+
+		await this._initRoutesPost();
 	}
 
 	async initRepositories(repositories) {
@@ -33,6 +38,12 @@ class BootPlugin {
 	}
 
 	async _initRoutes() {
+	}
+
+	async _initRoutesPost() {
+	}
+
+	async _initRoutesPre() {
 	}
 
 	async _initRepositories() {

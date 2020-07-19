@@ -2,7 +2,7 @@ import LibraryConstants from '../../constants';
 
 import NotImplementedError from '../../errors/notImplemented';
 
-import BootPlugin from './index';
+import ApiBaseBootPlugin from './baseApi';
 
 import newsRoute from '../../routes/news';
 import usersRoute from '../../routes/users';
@@ -11,7 +11,7 @@ import utilityRoute from '../../routes/utility';
 import plansService from '../../service/plans';
 import utilityService from '../../service/utility';
 
-class ApiBootPlugin extends BootPlugin {
+class ApiBootPlugin extends ApiBaseBootPlugin {
 	async _initRoutes() {
 		this._initRoute(this._initRoutesNews());
 		this._initRoute(this._initRoutesUsers());
@@ -32,7 +32,6 @@ class ApiBootPlugin extends BootPlugin {
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_SECURITY, this._initServicesSecurity());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_USERS, this._initServicesUser());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_UTILITY, this._initServicesUtility());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServiceVersion());
 	}
 
 	_initRepositoriesNews() {
@@ -85,10 +84,6 @@ class ApiBootPlugin extends BootPlugin {
 
 	_initServicesUtility() {
 		return new utilityService();
-	}
-
-	_initServiceVersion() {
-		throw new NotImplementedError();
 	}
 }
 

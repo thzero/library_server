@@ -26,9 +26,6 @@ import TokenExpiredError from '../errors/tokenExpired';
 require('../utility/string');
 import injector from '../utility/injector';
 
-import homeRoute from '../routes/home';
-import versionRoute from '../routes/version';
-
 import usageMetricsService from '../service/usageMetrics';
 
 const ResponseTime = 'X-Response-Time';
@@ -159,11 +156,7 @@ class BootMain {
 		for (const pluginRoute of plugins)
 			await pluginRoute.initRoutes(this._routes);
 
-		this._initRoute(this._initRoutesVersion());
-
 		await this._initRoutes();
-
-		this._initRoute(this._initRoutesHome());
 
 		for (const route of this._routes) {
 			await route.init(injector)
@@ -308,14 +301,6 @@ class BootMain {
 	}
 
 	async _initRoutes() {
-	}
-
-	_initRoutesHome() {
-		return new homeRoute();
-	}
-
-	_initRoutesVersion() {
-		return new versionRoute();
 	}
 
 	async _initServices() {
