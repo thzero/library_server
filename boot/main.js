@@ -110,6 +110,11 @@ class BootMain {
 
 		// auth-api-token
 		app.use(async (ctx, next) => {
+			if (ctx.originalUrl === '/favicon.ico') {
+				await next();
+				return;
+			}
+
 			const key = ctx.get(LibraryConstants.Headers.AuthKeys.API);
 			// this.loggerServiceI.debug('auth-api-token.key', key);
 			if (!String.isNullOrEmpty(key)) {
@@ -222,7 +227,7 @@ class BootMain {
 
 			await this._initRepositories();
 			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC, this._initRepositoriesUsageMetrics());
-			
+
 			for (const pluginRepository of plugins)
 				pluginRepository.initRepositories(injector, this._repositories);
 
@@ -232,7 +237,7 @@ class BootMain {
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
 			this.usageMetricsServiceI = this._intiServicesUsageMetrics();
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
-			
+
 			for (const pluginService of plugins)
 				pluginService.initServices(injector, this._repositories);
 
