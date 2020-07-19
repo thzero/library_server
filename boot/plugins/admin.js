@@ -8,17 +8,17 @@ import adminNewsRoute from '../../routes/admin/news';
 import adminUsersRoute from '../../routes/admin/users'
 
 class AdminBootPlugin extends BootPlugin {
-	_initRoutes() {
+	async _initRoutes() {
 		this._initRoute(this._initRoutesAdminNews());
 		this._initRoute(this._initRoutesAdminUsers());
 	}
 
-	_initRepositories() {
+	async _initRepositories() {
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_NEWS, this._initRepositoriesAdminNews());
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_USERS, this._initRepositoriesAdminUsers());
 	}
 
-	_initServices() {
+	async _initServices() {
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_ADMIN_NEWS, this._initServicesAdminNews());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_ADMIN_USERS, this._initServicesAdminUsers());
 	}

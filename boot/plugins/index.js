@@ -1,32 +1,41 @@
 class BootPlugin {
-	initRoutes(routes) {
+	async init(config, injector) {
+		this._config = config;
+		this._injector = injector;
+
+	}
+	async initRoutes(routes) {
 		this._routes = routes;
 
-		this._initRoutes();
+		await this._initRoutes();
 	}
 
-	initRepositories(injector, repositories) {
-		this._injector = injector;
+	async initRepositories(repositories) {
 		this._repositories = repositories;
 
-		this._initRepositories();
+		await this._initRepositories();
 	}
 
-	initServices(injector, services) {
-		this._injector = injector;
+	async initServices(services) {
 		this._services = services;
 
-		this._initServices();
+		await this._initServices();
+	}
+
+	async initServicesSecondary(services) {
+		this._services = services;
+
+		await this._initServicesSecondary();
 	}
 
 	_initRoute(route) {
 		this._routes.push(route);
 	}
 
-	_initRoutes() {
+	async _initRoutes() {
 	}
 
-	_initRepositories() {
+	async _initRepositories() {
 	}
 
 	_injectRepository(key, repository) {
@@ -41,7 +50,10 @@ class BootPlugin {
 		this._injector.addSingleton(key, service);
 	}
 
-	_initServices() {
+	async _initServices() {
+	}
+
+	async _initServicesSecondary() {
 	}
 }
 
