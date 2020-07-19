@@ -13,18 +13,24 @@ import utilityService from '../../service/utility';
 
 class ApiBootPlugin extends ApiBaseBootPlugin {
 	async _initRoutes() {
+		await super._initRoutes();
+
 		this._initRoute(this._initRoutesNews());
 		this._initRoute(this._initRoutesUsers());
 		this._initRoute(this._initRoutesUtility());
 	}
 
 	async _initRepositories() {
+		await super._initRepositories();
+
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_NEWS, this._initRepositoriesNews());
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_PLANS, this._initRepositoriesPlans());
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USERS, this._initRepositoriesUsers());
 	}
 
 	async _initServices() {
+		await super._initServices();
+
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_AUTH, this._initServicesAuth());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_NEWS, this._initServicesNews());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_PLANS, this._initServicesPlans());
