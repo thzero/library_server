@@ -12,19 +12,19 @@ import plansService from '../../service/plans';
 import utilityService from '../../service/utility';
 
 class ApiBootPlugin extends BootPlugin {
-	_initRoutes() {
+	async _initRoutes() {
 		this._initRoute(this._initRoutesNews());
 		this._initRoute(this._initRoutesUsers());
 		this._initRoute(this._initRoutesUtility());
 	}
 
-	_initRepositories() {
+	async _initRepositories() {
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_NEWS, this._initRepositoriesNews());
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_PLANS, this._initRepositoriesPlans());
 		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USERS, this._initRepositoriesUsers());
 	}
 
-	_initServices() {
+	async _initServices() {
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_AUTH, this._initServicesAuth());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_NEWS, this._initServicesNews());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_PLANS, this._initServicesPlans());

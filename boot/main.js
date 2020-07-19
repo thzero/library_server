@@ -35,6 +35,11 @@ const ResponseTime = 'X-Response-Time';
 
 class BootMain {
 	async start(...args) {
+		this._injector = injector;
+
+		// https://github.com/lorenwest/node-config/wiki
+		this._appConfig = config.get('app');
+
 		const plugins = this._initPlugins(args);
 
 		await this._init(plugins);
@@ -152,7 +157,7 @@ class BootMain {
 		this._routes = [];
 
 		for (const pluginRoute of plugins)
-			pluginRoute.initRoutes(this._routes);
+			await pluginRoute.initRoutes(this._routes);
 
 		this._initRoute(this._initRoutesVersion());
 
@@ -218,18 +223,15 @@ class BootMain {
 
 	async _init(plugins) {
 		try {
-			// https://github.com/lorenwest/node-config/wiki
-			this._appConfig = config.get('app');
-
 			injector.addSingleton(LibraryConstants.InjectorKeys.CONFIG, this._appConfig);
 
 			this._repositories = new Map();
 
+			for (const pluginRepository of plugins)
+				await pluginRepository.initRepositories(this._repositories);
+
 			await this._initRepositories();
 			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC, this._initRepositoriesUsageMetrics());
-
-			for (const pluginRepository of plugins)
-				pluginRepository.initRepositories(injector, this._repositories);
 
 			this._services = new Map();
 
@@ -239,7 +241,7 @@ class BootMain {
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
 
 			for (const pluginService of plugins)
-				pluginService.initServices(injector, this._repositories);
+				await pluginService.initServices(this._services);
 
 			await this._initServices();
 
@@ -251,6 +253,9 @@ class BootMain {
 			this._services = new Map();
 
 			await this._initServicesSecondary();
+
+			for (const pluginService of plugins)
+				await pluginService.initServicesSecondary(this._services);
 
 			for (const [key, value] of this._services) {
 				if (value.initialized)
@@ -285,6 +290,7 @@ class BootMain {
 		const results = [];
 		for (const plugin of plugins) {
 			obj = new plugin();
+			obj.init(this._appConfig, injector);
 			results.push(obj);
 		}
 		return results;
