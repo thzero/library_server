@@ -262,6 +262,16 @@ class Utility {
 		return (b - a)
 	}
 
+	static sortByNumberEx(values, field, ascending) {
+		if (!values || !Array.isArray(values))
+			return values;
+
+		if (ascending)
+			return values.sort((a, b) => Utility.sortByNumber(a, b, field));
+
+		return values.sort((a, b) => Utility.sortByNumber(b, a, field));
+	}
+
 	static sortByOrder(values, ascending) {
 		if (!values || !Array.isArray(values))
 			return values
