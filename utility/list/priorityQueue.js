@@ -1,6 +1,6 @@
 class PriorityQueue {
 	constructor() {
-		this._values = []
+		this._values = [];
 	}
 
 	dequeue() {
@@ -33,6 +33,7 @@ class PriorityQueue {
 		const length = this._values.length;
 		const elementPriority = this._values[0].priority;
 		// loop breaks if no swaps are needed
+		// eslint-disable-next-line
 		while (true) {
 			// get indexes of child elements by following formula
 			let leftChildIndex = (2 * parentIndex) + 1;
@@ -42,7 +43,7 @@ class PriorityQueue {
 
 			//  if left child exists, and is greater than the element, plan to swap with the left child index
 			if (leftChildIndex < length) {
-				leftChildPriority = this._values[leftChildIndex].priority
+				leftChildPriority = this._values[leftChildIndex].priority;
 				if (leftChildPriority < elementPriority)
 					indexToSwap = leftChildIndex;
 
@@ -50,7 +51,7 @@ class PriorityQueue {
 
 			// if right child exists
 			if (rightChildIndex < length) {
-				rightChildPriority = this._values[rightChildIndex].priority
+				rightChildPriority = this._values[rightChildIndex].priority;
 
 				if (
 					// if right child is greater than element and there are no plans to swap
@@ -59,13 +60,13 @@ class PriorityQueue {
 					(rightChildPriority < leftChildPriority && indexToSwap !== null))
 				{
 					// plan to swap with the right child
-					indexToSwap = rightChildIndex
+					indexToSwap = rightChildIndex;
 				}
 			}
 
 			// if there are no plans to swap, break out of the loop
 			if (indexToSwap === null)
-				break
+				break;
 
 			// swap with planned element
 			this._swap(parentIndex, indexToSwap);
@@ -77,7 +78,7 @@ class PriorityQueue {
 	// helper methods that bubbles up values from end
 	_bubbleUp() {
 		// get index of inserted element
-		let index = this._values.length - 1
+		let index = this._values.length - 1;
 		// loop while index is not 0 or element no loger needs to bubble
 		while (index > 0) {
 			// get parent index via formula
@@ -105,4 +106,4 @@ class PriorityQueue {
 	}
 }
 
-export default PriorityQueue
+export default PriorityQueue;
