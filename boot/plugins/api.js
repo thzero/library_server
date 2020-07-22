@@ -8,6 +8,7 @@ import newsRoute from '../../routes/news';
 import usersRoute from '../../routes/users';
 import utilityRoute from '../../routes/utility';
 
+import cryptoService from '../../service/crypto';
 import plansService from '../../service/plans';
 import utilityService from '../../service/utility';
 
@@ -32,6 +33,7 @@ class ApiBootPlugin extends ApiBaseBootPlugin {
 		await super._initServices();
 
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_AUTH, this._initServicesAuth());
+		this._injectService(LibraryConstants.InjectorKeys.SERVICE_CRYPTO, this._initServiceCrypto());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_NEWS, this._initServicesNews());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_PLANS, this._initServicesPlans());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS, this._initServicesNewsValidation());
@@ -66,6 +68,10 @@ class ApiBootPlugin extends ApiBaseBootPlugin {
 
 	_initServicesAuth() {
 		throw new NotImplementedError();
+	}
+
+	_initServiceCrypto() {
+		return new cryptoService();
 	}
 
 	_initServicesNews() {

@@ -10,6 +10,7 @@ const LibraryConstants = {
 		SERVICE_ADMIN_NEWS: 'serviceAdminNews',
 		SERVICE_ADMIN_USERS: 'serviceAdminUsers',
 		SERVICE_AUTH: 'serviceAuth',
+		SERVICE_CRYPTO: 'serviceCrypto',
 		SERVICE_LOGGER: 'serviceLogger',
 		SERVICE_NEWS: 'serviceNews',
 		SERVICE_PLANS: 'servicePlans',

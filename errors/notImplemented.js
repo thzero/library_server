@@ -1,6 +1,6 @@
 class NotImplementedError extends Error {
 	constructor() {
-		super('Not Implemented.')
+		super('Not Implemented.');
 	}
 }
 
