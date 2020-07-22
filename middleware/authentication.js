@@ -1,14 +1,26 @@
 import LibraryConstants from '../constants';
 
-import Utility from '../utility';
+import injector from '@thzero/library_common/utility/injector';
 
-import injector from '../utility/injector';
+const separator = ': ';
+
+function getAuthToken(context) {
+	if (!context)
+		return null;
+
+	const token = context.get(LibraryConstants.Headers.AuthKeys.AUTH);
+	const split = token.split(LibraryConstants.Headers.AuthKeys.AUTH_BEARER + separator);
+	if (split.length > 1)
+		return split[1];
+
+	return null;
+}
 
 const authentication = (required) => {
 	return async (ctx, next) => {
 		const logger = injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
 
-		const token = Utility.getAuthToken(ctx);
+		const token = getAuthToken(ctx);
 		logger.debug('authentication.token', token);
 		logger.debug('authentication.required', required);
 		const valid = ((required && !String.isNullOrEmpty(token)) || !required);

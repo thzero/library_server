@@ -22,18 +22,6 @@ const LibraryConstants = {
 		SERVICE_VALIDATION_NEWS: 'serviceNewsValidation',
 		SERVICE_VERSION: 'serviceVersion'
 	},
-	ErrorCodes: {
-		InvalidObject: 'invalidObject',
-		InvalidPermissions: 'invalidPermissions',
-		ObjectChanged: 'objectChanged',
-		QuotaReached: 'quotaExceeded'
-	},
-	ErrorFields: {
-		Generic: 'generic',
-		Name: 'name',
-		Number: 'number',
-		Order: 'order'
-	},
 	Headers: {
 		AuthKeys: {
 			API: 'x-api-key',

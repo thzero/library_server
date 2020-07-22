@@ -29,6 +29,7 @@
     "@hapi/joi-date": "^2.0.1",
     "@koa/cors": "^3.1.0",
     "@koa/router": "^9.3.1",
+    "@thzero/library_common": "^0.7.7",
     "async-mutex": "^0.2.4",
     "config": "^3.3.1",
     "dayjs": "^1.8.29",
