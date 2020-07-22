@@ -1,10 +1,10 @@
 {
   "name": "@thzero/library_server",
-  "version": "0.6.17",
+  "version": "0.7.8",
   "version_major": 0,
-  "version_minor": 6,
-  "version_patch": 17,
-  "version_date": "07/17/2020",
+  "version_minor": 7,
+  "version_patch": 8,
+  "version_date": "07/21/2020",
   "description": "An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.",
   "author": "thZero",
   "license": "MIT",
@@ -20,7 +20,7 @@
     "node": ">=13.0.1"
   },
   "scripts": {
-    "cli-update": "node -r esm ./cli.js --updateversion --pi",
+    "cli-update": "./node_modules/.bin/library-cli --updateversion --pi",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -31,34 +31,31 @@
     "@koa/router": "^9.3.1",
     "async-mutex": "^0.2.4",
     "config": "^3.3.1",
-    "crc": "^3.8.0",
     "dayjs": "^1.8.29",
     "dayjs-plugin-utc": "^0.1.2",
     "decimal.js-light": "^2.5.0",
     "easy-rbac": "^3.1.1",
-    "esm": "^3.2.25",
-    "firebase": "^7.16.0",
-    "firebase-admin": "^9.0.0",
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",
     "koa-helmet": "^5.2.0",
     "koa-static": "^5.0.0",
     "lodash": "^4.17.19",
-    "mongodb": "^3.5.9",
-    "pino": "^6.4.0",
     "reflect-metadata": "^0.1.13",
     "short-uuid": "^3.1.1",
     "swagger2-koa": "^2.0.0",
     "uuid": "^8.2.0"
+  },
+  "devDependencies": {
+    "@thzero/library_cli": "^0.6.16"
   },
   "peerDependencies": {
     "@babel/core": "^7.10.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
     "babel-loader": "^8.1.0",
-    "eslint": "^7.4.0",
+    "eslint": "^7.5.0",
     "eslint-plugin-node": "^11.1.0",
-    "pino-pretty": "^4.0.3",
+    "pino-pretty": "^4.1.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
   }

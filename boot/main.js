@@ -26,23 +26,20 @@ import TokenExpiredError from '../errors/tokenExpired';
 require('../utility/string');
 import injector from '../utility/injector';
 
-import adminNewsRoute from '../routes/admin/news';
-import adminUsersRoute from '../routes/admin/users'
-import homeRoute from '../routes/home';
-import newsRoute from '../routes/news';
-import usersRoute from '../routes/users';
-import utilityRoute from '../routes/utility';
-import versionRoute from '../routes/version';
-
-import plansService from '../service/plans';
 import usageMetricsService from '../service/usageMetrics';
-import utilityService from '../service/utility';
 
 const ResponseTime = 'X-Response-Time';
 
 class BootMain {
-	async start() {
-		await this._init();
+	async start(...args) {
+		this._injector = injector;
+
+		// https://github.com/lorenwest/node-config/wiki
+		this._appConfig = config.get('app');
+
+		const plugins = this._initPlugins(args);
+
+		await this._init(plugins);
 
 		const app = new Koa();
 		// https://github.com/koajs/cors
@@ -115,6 +112,11 @@ class BootMain {
 
 		// auth-api-token
 		app.use(async (ctx, next) => {
+			if (ctx.originalUrl === '/favicon.ico') {
+				await next();
+				return;
+			}
+
 			const key = ctx.get(LibraryConstants.Headers.AuthKeys.API);
 			// this.loggerServiceI.debug('auth-api-token.key', key);
 			if (!String.isNullOrEmpty(key)) {
@@ -150,16 +152,11 @@ class BootMain {
 		});
 
 		this._routes = [];
-		this._initRoute(this._initRoutesAdminNews());
-		this._initRoute(this._initRoutesAdminUsers());
-		this._initRoute(this._initRoutesNews());
-		this._initRoute(this._initRoutesUsers());
-		this._initRoute(this._initRoutesUtility());
-		this._initRoute(this._initRoutesVersion());
+
+		for (const pluginRoute of plugins)
+			await pluginRoute.initRoutes(this._routes);
 
 		await this._initRoutes();
-
-		this._initRoute(this._initRoutesHome());
 
 		for (const route of this._routes) {
 			await route.init(injector)
@@ -217,39 +214,28 @@ class BootMain {
 		this.loggerServiceI.info(`Starting HTTP on: `, serverHttp.address());
 	}
 
-	async _init() {
+	async _init(plugins) {
 		try {
-			// https://github.com/lorenwest/node-config/wiki
-			this._appConfig = config.get('app');
-
 			injector.addSingleton(LibraryConstants.InjectorKeys.CONFIG, this._appConfig);
 
 			this._repositories = new Map();
-			this._services = new Map();
-			this.loggerServiceI = this._initServicesLogger();
-			this.usageMetricsServiceI = this._intiServicesUsageMetrics();
 
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
+			for (const pluginRepository of plugins)
+				await pluginRepository.initRepositories(this._repositories);
 
 			await this._initRepositories();
-			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_NEWS, this._initRepositoriesAdminNews());
-			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_USERS, this._initRepositoriesAdminUsers());
-			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_NEWS, this._initRepositoriesNews());
-			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_PLANS, this._initRepositoriesPlans());
 			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC, this._initRepositoriesUsageMetrics());
-			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USERS, this._initRepositoriesUsers());
 
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_ADMIN_NEWS, this._initServicesAdminNews());
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_ADMIN_USERS, this._initServicesAdminUsers());
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_AUTH, this._initServicesAuth());
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_NEWS, this._initServicesNews());
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_PLANS, this._initServicesPlans());
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS, this._initServicesNewsValidation());
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_SECURITY, this._initServicesSecurity());
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USERS, this._initServicesUser());
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_UTILITY, this._initServicesUtility());
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServiceVersion());
+			this._services = new Map();
+
+			this.loggerServiceI = this._initServicesLogger();
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
+			this.usageMetricsServiceI = this._intiServicesUsageMetrics();
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
+
+			for (const pluginService of plugins)
+				await pluginService.initServices(this._services);
+
 			await this._initServices();
 
 			for (const [key, value] of this._services) {
@@ -260,6 +246,9 @@ class BootMain {
 			this._services = new Map();
 
 			await this._initServicesSecondary();
+
+			for (const pluginService of plugins)
+				await pluginService.initServicesSecondary(this._services);
 
 			for (const [key, value] of this._services) {
 				if (value.initialized)
@@ -289,31 +278,21 @@ class BootMain {
 		// your clean logic, like closing database connections
 	}
 
+	_initPlugins(plugins) {
+		let obj;
+		const results = [];
+		for (const plugin of plugins) {
+			obj = new plugin();
+			obj.init(this._appConfig, injector);
+			results.push(obj);
+		}
+		return results;
+	}
+
 	async _initRepositories() {
-		throw new NotImplementedError();
-	}
-
-	_initRepositoriesAdminNews() {
-		throw new NotImplementedError();
-	}
-
-	_initRepositoriesAdminUsers() {
-		throw new NotImplementedError();
-	}
-
-	_initRepositoriesNews() {
-		throw new NotImplementedError();
-	}
-
-	_initRepositoriesPlans() {
-		throw new NotImplementedError();
 	}
 
 	_initRepositoriesUsageMetrics() {
-		throw new NotImplementedError();
-	}
-
-	_initRepositoriesUsers() {
 		throw new NotImplementedError();
 	}
 
@@ -322,90 +301,20 @@ class BootMain {
 	}
 
 	async _initRoutes() {
-		throw new NotImplementedError();
-	}
-
-	_initRoutesAdminNews() {
-		return new adminNewsRoute();
-	}
-
-	_initRoutesAdminUsers() {
-		return new adminUsersRoute();
-	}
-
-	_initRoutesHome() {
-		return new homeRoute();
-	}
-
-	_initRoutesNews() {
-		return new newsRoute();
-	}
-
-	_initRoutesUsers() {
-		return new usersRoute();
-	}
-
-	_initRoutesUtility() {
-		return new utilityRoute();
-	}
-
-	_initRoutesVersion() {
-		return new versionRoute();
 	}
 
 	async _initServices() {
-		throw new NotImplementedError();
 	}
 
 	async _initServicesSecondary() {
-	}
-
-	_initServicesAdminNews() {
-		throw new NotImplementedError();
-	}
-
-	_initServicesAdminUsers() {
-		throw new NotImplementedError();
-	}
-
-	_initServicesAuth() {
-		throw new NotImplementedError();
 	}
 
 	_initServicesLogger() {
 		throw new NotImplementedError();
 	}
 
-	_initServicesNews() {
-		throw new NotImplementedError();
-	}
-
-	_initServicesPlans() {
-		return new plansService();
-	}
-
-	_initServicesNewsValidation() {
-		throw new NotImplementedError();
-	}
-
-	_initServicesSecurity() {
-		throw new NotImplementedError();
-	}
-
 	_intiServicesUsageMetrics() {
 		return new usageMetricsService();
-	}
-
-	_initServicesUser() {
-		throw new NotImplementedError();
-	}
-
-	_initServicesUtility() {
-		return new utilityService();
-	}
-
-	_initServiceVersion() {
-		throw new NotImplementedError();
 	}
 
 	_initServer(serverHttp) {

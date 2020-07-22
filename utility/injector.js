@@ -5,7 +5,7 @@ class Injector {
 
 	addService(key, dependency) {
 		if (String.isNullOrEmpty(key))
-			throw Error('Invalid injector key.');
+			throw Error(`Invalid injector key '${key}'.`);
 		if (!dependency)
 			throw Error('Invalid injector dependency.');
 
@@ -17,7 +17,7 @@ class Injector {
 
 	addSingleton(key, dependency) {
 		if (String.isNullOrEmpty(key))
-			throw Error('Invalid injector key.');
+			throw Error(`Invalid injector key '${key}'.`);
 		if (!dependency)
 			throw Error('Invalid injector dependency.');
 
@@ -33,7 +33,7 @@ class Injector {
 
 	getService(key, args) {
 		if (String.isNullOrEmpty(key))
-			throw Error('Invalid injector key.');
+			throw Error(`Invalid injector key '${key}'.`);
 
 		const result = this._di[key];
 		if (!result)

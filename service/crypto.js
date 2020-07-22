@@ -1,9 +1,11 @@
 import crypto from 'crypto';
 
+import Service from './index';
+
 const encoder = new TextEncoder();
 
-class CryptoUtility {
-	static async checksum(input, algorithm, encoding) {
+class CryptoService extends Service {
+	async checksum(input, algorithm, encoding) {
 		return crypto
 			.createHash(algorithm || 'sha256')
 			.update(encoder.encode(input), 'utf8')
@@ -11,4 +13,4 @@ class CryptoUtility {
 	}
 }
 
-export default CryptoUtility;
+export default CryptoService;

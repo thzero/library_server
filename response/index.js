@@ -12,8 +12,8 @@ class Response {
 		this.params = null;
 	}
 
-	add(message, code, field, params, prefix, suffix) {
-		return this._add(message, code, field, null, params, prefix, suffix);
+	add(message, code, field, type, params, prefix, suffix) {
+		return this._add(message, code, field, type, params, prefix, suffix);
 	}
 
 	addGeneric(message, code, params, prefix, suffix) {
@@ -39,7 +39,7 @@ class Response {
 		response.err = err;
 		response.errors = errors;
 		if (message || code)
-			response.addGeneric(message, code)
+			response.addGeneric(message, code);
 		return response;
 	}
 
