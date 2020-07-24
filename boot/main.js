@@ -21,7 +21,7 @@ import LibraryConstants from '../constants';
 import Utility from '@thzero/library_common/utility';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented';
-import TokenExpiredError from '@thzero/library_common/errors/tokenExpired';
+import TokenExpiredError from '..//errors/tokenExpired';
 
 require('@thzero/library_common/utility/string');
 import injector from '@thzero/library_common/utility/injector';
