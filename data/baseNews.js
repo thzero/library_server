@@ -1,6 +1,6 @@
 import Data from './index';
 
-import NotImplementedError from '../errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 class BaseNewsData extends Data {
 	constructor() {

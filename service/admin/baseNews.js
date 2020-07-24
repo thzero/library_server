@@ -2,7 +2,7 @@ import LibraryConstants from '../../constants';
 
 import BaseAdminService from './index';
 
-import NotImplementedError from '../../errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 class BaseNewsAdminService extends BaseAdminService {
 	constructor() {

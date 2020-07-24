@@ -1,6 +1,6 @@
 import Service from './index';
 
-import NotImplementedError from '../errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 class BaseUserService extends Service {
 	async fetch(correlationId, userId) {
