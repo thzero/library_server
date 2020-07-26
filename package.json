@@ -1,10 +1,10 @@
 {
   "name": "@thzero/library_server",
-  "version": "0.7.8",
+  "version": "0.7.14",
   "version_major": 0,
   "version_minor": 7,
-  "version_patch": 8,
-  "version_date": "07/21/2020",
+  "version_patch": 14,
+  "version_date": "07/26/2020",
   "description": "An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.",
   "author": "thZero",
   "license": "MIT",
@@ -29,9 +29,10 @@
     "@hapi/joi-date": "^2.0.1",
     "@koa/cors": "^3.1.0",
     "@koa/router": "^9.3.1",
+    "@thzero/library_common": "^0.7.11",
     "async-mutex": "^0.2.4",
     "config": "^3.3.1",
-    "dayjs": "^1.8.29",
+    "dayjs": "^1.8.30",
     "dayjs-plugin-utc": "^0.1.2",
     "decimal.js-light": "^2.5.0",
     "easy-rbac": "^3.1.1",
@@ -56,7 +57,7 @@
     "eslint": "^7.5.0",
     "eslint-plugin-node": "^11.1.0",
     "pino-pretty": "^4.1.0",
-    "webpack": "^4.43.0",
+    "webpack": "^4.44.0",
     "webpack-cli": "^3.3.12"
   }
 }

@@ -18,13 +18,13 @@ import config from 'config';
 
 import LibraryConstants from '../constants';
 
-import Utility from '../utility';
+import Utility from '@thzero/library_common/utility';
 
-import NotImplementedError from '../errors/notImplemented';
-import TokenExpiredError from '../errors/tokenExpired';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import TokenExpiredError from '..//errors/tokenExpired';
 
-require('../utility/string');
-import injector from '../utility/injector';
+require('@thzero/library_common/utility/string');
+import injector from '@thzero/library_common/utility/injector';
 
 import usageMetricsService from '../service/usageMetrics';
 

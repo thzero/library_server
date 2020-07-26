@@ -1,6 +1,6 @@
 import LibraryConstants from '../constants';
 
-import Utility from '../utility';
+import Utility from '@thzero/library_common/utility';
 
 import BaseRoute from './index';
 

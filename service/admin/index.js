@@ -1,7 +1,8 @@
-import NotImplementedError from '../../errors/notImplemented';
+import Utility from '@thzero/library_common/utility';
+
+import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 import Service from '../index';
-import Utility from '../../utility';
 
 class BaseAdminService extends Service {
 	async create(correlationId, user, requestedValue) {

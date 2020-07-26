@@ -1,6 +1,6 @@
 import LibraryConstants from '../../constants';
 
-import NotImplementedError from '../../errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 import ApiBaseBootPlugin from './baseApi';
 

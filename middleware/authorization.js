@@ -1,8 +1,8 @@
 import LibraryConstants from '../constants';
 
-import injector from '../utility/injector';
+import injector from '@thzero/library_common/utility/injector';
 
-require('../utility/string');
+require('@thzero/library_common/utility/string');
 
 const logicalAnd = 'and';
 const logicalOr = 'or';

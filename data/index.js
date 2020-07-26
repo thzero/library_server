@@ -1,4 +1,4 @@
-import Utility from '../utility';
+import Utility from '@thzero/library_common/utility';
 
 class Data {
 	constructor() {
