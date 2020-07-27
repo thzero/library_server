@@ -8,6 +8,7 @@ function getAuthToken(context) {
 	if (!context)
 		return null;
 
+	const logger = injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
 	const token = context.get(LibraryConstants.Headers.AuthKeys.AUTH);
 	logger.debug('getAuthToken.token', token);
 	const split = token.split(LibraryConstants.Headers.AuthKeys.AUTH_BEARER + separator);
