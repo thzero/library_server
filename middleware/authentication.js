@@ -9,10 +9,14 @@ function getAuthToken(context) {
 		return null;
 
 	const token = context.get(LibraryConstants.Headers.AuthKeys.AUTH);
+	logger.debug('getAuthToken.token', token);
 	const split = token.split(LibraryConstants.Headers.AuthKeys.AUTH_BEARER + separator);
+	logger.debug('getAuthToken.split', split);
+	logger.debug('getAuthToken.split.length', split.length);
 	if (split.length > 1)
 		return split[1];
 
+	logger.debug('getAuthToken.fail');
 	return null;
 }
 
