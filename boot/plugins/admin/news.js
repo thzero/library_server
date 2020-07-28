@@ -2,11 +2,11 @@ import LibraryConstants from '../../../constants';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
-import BootPlugin from '../index';
+import AdminBootPlugin from './index';
 
 import adminNewsRoute from '../../../routes/admin/news';
 
-class NewsAdminBootPlugin extends BootPlugin {
+class NewsAdminBootPlugin extends AdminBootPlugin {
 	async _initRoutes() {
 		this._initRoute(this._initRoutesAdminNews());
 	}
