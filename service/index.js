@@ -1,4 +1,5 @@
 import LibraryConstants from '../constants';
+import LibraryCommonConstants from '@thzero/library_common/constants';
 
 import Response from '@thzero/library_common/response';
 
@@ -19,10 +20,15 @@ class Service {
 		if (!requestedValue)
 			return this._initResponse();
 
-		const valid = value.updatedTimestamp === requestedValue.updatedTimestamp;
+		let valid = value.updatedTimestamp >= requestedValue.updatedTimestamp;
 		this._logger.debug('_checkUpdatedTimestamp.valid', valid);
 		if (!valid)
-			return this._error().addGeneric('Object already changed', LibraryConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse().paramIl8n(objectType) });
+			return this._error().addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse().paramIl8n(objectType) });
+
+		// valid = value.updatedTimestamp === requestedValue.updatedTimestamp;
+		// this._logger.debug('_checkUpdatedTimestamp.valid', valid);
+		// if (!valid)
+		// 	return this._error().addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse().paramIl8n(objectType) });
 
 		return this._initResponse();
 	}

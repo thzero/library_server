@@ -20,6 +20,7 @@ class ApiBootPlugin extends BootPlugin {
 		const utilityRoute = this._initRoutesUtility();
 		if (utilityRoute)
 			this._initRoute(utilityRoute);
+		this._initRoute(this._initRoutesVersion());
 	}
 
 	async _initServices() {
