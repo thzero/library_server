@@ -18,6 +18,8 @@ class ApiBaseBootPlugin extends BootPlugin {
 	}
 
 	async _initServices() {
+		this._injectService(LibraryConstants.InjectorKeys.SERVICE_AUTH, this._initServicesAuth());
+		this._injectService(LibraryConstants.InjectorKeys.SERVICE_SECURITY, this._initServicesSecurity());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServiceVersion());
 	}
 
@@ -31,6 +33,14 @@ class ApiBaseBootPlugin extends BootPlugin {
 
 	_initRoutesVersion() {
 		return new versionRoute();
+	}
+
+	_initServicesAuth() {
+		throw new NotImplementedError();
+	}
+
+	_initServicesSecurity() {
+		throw new NotImplementedError();
 	}
 
 	_initServiceVersion() {

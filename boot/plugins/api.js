@@ -32,12 +32,10 @@ class ApiBootPlugin extends ApiBaseBootPlugin {
 	async _initServices() {
 		await super._initServices();
 
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_AUTH, this._initServicesAuth());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_CRYPTO, this._initServiceCrypto());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_NEWS, this._initServicesNews());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_PLANS, this._initServicesPlans());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS, this._initServicesNewsValidation());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_SECURITY, this._initServicesSecurity());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_USERS, this._initServicesUser());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_UTILITY, this._initServicesUtility());
 	}
@@ -66,10 +64,6 @@ class ApiBootPlugin extends ApiBaseBootPlugin {
 		return new utilityRoute();
 	}
 
-	_initServicesAuth() {
-		throw new NotImplementedError();
-	}
-
 	_initServiceCrypto() {
 		return new cryptoService();
 	}
@@ -83,10 +77,6 @@ class ApiBootPlugin extends ApiBaseBootPlugin {
 	}
 
 	_initServicesNewsValidation() {
-		throw new NotImplementedError();
-	}
-
-	_initServicesSecurity() {
 		throw new NotImplementedError();
 	}
 
