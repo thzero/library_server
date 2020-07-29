@@ -18,16 +18,20 @@ class ApiBootPlugin extends BootPlugin {
 
 	async _initRoutesPre() {
 		const utilityRoute = this._initRoutesUtility();
-		if (utilityRoute)
+		const utilityService = this._initServicesUtility();
+		if (utilityRoute && utilityService)
 			this._initRoute(utilityRoute);
 		this._initRoute(this._initRoutesVersion());
 	}
 
 	async _initServices() {
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_CRYPTO, this._initServicesCrypto());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_SECURITY, this._initServicesSecurity());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServiceVersion());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_UTILITY, this._initServicesUtility());
+		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServicesVersion());
+
+		const utilityRoute = this._initRoutesUtility();
+		const utilityService = this._initServicesUtility();
+		if (utilityRoute && utilityService)
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_UTILITY, utilityService);
 	}
 
 	_initRoutesHome() {
@@ -46,11 +50,7 @@ class ApiBootPlugin extends BootPlugin {
 		return new cryptoService();
 	}
 
-	_initServicesSecurity() {
-		throw new NotImplementedError();
-	}
-
-	_initServiceVersion() {
+	_initServicesVersion() {
 		throw new NotImplementedError();
 	}
 
