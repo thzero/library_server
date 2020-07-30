@@ -1,10 +1,10 @@
 import LibraryConstants from '../../constants';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
-
 import ApiBootPlugin from './api';
 
 import utilityRoute from '../../routes/utility';
+
+import utilityService from '../../service/utility';
 
 class FrontApiBootPlugin extends ApiBootPlugin {
 	async _initRoutesPre() {
@@ -19,8 +19,8 @@ class FrontApiBootPlugin extends ApiBootPlugin {
 		return new utilityRoute();
 	}
 
-	_initServicesVersion() {
-		throw new NotImplementedError();
+	_initServicesUtility() {
+		return new utilityService();
 	}
 }
 
