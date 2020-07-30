@@ -19,7 +19,7 @@ class ApiBootPlugin extends BootPlugin {
 	async _initRoutesPre() {
 		const utilityRoute = this._initRoutesUtility();
 		const utilityService = this._initServicesUtility();
-		if (utilityRoute && utilityService)
+		if (utilityRoute || utilityService)
 			this._initRoute(utilityRoute);
 		this._initRoute(this._initRoutesVersion());
 	}
@@ -30,7 +30,7 @@ class ApiBootPlugin extends BootPlugin {
 
 		const utilityRoute = this._initRoutesUtility();
 		const utilityService = this._initServicesUtility();
-		if (utilityRoute && utilityService)
+		if (utilityRoute || utilityService)
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_UTILITY, utilityService);
 	}
 
