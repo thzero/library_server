@@ -1,9 +1,9 @@
 {
   "name": "@thzero/library_server",
-  "version": "0.7.24",
+  "version": "0.7.25",
   "version_major": 0,
   "version_minor": 7,
-  "version_patch": 24,
+  "version_patch": 25,
   "version_date": "07/30/2020",
   "description": "An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.",
   "author": "thZero",
