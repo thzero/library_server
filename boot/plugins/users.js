@@ -11,7 +11,7 @@ class UsersApiBootPlugin extends BootPlugin {
 		await super._initRoutes();
 
 		const usersRoute = this._initRoutesUsers();
-		if (!usersRoute)
+		if (usersRoute)
 			this._initRoute(usersRoute);
 	}
 
