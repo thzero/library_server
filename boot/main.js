@@ -5,12 +5,6 @@ import koaStatic from 'koa-static';
 
 import { createTerminus } from '@godaddy/terminus';
 
-import dayjs from 'dayjs';
-import localeData from 'dayjs/plugin/localeData';
-import localizedFormat from 'dayjs/plugin/localizedFormat';
-import utc from 'dayjs/plugin/utc';
-import 'dayjs/locale/en'; // load on demand
-
 import * as swagger from 'swagger2';
 import { ui as swagger_ui } from 'swagger2-koa';
 
@@ -263,10 +257,7 @@ class BootMain {
 				await value.init(injector);
 			}
 
-			dayjs.locale('en'); // use English locale globally
-			dayjs.extend(localeData);
-			dayjs.extend(localizedFormat);
-			dayjs.extend(utc);
+			Utility.initDateTime();
 		}
 		finally {
 			this._repositories = null;
