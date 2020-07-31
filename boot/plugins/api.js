@@ -19,6 +19,9 @@ class ApiBootPlugin extends BootPlugin {
 	}
 
 	async _initServices() {
+		const communicationRestService = this._initServicesCommunicationRest();
+		if (communicationRestService)
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_COMMUNICATION_REST, communicationRestService);
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_CRYPTO, this._initServicesCrypto());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServicesVersion());
 	}
@@ -33,6 +36,10 @@ class ApiBootPlugin extends BootPlugin {
 
 	_initServicesCrypto() {
 		return new cryptoService();
+	}
+
+	_initServicesCommunicationRest() {
+		return null;
 	}
 
 	_initServicesVersion() {

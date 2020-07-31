@@ -1,3 +1,5 @@
+import LibraryConstants from '../constants';
+
 import ExternalService from './external';
 
 class RestExternalService extends ExternalService {

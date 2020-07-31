@@ -20,6 +20,7 @@ import TokenExpiredError from '..//errors/tokenExpired';
 require('@thzero/library_common/utility/string');
 import injector from '@thzero/library_common/utility/injector';
 
+import configService from '../service/config';
 import usageMetricsService from '../service/usageMetrics';
 
 const ResponseTime = 'X-Response-Time';
@@ -29,7 +30,8 @@ class BootMain {
 		this._injector = injector;
 
 		// https://github.com/lorenwest/node-config/wiki
-		this._appConfig = config.get('app');
+		// this._appConfig = config.get('app');
+		this._appConfig = new configService(config.get('app'));
 
 		const plugins = this._initPlugins(args);
 
@@ -210,7 +212,7 @@ class BootMain {
 
 	async _init(plugins) {
 		try {
-			injector.addSingleton(LibraryConstants.InjectorKeys.CONFIG, this._appConfig);
+			injector.addSingleton(LibraryConstants.InjectorKeys.SERVICE_CONFIG, this._appConfig);
 
 			this._repositories = new Map();
 

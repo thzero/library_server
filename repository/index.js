@@ -6,7 +6,7 @@ class Repository {
 	}
 
 	get _config() {
-		return this._injector.getService(LibraryConstants.InjectorKeys.CONFIG)
+		return this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_CONFIG)
 	}
 
 	get _logger() {
