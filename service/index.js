@@ -4,10 +4,16 @@ import LibraryCommonConstants from '@thzero/library_common/constants';
 import Response from '@thzero/library_common/response';
 
 class Service {
+	constructor() {
+		this._config = null;
+		this._logger = null;
+		this._serviceValidation = null;
+	}
+
 	async init(injector) {
 		this._injector = injector;
 
-		this._config = this._injector.getService(LibraryConstants.InjectorKeys.CONFIG);
+		this._config = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_CONFIG);
 		this._logger = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
 		this._serviceValidation = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION);
 	}

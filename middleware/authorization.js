@@ -102,7 +102,7 @@ const authorization = (roles, logical) => {
 		logical = logicalOr;
 
 	return async (ctx, next) => {
-		const config = injector.getService(LibraryConstants.InjectorKeys.CONFIG);
+		const config = injector.getService(LibraryConstants.InjectorKeys.SERVICE_CONFIG);
 		const logger = injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
 		const security = injector.getService(LibraryConstants.InjectorKeys.SERVICE_SECURITY);
 

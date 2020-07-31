@@ -1,6 +1,5 @@
 const LibraryConstants = {
 	InjectorKeys: {
-		CONFIG: 'config',
 		REPOSITORY_ADMIN_NEWS: 'repositoryAdminNews',
 		REPOSITORY_ADMIN_USERS: 'repositoryAdminUsers',
 		REPOSITORY_NEWS: 'repositoryNews',
@@ -10,6 +9,8 @@ const LibraryConstants = {
 		SERVICE_ADMIN_NEWS: 'serviceAdminNews',
 		SERVICE_ADMIN_USERS: 'serviceAdminUsers',
 		SERVICE_AUTH: 'serviceAuth',
+		SERVICE_COMMUNICATION_REST: 'serviceCommunicationRest',
+		SERVICE_CONFIG: 'config',
 		SERVICE_CRYPTO: 'serviceCrypto',
 		SERVICE_LOGGER: 'serviceLogger',
 		SERVICE_NEWS: 'serviceNews',
