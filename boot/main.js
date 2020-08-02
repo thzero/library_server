@@ -27,6 +27,11 @@ const ResponseTime = 'X-Response-Time';
 
 class BootMain {
 	async start(...args) {
+		process.on('uncaughtException', function(err) {
+			console.log('Caught exception', err);
+			return process.exit(99);
+		});
+
 		this._injector = injector;
 
 		// https://github.com/lorenwest/node-config/wiki
