@@ -21,6 +21,7 @@ require('@thzero/library_common/utility/string');
 import injector from '@thzero/library_common/utility/injector';
 
 import configService from '../service/config';
+import loggerService from '../service/logger';
 import usageMetricsService from '../service/usageMetrics';
 
 const ResponseTime = 'X-Response-Time';
@@ -230,8 +231,9 @@ class BootMain {
 			this._services = new Map();
 
 			this.loggerServiceI = this._initServicesLogger();
+			this._initServicesLoggers();
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
-			this.usageMetricsServiceI = this._intiServicesUsageMetrics();
+			this.usageMetricsServiceI = this._initServicesUsageMetrics();
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
 
 			for (const pluginService of plugins)
@@ -308,10 +310,14 @@ class BootMain {
 	}
 
 	_initServicesLogger() {
+		return new loggerService();
+	}
+
+	_initServicesLoggers() {
 		throw new NotImplementedError();
 	}
 
-	_intiServicesUsageMetrics() {
+	_initServicesUsageMetrics() {
 		return new usageMetricsService();
 	}
 
@@ -331,6 +337,11 @@ class BootMain {
 	}
 
 	_initShutdown() {
+	}
+
+	_registerServicesLogger(key, service) {
+		this._injectService(key, service);
+		this.loggerServiceI.register(key);
 	}
 }
 
