@@ -1,10 +1,10 @@
 {
   "name": "@thzero/library_server",
-  "version": "0.7.30",
+  "version": "0.7.35",
   "version_major": 0,
   "version_minor": 7,
-  "version_patch": 30,
-  "version_date": "08/02/2020",
+  "version_patch": 35,
+  "version_date": "08/05/2020",
   "description": "An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.",
   "author": "thZero",
   "license": "MIT",
@@ -30,7 +30,7 @@
     "@thzero/library_common": "^0.7.15",
     "async-mutex": "^0.2.4",
     "config": "^3.3.1",
-    "dayjs": "^1.8.31",
+    "dayjs": "^1.8.32",
     "dayjs-plugin-utc": "^0.1.2",
     "easy-rbac": "^3.1.1",
     "koa": "^2.13.0",
@@ -43,7 +43,7 @@
     "@thzero/library_cli": "^0.7.2"
   },
   "peerDependencies": {
-    "@babel/core": "^7.11.0",
+    "@babel/core": "^7.11.1",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/preset-env": "^7.11.0",
     "babel-loader": "^8.1.0",
