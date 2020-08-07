@@ -59,9 +59,9 @@ class BaseMonitoringService extends Service {
 			this.gauge('gc.duration', duration);
 	}
 
-	_handleMemory(private, physical, virtual, physical_used, total) {
-		if (private)
-			this.gauge('memory.process.private', private);
+	_handleMemory(privateProcess, physical, virtual, physical_used, total) {
+		if (privateProcess)
+			this.gauge('memory.process.private', privateProcess);
 		if (physical)
 			this.gauge('memory.process.physical', physical);
 		if (virtual)
