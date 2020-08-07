@@ -13,6 +13,7 @@ const LibraryConstants = {
 		SERVICE_CONFIG: 'config',
 		SERVICE_CRYPTO: 'serviceCrypto',
 		SERVICE_LOGGER: 'serviceLogger',
+		SERVICE_MONITORING: 'serviceMonitoring',
 		SERVICE_NEWS: 'serviceNews',
 		SERVICE_PLANS: 'servicePlans',
 		SERVICE_SECURITY: 'serviceSecurity',

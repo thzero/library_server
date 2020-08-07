@@ -106,7 +106,7 @@ class BootMain {
 
 		app.use(koaStatic('./public'));
 
-		var env = (process.env.NODE_ENV || 'dev').toLowerCase();
+		const env = (process.env.NODE_ENV || 'dev').toLowerCase();
 		if (env == 'dev') {
 			const document = swagger.loadDocumentSync('./config/swagger.yml');
 			app.use(swagger_ui(document, '/swagger'));
@@ -233,6 +233,11 @@ class BootMain {
 			this.loggerServiceI = this._initServicesLogger();
 			this._initServicesLoggers();
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
+
+			const monitoringService = this._initServicesMonitoring();
+			if (monitoringService)
+				this._injectService(LibraryConstants.InjectorKeys.SERVICE_MONITORING, monitoringService);
+
 			this.usageMetricsServiceI = this._initServicesUsageMetrics();
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
 
@@ -315,6 +320,10 @@ class BootMain {
 
 	_initServicesLoggers() {
 		throw new NotImplementedError();
+	}
+
+	_initServicesMonitoring() {
+		return null;
 	}
 
 	_initServicesUsageMetrics() {
