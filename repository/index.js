@@ -1,5 +1,7 @@
 import LibraryConstants from '../constants';
 
+import Response from '@thzero/library_common/response';
+
 class Repository {
 	async init(injector) {
 		this._injector = injector;
@@ -7,10 +9,6 @@ class Repository {
 
 	get _config() {
 		return this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_CONFIG)
-	}
-
-	get _logger() {
-		return this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER)
 	}
 
 	_error(message, err, code, errors) {
@@ -38,6 +36,10 @@ class Repository {
 
 	_initResponseExtract() {
 		return new ExtractResponse();
+	}
+
+	get _logger() {
+		return this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER)
 	}
 
 	_success() {
