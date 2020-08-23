@@ -12,7 +12,7 @@ class Repository {
 	}
 
 	_enforceNotEmpty(clazz, method, value, name) {
-		if (String.isNullOrEmpt(value))
+		if (String.isNullOrEmpty(value))
 			throw Error(`Invalid ${name}`);
 	}
 
@@ -22,7 +22,7 @@ class Repository {
 	}
 
 	_enforceNotEmptyResponse(clazz, method, value, name) {
-		if (String.isNullOrEmpt(value))
+		if (String.isNullOrEmpty(value))
 			return Response.error(`Invalid ${name}`, null);
 
 		return this._success();
@@ -36,7 +36,7 @@ class Repository {
 	}
 
 	_enforceNotEmptyAsResponse(clazz, method, value, name) {
-		if (String.isNullOrEmpt(value))
+		if (String.isNullOrEmpty(value))
 			return Response.error(`Invalid ${name}`, null);
 
 		const response = this._initResponse();
