@@ -51,7 +51,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.debug(message, data, isClient);
+				logger.debug(clazz, method, message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - debug: ', err);
@@ -81,7 +81,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.error(message, data, isClient);
+				logger.error(clazz, method, message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - error: ', err);
@@ -111,7 +111,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.exception(ex, isClient);
+				logger.exception(clazz, method, ex, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - exception: ', err);
@@ -141,7 +141,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.fatal(message, data, isClient);
+				logger.fatal(clazz, method, message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - fatal: ', err);
@@ -171,7 +171,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.info(message, data, isClient);
+				logger.info(clazz, method, message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - info: ', err);
@@ -201,7 +201,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.trace(message, data, isClient);
+				logger.trace(clazz, method, message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - trace: ', err);
@@ -231,7 +231,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.warn(message, data, isClient);
+				logger.warn(clazz, method, message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - warn: ', err);
