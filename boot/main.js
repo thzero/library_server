@@ -246,6 +246,11 @@ class BootMain {
 
 			await this._initServices();
 
+			for (const [key, value] of this._repositories) {
+				console.log(`repositories.init - ${key}`);
+				await value.init(injector);
+			}
+
 			for (const [key, value] of this._services) {
 				console.log(`services.init - ${key}`);
 				await value.init(injector);
@@ -263,11 +268,6 @@ class BootMain {
 					continue;
 
 				console.log(`services.init.secondary - ${key}`);
-				await value.init(injector);
-			}
-
-			for (const [key, value] of this._repositories) {
-				console.log(`repositories.init - ${key}`);
 				await value.init(injector);
 			}
 
