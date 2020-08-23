@@ -11,9 +11,21 @@ class Repository {
 		return this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_CONFIG)
 	}
 
+	_enforceNotEmpty(clazz, method, value, name) {
+		if (!String.isNullOrEmpty(value))
+			throw Error(`Invalid ${name}`);
+	}
+
 	_enforceNotNull(clazz, method, value, name) {
 		if (!value)
 			throw Error(`Invalid ${name}`);
+	}
+
+	_enforceNotEmptyResponse(clazz, method, value, name) {
+		if (!String.isNullOrEmpty(value))
+			return Response.error(`Invalid ${name}`, null);
+
+		return this._success();
 	}
 
 	_enforceNotNullResponse(clazz, method, value, name) {
@@ -21,6 +33,15 @@ class Repository {
 			return Response.error(`Invalid ${name}`, null);
 
 		return this._success();
+	}
+
+	_enforceNotEmptyAsResponse(clazz, method, value, name) {
+		if (!String.isNullOrEmpty(value))
+			return Response.error(`Invalid ${name}`, null);
+
+		const response = this._initResponse();
+		response.results = value;
+		return response;
 	}
 
 	_enforceNotNullAsResponse(clazz, method, value, name) {
