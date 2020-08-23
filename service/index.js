@@ -40,7 +40,7 @@ class Service {
 	}
 
 	_enforceNotEmpty(clazz, method, value, name) {
-		if (!String.isNullOrEmpty(value))
+		if (String.isNullOrEmpty(value))
 			throw Error(`Invalid ${name}`);
 	}
 
@@ -50,7 +50,7 @@ class Service {
 	}
 
 	_enforceNotEmptyResponse(clazz, method, value, name) {
-		if (!String.isNullOrEmpty(value))
+		if (String.isNullOrEmpty(value))
 			return Response.error(`Invalid ${name}`, null);
 
 		return this._success();
@@ -64,7 +64,7 @@ class Service {
 	}
 
 	_enforceNotEmptyAsResponse(clazz, method, value, name) {
-		if (!String.isNullOrEmpty(value))
+		if (String.isNullOrEmpty(value))
 			return Response.error(`Invalid ${name}`, null);
 
 		const response = this._initResponse();
