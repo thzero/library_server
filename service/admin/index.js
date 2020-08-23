@@ -7,13 +7,13 @@ import Service from '../index';
 class BaseAdminService extends Service {
 	async create(correlationId, user, requestedValue) {
 		if (!this._allowsCreate)
-			return this._error();
+			return this._error('BaseAdminService', 'create');
 
 		const validationResponse = this._validateUser(user);
 		if (!validationResponse.success)
 			return this._errorResponse(validationResponse);
 
-		this._logger.debug('requestedValue', requestedValue);
+		this._logger.debug('BaseAdminService', 'create', 'requestedValue', requestedValue);
 		const validationCheckValueResponse = this._validateCreate(requestedValue);
 		if (!validationCheckValueResponse.success)
 			return this._errorResponse(validationCheckValueResponse);
@@ -27,7 +27,7 @@ class BaseAdminService extends Service {
 
 	async delete(correlationId, user, id) {
 		if (!this._allowsDelete)
-			return this._error();
+			return this._error('BaseAdminService', 'delete');
 
 		const validationCheckIdResponse = this._serviceValidation.check(this._serviceValidation.idSchema, id, null, this._validationCheckKey);
 		if (!validationCheckIdResponse.success)
@@ -64,7 +64,7 @@ class BaseAdminService extends Service {
 		if (!validationIdResponse.success)
 			return this._errorResponse(validationIdResponse);
 
-		this._logger.debug('requestedValue', requestedValue);
+		this._logger.debug('BaseAdminService', 'update', 'requestedValue', requestedValue);
 		const validationCheckValueUpdateResponse = this._validateUpdate(requestedValue);
 		if (!validationCheckValueUpdateResponse.success)
 			return this._errorResponse(validationCheckValueUpdateResponse);
