@@ -25,7 +25,7 @@ class BaseUsersAdminService extends BaseAdminService {
 
 	async delete(correlationId, user, id) {
 		if (!this._allowsDelete)
-			return this._error();
+			return this._error('BaseUsersAdminService', 'delete');
 
 		const validationCheckIdResponse = this._serviceValidation.check(this._serviceValidation.idSchema, id, null, this._validationCheckKey);
 		if (!validationCheckIdResponse.success)
@@ -55,7 +55,7 @@ class BaseUsersAdminService extends BaseAdminService {
 		if (!validationIdResponse.success)
 			return this._errorResponse(validationIdResponse);
 
-		this._logger.debug('requestedUser', requestedUser);
+		this._logger.debug('BaseUsersAdminService', 'update', 'requestedUser', requestedUser);
 		const validationCheckUsersUpdateResponse = this._serviceValidation.check(this._serviceValidation.userUpdateSchema, requestedUser, null, this._validationCheckKey);
 		if (!validationCheckUsersUpdateResponse.success)
 			return this._errorResponse(validationCheckUsersUpdateResponse);
@@ -76,7 +76,7 @@ class BaseUsersAdminService extends BaseAdminService {
 			return this._errorResponse(respositoryResponse);
 
 		if (!user.external && !user.external.id)
-			return this._error();
+			return this._error('BaseUsersAdminService', 'update');
 
 		const serviceAdminResponse = await this._serviceAuth.setClaims(userExisting.external.id, requestedUser.roles, true)
 		if (!serviceAdminResponse.success)

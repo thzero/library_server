@@ -44,7 +44,7 @@ class LoggerService extends Service {
 		this._loggerKeys.push(key);
 	}
 
-	debug(message, data, isClient) {
+	debug(clazz, method, message, data, isClient) {
 		let logger;
 		let index = 0;
 		const length = this._loggers.length;
@@ -59,7 +59,22 @@ class LoggerService extends Service {
 		}
 	}
 
-	error(message, data, isClient) {
+	debug2(message, data, isClient) {
+		let logger;
+		let index = 0;
+		const length = this._loggers.length;
+		for (; index < length; index++) {
+			logger = this._loggers[index];
+			try {
+				logger.debug(message, data, isClient);
+			}
+			catch (err) {
+				console.error('logger exception - debug: ', err);
+			}
+		}
+	}
+
+	error(clazz, method, message, data, isClient) {
 		let logger;
 		let index = 0;
 		const length = this._loggers.length;
@@ -74,7 +89,22 @@ class LoggerService extends Service {
 		}
 	}
 
-	exception(ex, isClient) {
+	error2(message, data, isClient) {
+		let logger;
+		let index = 0;
+		const length = this._loggers.length;
+		for (; index < length; index++) {
+			logger = this._loggers[index];
+			try {
+				logger.error(message, data, isClient);
+			}
+			catch (err) {
+				console.error('logger exception - error: ', err);
+			}
+		}
+	}
+
+	exception(clazz, method, ex, isClient) {
 		let logger;
 		let index = 0;
 		const length = this._loggers.length;
@@ -89,7 +119,22 @@ class LoggerService extends Service {
 		}
 	}
 
-	fatal(message, data, isClient) {
+	exception2(ex, isClient) {
+		let logger;
+		let index = 0;
+		const length = this._loggers.length;
+		for (; index < length; index++) {
+			logger = this._loggers[index];
+			try {
+				logger.exception(ex, isClient);
+			}
+			catch (err) {
+				console.error('logger exception - exception: ', err);
+			}
+		}
+	}
+
+	fatal(clazz, method, message, data, isClient) {
 		let logger;
 		let index = 0;
 		const length = this._loggers.length;
@@ -104,7 +149,22 @@ class LoggerService extends Service {
 		}
 	}
 
-	info(message, data, isClient) {
+	fatal2(message, data, isClient) {
+		let logger;
+		let index = 0;
+		const length = this._loggers.length;
+		for (; index < length; index++) {
+			logger = this._loggers[index];
+			try {
+				logger.fatal(message, data, isClient);
+			}
+			catch (err) {
+				console.error('logger exception - fatal: ', err);
+			}
+		}
+	}
+
+	info(clazz, method, message, data, isClient) {
 		let logger;
 		let index = 0;
 		const length = this._loggers.length;
@@ -119,7 +179,22 @@ class LoggerService extends Service {
 		}
 	}
 
-	trace(message, data, isClient) {
+	info2(message, data, isClient) {
+		let logger;
+		let index = 0;
+		const length = this._loggers.length;
+		for (; index < length; index++) {
+			logger = this._loggers[index];
+			try {
+				logger.info(message, data, isClient);
+			}
+			catch (err) {
+				console.error('logger exception - info: ', err);
+			}
+		}
+	}
+
+	trace(clazz, method, message, data, isClient) {
 		let logger;
 		let index = 0;
 		const length = this._loggers.length;
@@ -134,7 +209,37 @@ class LoggerService extends Service {
 		}
 	}
 
-	warn(message, data, isClient) {
+	trace2(message, data, isClient) {
+		let logger;
+		let index = 0;
+		const length = this._loggers.length;
+		for (; index < length; index++) {
+			logger = this._loggers[index];
+			try {
+				logger.trace(message, data, isClient);
+			}
+			catch (err) {
+				console.error('logger exception - trace: ', err);
+			}
+		}
+	}
+
+	warn(clazz, method, message, data, isClient) {
+		let logger;
+		let index = 0;
+		const length = this._loggers.length;
+		for (; index < length; index++) {
+			logger = this._loggers[index];
+			try {
+				logger.warn(message, data, isClient);
+			}
+			catch (err) {
+				console.error('logger exception - warn: ', err);
+			}
+		}
+	}
+
+	warn2(message, data, isClient) {
 		let logger;
 		let index = 0;
 		const length = this._loggers.length;

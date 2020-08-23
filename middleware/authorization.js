@@ -18,10 +18,10 @@ const authorizationCheckClaims = async (ctx, success, logical, security, logger)
 	let roleObj;
 	let roleParts;
 	for (const claim of ctx.state.claims) {
-		logger.debug('authorization.claim', claim);
+		logger.debug('middleware', 'authorization', 'authorization.claim', claim);
 
 		for (const role of ctx.state.roles) {
-			logger.debug('authorization.role', role);
+			logger.debug('middleware', 'authorization', 'role', role);
 
 			roleParts = role.split('.');
 			if (roleParts && roleParts.length < 1)
@@ -31,7 +31,7 @@ const authorizationCheckClaims = async (ctx, success, logical, security, logger)
 			roleAct = roleParts.length >= 2 ? roleParts[1] : null
 
 			result = await security.validate(claim, null, roleObj, roleAct);
-			logger.debug('authorization.result', result);
+			logger.debug('middleware', 'authorization', 'result', result);
 			if (logical === logicalOr)
 				success = success || result;
 			else
@@ -46,21 +46,21 @@ const authorizationCheckRoles = async (ctx, success, logical, security, logger) 
 	if (!ctx)
 		return false;
 
-	logger.debug('authorizationCheckRoles.user', ctx.state.user);
+	logger.debug('middleware', 'authorizationCheckRoles', 'user', ctx.state.user);
 	if (!(ctx.state.user && ctx.state.user.roles && Array.isArray(ctx.state.user.roles)))
 		return false;
 
-	logger.debug('authorization.logical', logical);
+		logger.debug('middleware', 'authorizationCheckRoles', 'logical', logical);
 
 	let result;
 	let roleAct;
 	let roleObj;
 	let roleParts;
 	for (const userRole of ctx.state.user.roles) {
-		logger.debug('authorization.userRole', userRole);
+		logger.debug('middleware', 'authorizationCheckRoles', 'userRole', userRole);
 
 		for (const role of ctx.state.roles) {
-			logger.debug('authorization.role', role);
+			logger.debug('middleware', 'authorizationCheckRoles', 'role', role);
 
 			roleParts = role.split('.');
 			if (roleParts && roleParts.length < 1)
@@ -70,7 +70,7 @@ const authorizationCheckRoles = async (ctx, success, logical, security, logger) 
 			roleAct = roleParts.length >= 2 ? roleParts[1] : null
 
 			result = await security.validate(userRole, null, roleObj, roleAct);
-			logger.debug('authorization.result', result);
+			logger.debug('middleware', 'authorizationCheckRoles', 'result', result);
 			if (logical === logicalOr) {
 				if (result)
 					return result;
@@ -87,11 +87,11 @@ const authorizationCheckRoles = async (ctx, success, logical, security, logger) 
 
 const initalizeRoles = (ctx, roles, logger) => {
 	if (Array.isArray(roles)) {
-		// logger.debug('authorization.roles1a', roles);
+		// logger.debug('middleware', 'initalizeRoles', 'roles1a', roles);
 		ctx.state.roles = roles;
 	}
 	else if ((typeof(roles) === 'string') || (roles instanceof String)) {
-		// logger.debug('authorization.roles1b', roles);
+		// logger.debug('middleware', 'initalizeRoles', 'roles1b', roles);
 		ctx.state.roles = roles.split(',');
 		ctx.state.roles.map(item => item ? item.trim() : item);
 	}
@@ -107,9 +107,9 @@ const authorization = (roles, logical) => {
 		const security = injector.getService(LibraryConstants.InjectorKeys.SERVICE_SECURITY);
 
 		// logger.debug('token', ctx.state.token);
-		logger.debug('authorization.user', ctx.state.user);
-		logger.debug('authorization.claims', ctx.state.claims);
-		logger.debug('authorization.roles1', roles);
+		logger.debug('middleware', 'authorization', 'user', ctx.state.user);
+		logger.debug('middleware', 'authorization', 'claims', ctx.state.claims);
+		logger.debug('middleware', 'authorization', 'roles1', roles);
 		ctx.state.roles = [];
 		if (roles) {
 			// logger.debug('authorization.roles1', roles);
@@ -127,14 +127,14 @@ const authorization = (roles, logical) => {
 			// }
 			initalizeRoles(ctx, roles, logger);
 		}
-		logger.debug('authorization.roles2', ctx.state.roles);
+		logger.debug('middleware', 'authorization', 'roles2', ctx.state.roles);
 
 		let success = false; //(logical === logicalOr ? false : true);
 		if (ctx.state.roles && Array.isArray(ctx.state.roles) && (ctx.state.roles.length > 0)) {
 			const auth = config.get('auth');
 			if (auth) {
-				logger.debug('authorization.auth.claims', auth.claims);
-				logger.debug('authorization.auth.claims.check', auth.claims.check);
+				logger.debug('middleware', 'authorization', 'auth.claims', auth.claims);
+				logger.debug('middleware', 'authorization', 'auth.claims.check', auth.claims.check);
 			}
 			if (auth && auth.claims && auth.claims.check)
 				success = await authorizationCheckClaims(ctx, (logical === logicalOr ? false : true), logical, security, logger);
@@ -143,7 +143,7 @@ const authorization = (roles, logical) => {
 				success = await authorizationCheckRoles(ctx, (logical === logicalOr ? false : true), logical, security, logger);
 		}
 
-		logger.debug('authorization.success', ctx.state.success);
+		logger.debug('middleware', 'authorization', 'success', ctx.state.success);
 		if (success) {
 			await next();
 			return;
@@ -157,7 +157,7 @@ const authorization = (roles, logical) => {
 			});
 		})();
 
-		logger.warn('Unauthorized... authorization unknown');
+		logger.warn('middleware', 'authorization', 'Unauthorized... authorization unknown');
 		ctx.throw(401);
 	}
 }
