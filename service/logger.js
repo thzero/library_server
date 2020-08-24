@@ -35,7 +35,8 @@ class LoggerService extends Service {
 	}
 
 	register(key) {
-		this._enforceNotNull(key, 'key');
+		if (String.isNullOrEmpty(key))
+			console.log(`Invalid key '${key}'.`);
 
 		const logger = this._loggerKeys.find(l => l === key);
 		if (logger)
@@ -66,7 +67,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.debug(message, data, isClient);
+				logger.debug2(message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - debug: ', err);
@@ -96,7 +97,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.error(message, data, isClient);
+				logger.error2(message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - error: ', err);
@@ -126,7 +127,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.exception(ex, isClient);
+				logger.exception2(ex, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - exception: ', err);
@@ -156,7 +157,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.fatal(message, data, isClient);
+				logger.fatal2(message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - fatal: ', err);
@@ -186,7 +187,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.info(message, data, isClient);
+				logger.info2(message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - info: ', err);
@@ -216,7 +217,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.trace(message, data, isClient);
+				logger.trace2(message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - trace: ', err);
@@ -246,7 +247,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.warn(message, data, isClient);
+				logger.warn2(message, data, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - warn: ', err);

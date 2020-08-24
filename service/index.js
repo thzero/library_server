@@ -40,32 +40,42 @@ class Service {
 	}
 
 	_enforceNotEmpty(clazz, method, value, name) {
-		if (String.isNullOrEmpty(value))
+		if (String.isNullOrEmpty(value)) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
 			throw Error(`Invalid ${name}`);
+		}
 	}
 
 	_enforceNotNull(clazz, method, value, name) {
-		if (!value)
+		if (!value) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
 			throw Error(`Invalid ${name}`);
+		}
 	}
 
 	_enforceNotEmptyResponse(clazz, method, value, name) {
-		if (String.isNullOrEmpty(value))
+		if (String.isNullOrEmpty(value)) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
 			return Response.error(`Invalid ${name}`, null);
+		}
 
 		return this._success();
 	}
 
 	_enforceNotNullResponse(clazz, method, value, name) {
-		if (!value)
+		if (!value) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
 			return Response.error(`Invalid ${name}`, null);
+		}
 
 		return this._success();
 	}
 
 	_enforceNotEmptyAsResponse(clazz, method, value, name) {
-		if (String.isNullOrEmpty(value))
+		if (String.isNullOrEmpty(value)) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
 			return Response.error(`Invalid ${name}`, null);
+		}
 
 		const response = this._initResponse();
 		response.results = value;
@@ -73,15 +83,17 @@ class Service {
 	}
 
 	_enforceNotNullAsResponse(clazz, method, value, name) {
-		if (!value)
+		if (!value) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
 			return Response.error(`Invalid ${name}`, null);
+		}
 
 		const response = this._initResponse();
 		response.results = value;
 		return response;
 	}
 
-	_enforceResponse(clazz, method, response, name) {
+	_enforceResponse(response) {
 		if (!response && !response.success)
 			throw response;
 
@@ -94,7 +106,7 @@ class Service {
 		if (err)
 			this._logger.error(clazz, method, err.message);
 		if (code)
-			this._logger.errorclazz, method, code);
+			this._logger.error(clazz, method, code);
 		if (errors)
 			this._logger.error(clazz, method, errors);
 		return Response.error(message, err, code, errors);
