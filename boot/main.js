@@ -68,13 +68,13 @@ class BootMain {
 				}
 				ctx.app.emit('error', err, ctx);
 				await this.usageMetricsServiceI.register(ctx, err).catch(() => {
-					this.loggerServiceI.error(null, err);
+					this.loggerServiceI.exception('BootMain', 'start', err);
 				});
 			}
 		});
 
 		app.on('error', (err, ctx) => {
-			this.loggerServiceI.error(null, err);
+			this.loggerServiceI.error('BootMain', 'start', 'Uncaught Exception', err);
 		});
 
 		// config
@@ -93,7 +93,7 @@ class BootMain {
 		app.use(async (ctx, next) => {
 			await next();
 			const rt = ctx.response.get(ResponseTime);
-			this.loggerServiceI.info(`${ctx.method} ${ctx.url} - ${rt}`);
+			this.loggerServiceI.info2(`${ctx.method} ${ctx.url} - ${rt}`);
 		});
 
 		// x-response-time
@@ -120,13 +120,13 @@ class BootMain {
 			}
 
 			const key = ctx.get(LibraryConstants.Headers.AuthKeys.API);
-			// this.loggerServiceI.debug('auth-api-token.key', key);
+			// this.loggerServiceI.debug('BootMain', 'start', 'auth-api-token.key', key);
 			if (!String.isNullOrEmpty(key)) {
 				const auth = ctx.config.get('auth');
 				if (auth) {
 					const apiKey = auth.apiKey;
-					// this.loggerServiceI.debug('auth-api-token.apiKey', apiKey);
-					// this.loggerServiceI.debug('auth-api-token.key===apiKey', (key === apiKey));
+					// this.loggerServiceI.debug('BootMain', 'start', 'auth-api-token.apiKey', apiKey);
+					// this.loggerServiceI.debug('BootMain', 'start', 'auth-api-token.key===apiKey', (key === apiKey));
 					if (key === apiKey) {
 						ctx.state.apiKey = key;
 						await next();
@@ -137,7 +137,7 @@ class BootMain {
 
 			(async () => {
 				await this.usageMetricsServiceI.register(ctx).catch((err) => {
-					this.loggerServiceI.error(null, err);
+					this.loggerServiceI.error('BootMain', 'start', 'usageMetrics', err);
 				});
 			})();
 
@@ -149,7 +149,7 @@ class BootMain {
 		app.use(async (ctx, next) => {
 			await next();
 			await this.usageMetricsServiceI.register(ctx).catch((err) => {
-				this.loggerServiceI.error(null, err);
+				this.loggerServiceI.error('BootMain', 'start', 'usageMetrics', err);
 			});
 		});
 
@@ -170,14 +170,14 @@ class BootMain {
 		}
 
 		this.port = this._appConfig.get('port');
-		this.loggerServiceI.info(`config.port: ${this.port}`);
-		this.loggerServiceI.info(`process.env.PORT: ${process.env.PORT}`);
+		this.loggerServiceI.info2(`config.port: ${this.port}`);
+		this.loggerServiceI.info2(`process.env.PORT: ${process.env.PORT}`);
 		this.port = process.env.PORT || this.port;
-		this.loggerServiceI.info(`selected.port: ${this.port}`);
+		this.loggerServiceI.info2(`selected.port: ${this.port}`);
 		const serverHttp = require('http').createServer(app.callback());
 
 		function onSignal() {
-			this.loggerServiceI.info(`server is starting cleanup`);
+			this.loggerServiceI.info2(`server is starting cleanup`);
 			const cleanupFuncs = [];
 			this._initCleanup(cleanupFuncs);
 			return Promise.all(cleanupFuncs);
@@ -185,7 +185,7 @@ class BootMain {
 
 		function onShutdown() {
 			this._initShutdown();
-			this.loggerServiceI.info(`cleanup finished, server is shutting down`);
+			this.loggerServiceI.info2(`cleanup finished, server is shutting down`);
 		}
 
 		function healthCheck() {
@@ -213,7 +213,7 @@ class BootMain {
 		serverHttp.listen(this.port);
 		this._initServer(serverHttp);
 
-		this.loggerServiceI.info(`Starting HTTP on: `, serverHttp.address());
+		this.loggerServiceI.info2(`Starting HTTP on: `, serverHttp.address());
 	}
 
 	async _init(plugins) {
