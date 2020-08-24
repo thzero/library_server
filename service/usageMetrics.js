@@ -44,7 +44,7 @@ class UsageMetricsService extends Service {
 			return this._success();
 		}
 		catch (err) {
-			this._logger.info('usageMetrics', err);
+			this._logger.exception('UsageMetricsService', 'register', err);
 		}
 	}
 

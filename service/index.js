@@ -27,7 +27,7 @@ class Service {
 			return this._initResponse();
 
 		let valid = value.updatedTimestamp >= requestedValue.updatedTimestamp;
-		this._logger.debug('_checkUpdatedTimestamp.valid', valid);
+		this._logger.debug('Service', '_checkUpdatedTimestamp', 'valid', valid);
 		if (!valid)
 			return this._error().addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse().paramIl8n(objectType) });
 
@@ -39,43 +39,76 @@ class Service {
 		return this._initResponse();
 	}
 
-	_enforceNotNull(value, name) {
-		if (!value)
+	_enforceNotEmpty(clazz, method, value, name) {
+		if (String.isNullOrEmpty(value)) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
 			throw Error(`Invalid ${name}`);
+		}
 	}
 
-	_enforceNotNullResponse(value, name) {
-		if (!value)
+	_enforceNotNull(clazz, method, value, name) {
+		if (!value) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
+			throw Error(`Invalid ${name}`);
+		}
+	}
+
+	_enforceNotEmptyResponse(clazz, method, value, name) {
+		if (String.isNullOrEmpty(value)) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
 			return Response.error(`Invalid ${name}`, null);
+		}
 
 		return this._success();
 	}
 
-	_enforceNotNullAsResponse(value, name) {
-		if (!value)
+	_enforceNotNullResponse(clazz, method, value, name) {
+		if (!value) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
 			return Response.error(`Invalid ${name}`, null);
+		}
+
+		return this._success();
+	}
+
+	_enforceNotEmptyAsResponse(clazz, method, value, name) {
+		if (String.isNullOrEmpty(value)) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
+			return Response.error(`Invalid ${name}`, null);
+		}
 
 		const response = this._initResponse();
 		response.results = value;
 		return response;
 	}
 
-	_enforceResponse(response, name) {
+	_enforceNotNullAsResponse(clazz, method, value, name) {
+		if (!value) {
+			this._logger.error(clazz, method, `Invalid ${name}`);
+			return Response.error(`Invalid ${name}`, null);
+		}
+
+		const response = this._initResponse();
+		response.results = value;
+		return response;
+	}
+
+	_enforceResponse(response) {
 		if (!response && !response.success)
 			throw response;
 
 		return response;
 	}
 
-	_error(message, err, code, errors) {
+	_error(clazz, method, message, err, code, errors) {
 		if (message)
-			this._logger.error(message);
+			this._logger.error(clazz, method, message);
 		if (err)
-			this._logger.error(err.message);
+			this._logger.error(clazz, method, err.message);
 		if (code)
-			this._logger.error(code);
+			this._logger.error(clazz, method, code);
 		if (errors)
-			this._logger.error(errors);
+			this._logger.error(clazz, method, errors);
 		return Response.error(message, err, code, errors);
 	}
 
@@ -104,31 +137,31 @@ class Service {
 
 	_validateId(id, prefix) {
 		if (String.isNullOrEmpty(id))
-			return this._error('Invalid id');
+			return this._error('Service', '_validateId', 'Invalid id');
 
 		return this._serviceValidation.check(this._serviceValidation.idSchema, id, null, prefix);
 	}
 
 	_validateUser(user) {
 		if (!user)
-			return this._error('Invalid user');
+			return this._error('Service', '_validateUser', 'Invalid user');
 
 		if (String.isNullOrEmpty(user.id))
-			return this._error('Invalid user.id');
+			return this._error('Service', '_validateUser', 'Invalid user.id');
 
-		this._logger.debug('userId', user.id);
+		this._logger.debug('Service', '_validateUser', 'userId', user.id);
 		return this._success();
 	}
 
-	_warn(message, err, code, errors) {
+	_warn(clazz, method, message, err, code, errors) {
 		if (!message)
-			this._logger.warn(message);
+			this._logger.warn(clazz, method, message);
 		if (!err)
-			this._logger.warn(err);
+			this._logger.warn(clazz, method, err);
 		if (!code)
-			this._logger.warn(code);
+			this._logger.warn(clazz, method, code);
 		if (!errors)
-			this._logger.warn(errors);
+			this._logger.warn(clazz, method, errors);
 		return Response.error(message, err, code, errors);
 	}
 }
