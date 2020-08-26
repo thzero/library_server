@@ -211,7 +211,7 @@ class BootMain {
 		createTerminus(serverHttp, terminusOptions);
 
 		serverHttp.listen(this.port);
-		this._initServer(serverHttp);
+		await this._initServer(serverHttp);
 
 		this.loggerServiceI.info2(`Starting HTTP on: `, serverHttp.address());
 	}
@@ -330,7 +330,7 @@ class BootMain {
 		return new usageMetricsService();
 	}
 
-	_initServer(serverHttp) {
+	async _initServer(serverHttp) {
 	}
 
 	_injectRepository(key, repository) {
