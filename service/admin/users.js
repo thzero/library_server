@@ -35,7 +35,7 @@ class BaseUsersAdminService extends BaseAdminService {
 		if (!fetchResponse.success)
 			return this._errorResponse(fetchResponse);
 
-		const response = await this._serviceAuth.deleteUser(id);
+		const response = await this._serviceAuth.deleteUser(correlationId, id);
 		if (!response.success)
 			return this._errorResponse(response);
 
@@ -78,7 +78,7 @@ class BaseUsersAdminService extends BaseAdminService {
 		if (!user.external && !user.external.id)
 			return this._error('BaseUsersAdminService', 'update', null, null, null, null, correlationId);
 
-		const serviceAdminResponse = await this._serviceAuth.setClaims(userExisting.external.id, requestedUser.roles, true)
+		const serviceAdminResponse = await this._serviceAuth.setClaims(correlationId, userExisting.external.id, requestedUser.roles, true)
 		if (!serviceAdminResponse.success)
 			return this._errorResponse(serviceAdminResponse);
 
