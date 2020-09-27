@@ -28,7 +28,7 @@ const authentication = (required) => {
 		const token = getAuthToken(ctx);
 		logger.debug('middleware', 'authentication', 'token', token, ctx.correlationId);
 		logger.debug('middleware', 'authentication', 'required', required, ctx.correlationId);
-		const valid = ((required && !String.isNullOrEmpty(token)) || !required, ctx.correlationId);
+		const valid = ((required && !String.isNullOrEmpty(token)) || !required);
 		logger.debug('middleware', 'authentication', 'valid', valid, ctx.correlationId);
 		if (valid) {
 			if (!String.isNullOrEmpty(token)) {

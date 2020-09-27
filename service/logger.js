@@ -232,7 +232,7 @@ class LoggerService extends Service {
 		for (; index < length; index++) {
 			logger = this._loggers[index];
 			try {
-				logger.warn(clazz, method, message, dat, correlationId, isClient);
+				logger.warn(clazz, method, message, data, correlationId, isClient);
 			}
 			catch (err) {
 				console.error('logger exception - warn: ', err);
