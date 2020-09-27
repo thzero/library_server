@@ -18,79 +18,79 @@ class Service {
 		this._serviceValidation = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION);
 	}
 
-	_checkUpdatedTimestamp(value, requestedValue, objectType) {
+	_checkUpdatedTimestamp(correlationId, value, requestedValue, objectType) {
 		if (!value && !requestedValue)
-			return this._initResponse();
+			return this._success(correlationId);
 		if (!value)
-			return this._initResponse();
+			return this._success(correlationId);
 		if (!requestedValue)
-			return this._initResponse();
+			return this._success(correlationId);
 
 		let valid = value.updatedTimestamp >= requestedValue.updatedTimestamp;
-		this._logger.debug('Service', '_checkUpdatedTimestamp', 'valid', valid);
+		this._logger.debug('Service', '_checkUpdatedTimestamp', 'valid', valid, correlationId, );
 		if (!valid)
-			return this._error().addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse().paramIl8n(objectType) });
+			return this._error(correlationId).addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse(correlationId).paramIl8n(objectType) });
 
 		// valid = value.updatedTimestamp === requestedValue.updatedTimestamp;
 		// this._logger.debug('_checkUpdatedTimestamp.valid', valid);
 		// if (!valid)
-		// 	return this._error().addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse().paramIl8n(objectType) });
+		// 	return this._error(correlatioNid).addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse(correlationId).paramIl8n(objectType) });
 
-		return this._initResponse();
+		return this._success(correlationId);
 	}
 
-	_enforceNotEmpty(clazz, method, value, name) {
+	_enforceNotEmpty(clazz, method, value, name, correlationId) {
 		if (String.isNullOrEmpty(value)) {
-			this._logger.error(clazz, method, `Invalid ${name}`);
-			throw Error(`Invalid ${name}`);
+			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
+			const error = Error(`Invalid ${name}`, true);
+			error.correlationId = correlationId;
+			return error;
 		}
 	}
 
-	_enforceNotNull(clazz, method, value, name) {
+	_enforceNotNull(clazz, method, value, name, correlationId) {
 		if (!value) {
-			this._logger.error(clazz, method, `Invalid ${name}`);
-			throw Error(`Invalid ${name}`);
+			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
+			const error = Error(`Invalid ${name}`, true);
+			error.correlationId = correlationId;
+			return error;
 		}
 	}
 
-	_enforceNotEmptyResponse(clazz, method, value, name) {
+	_enforceNotEmptyResponse(clazz, method, value, name, correlationId) {
 		if (String.isNullOrEmpty(value)) {
-			this._logger.error(clazz, method, `Invalid ${name}`);
-			return Response.error(`Invalid ${name}`, null);
+			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
+			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
 		}
 
-		return this._success();
+		return this._success(correlationId);
 	}
 
-	_enforceNotNullResponse(clazz, method, value, name) {
+	_enforceNotNullResponse(clazz, method, value, name, correlationId) {
 		if (!value) {
-			this._logger.error(clazz, method, `Invalid ${name}`);
-			return Response.error(`Invalid ${name}`, null);
+			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
+			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
 		}
 
-		return this._success();
+		return this._success(correlationId);
 	}
 
-	_enforceNotEmptyAsResponse(clazz, method, value, name) {
+	_enforceNotEmptyAsResponse(clazz, method, value, name, correlationId) {
 		if (String.isNullOrEmpty(value)) {
-			this._logger.error(clazz, method, `Invalid ${name}`);
-			return Response.error(`Invalid ${name}`, null);
+			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
+			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
 		}
 
-		const response = this._initResponse();
-		response.results = value;
-		return response;
+		return this._successResponse(correlationId);
 	}
 
-	_enforceNotNullAsResponse(clazz, method, value, name) {
+	_enforceNotNullAsResponse(clazz, method, value, name, correlationId) {
 		if (!value) {
-			this._logger.error(clazz, method, `Invalid ${name}`);
-			return Response.error(`Invalid ${name}`, null);
+			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
+			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
 		}
 
-		const response = this._initResponse();
-		response.results = value;
-		return response;
+		return this._successResponse(correlationId);
 	}
 
 	_enforceResponse(response) {
@@ -100,69 +100,67 @@ class Service {
 		return response;
 	}
 
-	_error(clazz, method, message, err, code, errors) {
+	_error(clazz, method, message, err, code, errors, correlationId) {
 		if (message)
-			this._logger.error(clazz, method, message);
+			this._logger.error(clazz, method, message, null, correlationId);
 		if (err)
-			this._logger.error(clazz, method, err.message);
+			this._logger.error(clazz, method, err.message, null, correlationId);
 		if (code)
-			this._logger.error(clazz, method, code);
+			this._logger.error(clazz, method, 'code', code, correlationId);
 		if (errors)
-			this._logger.error(clazz, method, errors);
-		return Response.error(message, err, code, errors);
+			this._logger.error(clazz, method, null, errors, correlationId);
+		return Response.error(message, err, code, errors, correlationId);
 	}
 
 	_errorResponse(response) {
 		if (!response)
 			return Response.error();
 
-		return Response.error(response.message, response.err, response.code, response.errors);
+		return Response.error(response.message, response.err, response.code, response.errors, response.correlationId);
 	}
 
-	_initResponse(response) {
-		if (response)
-			return response;
-		return new Response();
+	_initResponse(correlationId) {
+		return new Response(correlationId);
 	}
 
-	_success() {
-		return Response.success();
+	_success(correlationId) {
+		return Response.success(correlationId);
 	}
 
-	_successResponse(value) {
-		let response = Response.success();
+	_successResponse(value, correlationId) {
+		const response = Response.success(correlationId);
 		response.results = value;
 		return response;
 	}
 
-	_validateId(id, prefix) {
+	_validateId(correlationId, id, prefix) {
 		if (String.isNullOrEmpty(id))
-			return this._error('Service', '_validateId', 'Invalid id');
+			return this._error('Service', '_validateId', 'Invalid id', null, null, null, correlationId);
 
-		return this._serviceValidation.check(this._serviceValidation.idSchema, id, null, prefix);
+		return this._serviceValidation.check(correlationId, this._serviceValidation.idSchema, id, null, prefix);
 	}
 
-	_validateUser(user) {
+	_validateUser(correlationId, user) {
 		if (!user)
-			return this._error('Service', '_validateUser', 'Invalid user');
+			return this._error('Service', '_validateUser', 'Invalid user', null, null, null, correlationId);
 
 		if (String.isNullOrEmpty(user.id))
-			return this._error('Service', '_validateUser', 'Invalid user.id');
+			return this._error('Service', '_validateUser', 'Invalid user.id', null, null, null, correlationId);
 
-		this._logger.debug('Service', '_validateUser', 'userId', user.id);
-		return this._success();
+		this._logger.debug('Service', '_validateUser', 'userId', user.id, correlationId);
+		return this._success(correlationId);
 	}
 
-	_warn(clazz, method, message, err, code, errors) {
-		if (!message)
-			this._logger.warn(clazz, method, message);
-		if (!err)
-			this._logger.warn(clazz, method, err);
-		if (!code)
-			this._logger.warn(clazz, method, code);
-		if (!errors)
-			this._logger.warn(clazz, method, errors);
-		return Response.error(message, err, code, errors);
+	_warn(clazz, method, message, err, code, errors, correlationId) {
+		if (message)
+			this._logger.warn(clazz, method, message, null, correlationId);
+		if (err)
+			this._logger.warn(clazz, method, err.message, null, correlationId);
+		if (code)
+			this._logger.warn(clazz, method, 'code', code, correlationId);
+		if (errors)
+			this._logger.warn(clazz, method, null, errors, correlationId);
+		return Response.error(message, err, code, errors, correlationId);
 	}
 }
 

@@ -4,7 +4,7 @@ import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 class BaseUserService extends Service {
 	async fetch(correlationId, userId) {
-		const validationCheckExternalIdResponse = this._serviceValidation.check(this._serviceValidation.externalIdSchema, userId);
+		const validationCheckExternalIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.externalIdSchema, userId);
 		if (!validationCheckExternalIdResponse.success)
 			return this._errorResponse(validationCheckExternalIdResponse);
 
@@ -12,11 +12,11 @@ class BaseUserService extends Service {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	async fetchByExternalId(correlationId, externalUserId) {
-		const validationCheckExternalIdResponse = this._serviceValidation.check(this._serviceValidation.externalIdSchema, externalUserId);
+		const validationCheckExternalIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.externalIdSchema, externalUserId);
 		if (!validationCheckExternalIdResponse.success)
 			return this._errorResponse(validationCheckExternalIdResponse);
 
@@ -24,11 +24,11 @@ class BaseUserService extends Service {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	async fetchByGamerId(correlationId, requestedGamerId) {
-		const validationRequestedGamerIdResponse = this._serviceValidation.check(this._serviceValidation.gamerIdSchema, requestedGamerId);
+		const validationRequestedGamerIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.gamerIdSchema, requestedGamerId);
 		if (!validationRequestedGamerIdResponse.success)
 			return this._errorResponse(validationRequestedGamerIdResponse);
 
@@ -36,11 +36,11 @@ class BaseUserService extends Service {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	async fetchByGamerTag(correlationId, requestedUserGamerTag) {
-		const validationRequestedGamerTagResponse = this._serviceValidation.check(this._serviceValidation.gamerTagSchema, requestedUserGamerTag);
+		const validationRequestedGamerTagResponse = this._serviceValidation.check(correlationId, this._serviceValidation.gamerTagSchema, requestedUserGamerTag);
 		if (!validationRequestedGamerTagResponse.success)
 			return this._errorResponse(validationRequestedGamerTagResponse);
 
@@ -48,11 +48,11 @@ class BaseUserService extends Service {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	async update(correlationId, externalUser) {
-		const validationCheckExternalUserResponse = this._serviceValidation.check(this._serviceValidation.externalUserSchema, externalUser);
+		const validationCheckExternalUserResponse = this._serviceValidation.check(correlationId, this._serviceValidation.externalUserSchema, externalUser);
 		if (!validationCheckExternalUserResponse.success)
 			return this._errorResponse(validationCheckExternalUserResponse);
 
@@ -74,11 +74,11 @@ class BaseUserService extends Service {
 		if (!respositoryExternalResponse.success)
 			return this._errorResponse(respositoryExternalResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	async updateSettings(correlationId, requestedSettings) {
-		const validationCheckSettingsResponse = this._serviceValidation.check(this._serviceValidation.settingRequestSchema(), requestedSettings);
+		const validationCheckSettingsResponse = this._serviceValidation.check(correlationId, this._serviceValidation.settingRequestSchema(), requestedSettings);
 		if (!validationCheckSettingsResponse.success)
 			return this._errorResponse(validationCheckSettingsResponse);
 
@@ -86,7 +86,7 @@ class BaseUserService extends Service {
 		if (!validationSettingsResponse.success)
 			return this._errorResponse(validationSettingsResponse);
 
-		const updateSettingsResponse = await this._updateSettings(requestedSettings);
+		const updateSettingsResponse = await this._updateSettings(correlationId, requestedSettings);
 		if (!updateSettingsResponse.success)
 			return this._errorResponse(updateSettingsResponse);
 
@@ -94,15 +94,15 @@ class BaseUserService extends Service {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
-	_updateSettings(requestedSettings) {
-		return this._success();
+	_updateSettings(correlationId, requestedSettings) {
+		return this._success(correlationId);
 	}
 
 	_updateSettingsValidation(correlationId, requestedSettings) {
-		return this._success();
+		return this._success(correlationId);
 	}
 
 	_getDefaultPlan() {

@@ -7,8 +7,8 @@ class VersionService extends Service {
 		throw new NotImplementedError();
 	}
 
-	_generate(version_major, version_minor, version_patch, version_date) {
-		const response = this._initResponse();
+	_generate(correlationId, version_major, version_minor, version_patch, version_date) {
+		const response = this._success(correlationId);
 		response.results = {
 			major: version_major,
 			minor: version_minor,

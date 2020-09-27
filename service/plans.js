@@ -20,7 +20,7 @@ class PlansService extends Service {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	get _repositoryPlans() {

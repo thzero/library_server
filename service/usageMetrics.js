@@ -41,7 +41,7 @@ class UsageMetricsService extends Service {
 			usageMetrics.token = context.request.token;
 			usageMetrics.err = err;
 			await this._repositoryUsageMetrics.register(usageMetrics);
-			return this._success();
+			return this._success(correlationId);
 		}
 		catch (err) {
 			this._logger.exception('UsageMetricsService', 'register', err);
