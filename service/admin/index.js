@@ -7,14 +7,14 @@ import Service from '../index';
 class BaseAdminService extends Service {
 	async create(correlationId, user, requestedValue) {
 		if (!this._allowsCreate)
-			return this._error('BaseAdminService', 'create');
+			return this._error('BaseAdminService', 'create', null, null, null, null, correlationId);
 
-		const validationResponse = this._validateUser(user);
+		const validationResponse = this._validateUser(correlationId, user);
 		if (!validationResponse.success)
 			return this._errorResponse(validationResponse);
 
-		this._logger.debug('BaseAdminService', 'create', 'requestedValue', requestedValue);
-		const validationCheckValueResponse = this._validateCreate(requestedValue);
+		this._logger.debug('BaseAdminService', 'create', 'requestedValue', requestedValue, correlationId);
+		const validationCheckValueResponse = this._validateCreate(correlationId, requestedValue);
 		if (!validationCheckValueResponse.success)
 			return this._errorResponse(validationCheckValueResponse);
 
@@ -22,14 +22,14 @@ class BaseAdminService extends Service {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	async delete(correlationId, user, id) {
 		if (!this._allowsDelete)
-			return this._error('BaseAdminService', 'delete');
+			return this._error('BaseAdminService', 'delete', null, null, null, null, correlationId);
 
-		const validationCheckIdResponse = this._serviceValidation.check(this._serviceValidation.idSchema, id, null, this._validationCheckKey);
+		const validationCheckIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.idSchema, id, null, this._validationCheckKey);
 		if (!validationCheckIdResponse.success)
 			return this._errorResponse(validationCheckIdResponse);
 
@@ -37,11 +37,11 @@ class BaseAdminService extends Service {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	async search(correlationId, user, params) {
-		const validationCheckParamsResponse = this._validateSearch(params);
+		const validationCheckParamsResponse = this._validateSearch(correlationId, params);
 		if (!validationCheckParamsResponse.success)
 			return this._errorResponse(validationCheckParamsResponse);
 
@@ -49,23 +49,23 @@ class BaseAdminService extends Service {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	async update(correlationId, user, id, requestedValue) {
 		if (!this._allowsUpdate)
-			return this._error();
+			return this._error('BaseAdminService', 'update', 'requestedValue', null, null, null, correlationId);
 
-		const validationResponse = this._validateUser(user);
+		const validationResponse = this._validateUser(correlationId, user);
 		if (!validationResponse.success)
 			return this._errorResponse(validationResponse);
 
-		const validationIdResponse = this._validateId(id, this._validationCheckKey);
+		const validationIdResponse = this._validateId(correlationId, id, this._validationCheckKey);
 		if (!validationIdResponse.success)
 			return this._errorResponse(validationIdResponse);
 
-		this._logger.debug('BaseAdminService', 'update', 'requestedValue', requestedValue);
-		const validationCheckValueUpdateResponse = this._validateUpdate(requestedValue);
+		this._logger.debug('BaseAdminService', 'update', 'requestedValue', requestedValue, correlationId);
+		const validationCheckValueUpdateResponse = this._validateUpdate(correlationId, requestedValue);
 		if (!validationCheckValueUpdateResponse.success)
 			return this._errorResponse(validationCheckValueUpdateResponse);
 
@@ -74,7 +74,7 @@ class BaseAdminService extends Service {
 		if (fetchRespositoryResponse.success && fetchRespositoryResponse.results)
 			value = Utility.map(this._initializeData(), fetchRespositoryResponse.results, true);
 
-		const validResponse = this._checkUpdatedTimestamp(value, requestedValue, 'value');
+		const validResponse = this._checkUpdatedTimestamp(correlationId, value, requestedValue, 'value');
 		if (!validResponse.success)
 			return validResponse;
 
@@ -84,7 +84,7 @@ class BaseAdminService extends Service {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	get _allowsCreate() {
@@ -107,27 +107,27 @@ class BaseAdminService extends Service {
 		throw new NotImplementedError()
 	}
 
-	_validateCreate(requestedValue) {
-		return this._serviceValidation.check(this._validationCreateSchema, requestedValue, null, this._validationCheckKey);
+	_validateCreate(correlationId, requestedValue) {
+		return this._serviceValidation.check(correlationId, this._validationCreateSchema, requestedValue, null, this._validationCheckKey);
 	}
 
 	get _validationCreateSchema() {
 		throw new NotImplementedError()
 	}
 
-	_validateSearch(requestedValue) {
+	_validateSearch(correlationId, requestedValue) {
 		if (this._validationSearchSchema === null)
-			return this._success()
+			return this._success(correlationId)
 
-		return this._serviceValidation.check(this._validationSearchSchema, requestedValue, null, this._validationCheckKey);
+		return this._serviceValidation.check(correlationId, this._validationSearchSchema, requestedValue, null, this._validationCheckKey);
 	}
 
 	get _validationSearchSchema() {
 		return null
 	}
 
-	_validateUpdate(requestedValue) {
-		return this._serviceValidation.check(this._validationUpdateSchema, requestedValue, null, this._validationCheckKey);
+	_validateUpdate(correlationId, requestedValue) {
+		return this._serviceValidation.check(correlationId, this._validationUpdateSchema, requestedValue, null, this._validationCheckKey);
 	}
 
 	get _validationUpdateSchema() {

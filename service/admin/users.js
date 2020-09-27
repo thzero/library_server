@@ -25,9 +25,9 @@ class BaseUsersAdminService extends BaseAdminService {
 
 	async delete(correlationId, user, id) {
 		if (!this._allowsDelete)
-			return this._error('BaseUsersAdminService', 'delete');
+			return this._error('BaseUsersAdminService', 'delete', null, null, null, null, correlationId);
 
-		const validationCheckIdResponse = this._serviceValidation.check(this._serviceValidation.idSchema, id, null, this._validationCheckKey);
+		const validationCheckIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.idSchema, id, null, this._validationCheckKey);
 		if (!validationCheckIdResponse.success)
 			return this._errorResponse(validationCheckIdResponse);
 
@@ -43,20 +43,20 @@ class BaseUsersAdminService extends BaseAdminService {
 		if (!respositoryResponse.success)
 			return this._errorResponse(respositoryResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	async update(correlationId, user, id, requestedUser) {
-		const validationResponse = this._validateUser(user);
+		const validationResponse = this._validateUser(correlationId, user);
 		if (!validationResponse.success)
 			return this._errorResponse(validationResponse);
 
-		const validationIdResponse = this._validateId(id, 'adminUsers');
+		const validationIdResponse = this._validateId(correlationId, id, 'adminUsers');
 		if (!validationIdResponse.success)
 			return this._errorResponse(validationIdResponse);
 
-		this._logger.debug('BaseUsersAdminService', 'update', 'requestedUser', requestedUser);
-		const validationCheckUsersUpdateResponse = this._serviceValidation.check(this._serviceValidation.userUpdateSchema, requestedUser, null, this._validationCheckKey);
+		this._logger.debug('BaseUsersAdminService', 'update', 'requestedUser', requestedUser, correlationId);
+		const validationCheckUsersUpdateResponse = this._serviceValidation.check(correlationId, this._serviceValidation.userUpdateSchema, requestedUser, null, this._validationCheckKey);
 		if (!validationCheckUsersUpdateResponse.success)
 			return this._errorResponse(validationCheckUsersUpdateResponse);
 
@@ -65,7 +65,7 @@ class BaseUsersAdminService extends BaseAdminService {
 		if (fetchRespositoryResponse.success && fetchRespositoryResponse.results)
 			userExisting = Utility.map(this._initializeData(), fetchRespositoryResponse.results, true);
 
-		const validResponse = this._checkUpdatedTimestamp(userExisting, requestedUser, 'users');
+		const validResponse = this._checkUpdatedTimestamp(correlationId, userExisting, requestedUser, 'users');
 		if (!validResponse.success)
 			return validResponse;
 
@@ -76,13 +76,13 @@ class BaseUsersAdminService extends BaseAdminService {
 			return this._errorResponse(respositoryResponse);
 
 		if (!user.external && !user.external.id)
-			return this._error('BaseUsersAdminService', 'update');
+			return this._error('BaseUsersAdminService', 'update', null, null, null, null, correlationId);
 
 		const serviceAdminResponse = await this._serviceAuth.setClaims(userExisting.external.id, requestedUser.roles, true)
 		if (!serviceAdminResponse.success)
 			return this._errorResponse(serviceAdminResponse);
 
-		return this._initResponse(respositoryResponse);
+		return respositoryResponse;
 	}
 
 	get _allowsCreate() {

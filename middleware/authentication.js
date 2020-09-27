@@ -10,14 +10,14 @@ function getAuthToken(context) {
 
 	const logger = injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
 	const token = context.get(LibraryConstants.Headers.AuthKeys.AUTH);
-	logger.debug('middleware', 'getAuthToken', 'token', token);
+	logger.debug('middleware', 'getAuthToken', 'token', token, context.correlationId);
 	const split = token.split(LibraryConstants.Headers.AuthKeys.AUTH_BEARER + separator);
-	logger.debug('middleware', 'getAuthToken', 'split', split);
-	logger.debug('middleware', 'getAuthToken', 'split.length', split.length);
+	logger.debug('middleware', 'getAuthToken', 'split', split, context.correlationId);
+	logger.debug('middleware', 'getAuthToken', 'split.length', split.length, context.correlationId);
 	if (split.length > 1)
 		return split[1];
 
-	logger.debug('middleware', 'getAuthToken', 'fail');
+	logger.debug('middleware', 'getAuthToken', 'fail', null, context.correlationId);
 	return null;
 }
 
@@ -26,17 +26,17 @@ const authentication = (required) => {
 		const logger = injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
 
 		const token = getAuthToken(ctx);
-		logger.debug('middleware', 'authentication', 'token', token);
-		logger.debug('middleware', 'authentication', 'required', required);
-		const valid = ((required && !String.isNullOrEmpty(token)) || !required);
-		logger.debug('middleware', 'authentication', 'valid', valid);
+		logger.debug('middleware', 'authentication', 'token', token, ctx.correlationId);
+		logger.debug('middleware', 'authentication', 'required', required, ctx.correlationId);
+		const valid = ((required && !String.isNullOrEmpty(token)) || !required, ctx.correlationId);
+		logger.debug('middleware', 'authentication', 'valid', valid, ctx.correlationId);
 		if (valid) {
 			if (!String.isNullOrEmpty(token)) {
 				const service = injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
 				const results = await service.verifyToken(ctx.correlationId, token);
-				logger.debug('middleware', 'authentication', 'results', results);
+				logger.debug('middleware', 'authentication', 'results', results, ctx.correlationId);
 				if (!results || !results.success) {
-					logger.warn('middleware', 'authentication', 'Unauthorized... invalid token');
+					logger.warn('middleware', 'authentication', 'Unauthorized... invalid token', null, ctx.correlationId);
 					ctx.throw(401);
 					return;
 				}
@@ -54,11 +54,11 @@ const authentication = (required) => {
 			const usageMetrics = injector.getService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC);
 			await usageMetrics.register(ctx).catch((err) => {
 				const logger = injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
-				logger.error('middleware', 'authentication', err);
+				logger.error('middleware', 'authentication', err, null, ctx.correlationId);
 			});
 		})();
 
-		logger.warn('middleware', 'authentication', 'Unauthorized... authentication unknown');
+		logger.warn('middleware', 'authentication', 'Unauthorized... authentication unknown', null, ctx.correlationId);
 		ctx.throw(401);
 	}
 }
