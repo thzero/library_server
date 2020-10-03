@@ -7,41 +7,41 @@ class BaseMonitoringService extends Service {
 		this._initialize();
 	}
 
-	check(name, status, options, tags, callback) {
+	check(correlationId, name, status, options, tags, callback) {
 	}
 
-	decrement(stat, value, sampleRate, tags, callback) {
+	decrement(correlationId, stat, value, sampleRate, tags, callback) {
 	}
 
-	distribution(stat, value, sampleRate, tags, callback) {
+	distribution(correlationId, stat, value, sampleRate, tags, callback) {
 	}
 
-	event(title, text, options, tags, callback) {
+	event(correlationId, title, text, options, tags, callback) {
 	}
 
-	gauge(stat, value, sampleRate, tags, callback) {
+	gauge(correlationId, stat, value, sampleRate, tags, callback) {
 	}
 
-	histogram(stat, value, sampleRate, tags, callback) {
+	histogram(correlationId, stat, value, sampleRate, tags, callback) {
 	}
 
-	increment(stat, value, sampleRate, tags, callback) {
+	increment(correlationId, stat, value, sampleRate, tags, callback) {
 	}
 
-	set(stat, value, sampleRate, tags, callback) {
+	set(correlationId, stat, value, sampleRate, tags, callback) {
 	}
 
-	unique(stat, value, sampleRate, tags, callback) {
+	unique(correlationId, stat, value, sampleRate, tags, callback) {
 	}
 
-	_handleCpu(process, system) {
+	_handleCpu(correlationId, process, system) {
 		if (process)
 			this.gauge('cpu.process', process);
 		if (system)
 			this.gauge('cpu.system', system);
 	}
 
-	_handleEventLoop(min, max, avg) {
+	_handleEventLoop(correlationId, min, max, avg) {
 		if (min)
 			this.gauge('eventloop.latency.min', min);
 		if (max)
@@ -50,7 +50,7 @@ class BaseMonitoringService extends Service {
 			this.gauge('eventloop.latency.avg', avg);
 	}
 
-	_handleGC(size, used, duration) {
+	_handleGC(correlationId, size, used, duration) {
 		if (size)
 			this.gauge('gc.size', size);
 		if (used)
@@ -59,7 +59,7 @@ class BaseMonitoringService extends Service {
 			this.gauge('gc.duration', duration);
 	}
 
-	_handleMemory(privateProcess, physical, virtual, physical_used, total) {
+	_handleMemory(correlationId, privateProcess, physical, virtual, physical_used, total) {
 		if (privateProcess)
 			this.gauge('memory.process.private', privateProcess);
 		if (physical)
