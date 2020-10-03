@@ -81,7 +81,7 @@ class Service {
 			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
 		}
 
-		return this._successResponse(correlationId);
+		return this._successResponse(null, correlationId);
 	}
 
 	_enforceNotNullAsResponse(clazz, method, value, name, correlationId) {
@@ -90,7 +90,7 @@ class Service {
 			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
 		}
 
-		return this._successResponse(correlationId);
+		return this._successResponse(null, correlationId);
 	}
 
 	_enforceResponse(response) {
@@ -110,13 +110,6 @@ class Service {
 		if (errors)
 			this._logger.error(clazz, method, null, errors, correlationId);
 		return Response.error(message, err, code, errors, correlationId);
-	}
-
-	_errorResponse(response) {
-		if (!response)
-			return Response.error();
-
-		return Response.error(response.message, response.err, response.code, response.errors, response.correlationId);
 	}
 
 	_initResponse(correlationId) {
