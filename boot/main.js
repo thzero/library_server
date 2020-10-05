@@ -85,7 +85,7 @@ class BootMain {
 
 		// correlationId
 		app.use(async (ctx, next) => {
-			ctx.correlationId = ctx.response.header[LibraryConstants.Headers.CorrelationId]
+			ctx.correlationId = ctx.request.header[LibraryConstants.Headers.CorrelationId]
 			await next();
 		});
 
