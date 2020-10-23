@@ -12,6 +12,7 @@ const LibraryConstants = {
 		SERVICE_COMMUNICATION_REST: 'serviceCommunicationRest',
 		SERVICE_CONFIG: 'config',
 		SERVICE_CRYPTO: 'serviceCrypto',
+		SERVICE_DISCOVERY_RESOURCE: 'serviceDiscoveryResource',
 		SERVICE_LOGGER: 'serviceLogger',
 		SERVICE_MONITORING: 'serviceMonitoring',
 		SERVICE_NEWS: 'serviceNews',

@@ -169,6 +169,7 @@ class BootMain {
 			console.log(route.router.stack.map(i => i.methods));
 		}
 
+		this.address = serverHttp.address();
 		this.port = this._appConfig.get('port');
 		this.loggerServiceI.info2(`config.port: ${this.port}`);
 		this.loggerServiceI.info2(`process.env.PORT: ${process.env.PORT}`);
@@ -213,7 +214,7 @@ class BootMain {
 		serverHttp.listen(this.port);
 		await this._initServer(serverHttp);
 
-		this.loggerServiceI.info2(`Starting HTTP on: `, serverHttp.address());
+		this.loggerServiceI.info2(`Starting HTTP on: `, this.address);
 	}
 
 	async _init(plugins) {
@@ -240,6 +241,9 @@ class BootMain {
 
 			this.usageMetricsServiceI = this._initServicesUsageMetrics();
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
+
+			this.discoveryResourcesI = this._initServicesDiscoveryResources();
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_DISCOVERY_RESOURCE, this.discoveryResourcesI);
 
 			for (const pluginService of plugins)
 				await pluginService.initServices(this._services);
@@ -331,6 +335,19 @@ class BootMain {
 	}
 
 	async _initServer(serverHttp) {
+		if (this.discoveryResourcesI)
+			await this._initServerDiscovery(serverHttp);
+	}
+
+	async _initServerDiscovery(serverHttp) {
+		if (!this.discoveryResourcesI)
+			return;
+
+		this._initServerDiscoveryI(this.address, this.port, opts)
+	}
+
+	async _initServerDiscoveryI(address, port, opts) {
+		return this.discoveryResourcesI.initialize(Utility.generateId(), address, port, opts);
 	}
 
 	_injectRepository(key, repository) {
