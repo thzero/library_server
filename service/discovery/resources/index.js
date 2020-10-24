@@ -1,8 +1,8 @@
 import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
-import BaseService from '@thzero/library_server/service/index';
+import BaseService from '@thzero/library_server/service';
 
-class ResourceDiscoveryService extends BaseService {
+class ResourcesDiscoveryService extends BaseService {
 	async cleanup() {
 	}
 
@@ -47,4 +47,4 @@ class ResourceDiscoveryService extends BaseService {
 	}
 }
 
-export default ResourceDiscoveryService;
+export default ResourcesDiscoveryService;
