@@ -169,13 +169,13 @@ class BootMain {
 			console.log(route.router.stack.map(i => i.methods));
 		}
 
-		this.address = serverHttp.address();
 		this.port = this._appConfig.get('port');
 		this.loggerServiceI.info2(`config.port: ${this.port}`);
 		this.loggerServiceI.info2(`process.env.PORT: ${process.env.PORT}`);
 		this.port = process.env.PORT || this.port;
 		this.loggerServiceI.info2(`selected.port: ${this.port}`);
 		const serverHttp = require('http').createServer(app.callback());
+		this.address = serverHttp.address();
 
 		function onSignal() {
 			this.loggerServiceI.info2(`server is starting cleanup`);
@@ -243,7 +243,7 @@ class BootMain {
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
 
 			this.discoveryResourcesI = this._initServicesDiscoveryResources();
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_DISCOVERY_RESOURCE, this.discoveryResourcesI);
+			this._injectService(LibraryConstants.InjectorKeys.SERVICE_DISCOVERY_RESOURCES, this.discoveryResourcesI);
 
 			for (const pluginService of plugins)
 				await pluginService.initServices(this._services);
@@ -316,6 +316,10 @@ class BootMain {
 	}
 
 	async _initServicesSecondary() {
+	}
+
+	_initServicesDiscoveryResources() {
+		return null;
 	}
 
 	_initServicesLogger() {
