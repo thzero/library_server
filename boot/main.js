@@ -243,7 +243,8 @@ class BootMain {
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
 
 			this.discoveryResourcesI = this._initServicesDiscoveryResources();
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_DISCOVERY_RESOURCES, this.discoveryResourcesI);
+			if (this.discoveryResourcesI)
+				this._injectService(LibraryConstants.InjectorKeys.SERVICE_DISCOVERY_RESOURCES, this.discoveryResourcesI);
 
 			for (const pluginService of plugins)
 				await pluginService.initServices(this._services);
