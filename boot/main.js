@@ -2,6 +2,7 @@ import Koa from 'koa';
 import koaCors from '@koa/cors';
 import koaHelmet from 'koa-helmet';
 import koaStatic from 'koa-static';
+import internalIp from 'internal-ip';
 
 import { createTerminus } from '@godaddy/terminus';
 
@@ -175,7 +176,6 @@ class BootMain {
 		this.port = process.env.PORT || this.port;
 		this.loggerServiceI.info2(`selected.port: ${this.port}`);
 		const serverHttp = require('http').createServer(app.callback());
-		this.address = serverHttp.address();
 
 		function onSignal() {
 			this.loggerServiceI.info2(`server is starting cleanup`);
@@ -212,7 +212,12 @@ class BootMain {
 		createTerminus(serverHttp, terminusOptions);
 
 		serverHttp.listen(this.port);
+		this.address = serverHttp.address() ? serverHttp.address().address : null;
+		if (this.address === '::')
+			this.address = await internalIp.v4();
+
 		await this._initServer(serverHttp);
+		await this._initServerDiscovery(serverHttp);
 
 		this.loggerServiceI.info2(`Starting HTTP on: `, this.address);
 	}
@@ -340,15 +345,13 @@ class BootMain {
 	}
 
 	async _initServer(serverHttp) {
-		if (this.discoveryResourcesI)
-			await this._initServerDiscovery(serverHttp);
 	}
 
 	async _initServerDiscovery(serverHttp) {
 		if (!this.discoveryResourcesI)
 			return;
 
-		this._initServerDiscoveryI(this.address, this.port, opts)
+		this._initServerDiscoveryI(this.address, this.port, {})
 	}
 
 	async _initServerDiscoveryI(address, port, opts) {
