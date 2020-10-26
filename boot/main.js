@@ -351,11 +351,22 @@ class BootMain {
 		if (!this.discoveryResourcesI)
 			return;
 
-		this._initServerDiscoveryI(this.address, this.port, {})
+		const grpc = this._appConfig.get('grpc');
+
+		await this.discoveryResourcesI.initialize(Utility.generateId(), await this._initServerDiscoveryOpts({
+			address: this.address,
+			port: this.port,
+			grpc: {
+				port: grpc ? grpc.port : null,
+				tls: grpc ? (grpc.tls ? grpc.tls : false) : false
+			},
+			healthCheck: 'healthcheck',
+			https: false
+		}));
 	}
 
-	async _initServerDiscoveryI(address, port, opts) {
-		return this.discoveryResourcesI.initialize(Utility.generateId(), address, port, opts);
+	async _initServerDiscoveryOpts(opts) {
+		return opts;
 	}
 
 	_injectRepository(key, repository) {
