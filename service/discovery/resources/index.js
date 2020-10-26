@@ -18,12 +18,13 @@ class ResourcesDiscoveryService extends BaseService {
 	}
 
 	// options { name, ttl, description }
-	async initialize(correlationId, address, port, opts) {
+	async initialize(correlationId, opts) {
 		try {
-			this._enforceNotEmpty('ResourceDiscoveryService', 'initialize', address, 'address', correlationId);
-			this._enforceNotNull('ResourceDiscoveryService', 'initialize', port, 'port', correlationId);
+			this._enforceNotEmpty('ResourceDiscoveryService', 'initialize', opts, 'opts', correlationId);
+			this._enforceNotEmpty('ResourceDiscoveryService', 'initialize', opts.address, 'address', correlationId);
+			this._enforceNotNull('ResourceDiscoveryService', 'initialize', opts.port, 'port', correlationId);
 
-			return await this._initialize(correlationId, address, port, opts);
+			return await this._initialize(correlationId, opts);
 		}
 		catch(err) {
 			return this._error('ResourceDiscoveryService', 'initialize', null, err, null, null, correlationId);
@@ -38,7 +39,7 @@ class ResourcesDiscoveryService extends BaseService {
 		throw new NotImplementedError();
 	}
 
-	async _initialize(correlationId, address, port, opts) {
+	async _initialize(correlationId, opts) {
 		throw new NotImplementedError();
 	}
 
