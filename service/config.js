@@ -18,14 +18,14 @@ class ConfigService extends Service {
 		}
 	}
 
-	getBackend(key, defaultValue) {
+	getBackend(key) {
 		if (String.isNullOrEmpty(key))
 			return null;
 
 		if (!this._config)
 			return null;
 
-		const configBackend = this._config.get('backend', defaultValue);
+		const configBackend = this._config.get('backend', null);
 		if (!configBackend)
 			return null;
 
