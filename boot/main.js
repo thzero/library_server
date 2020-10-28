@@ -351,18 +351,25 @@ class BootMain {
 		if (!this.discoveryResourcesI)
 			return;
 
-		const grpc = this._appConfig.get('grpc');
+		const grpc = this._appConfig.get('grpc', null);
+		const secure = this._appConfig.get('secure', false);
 
-		await this.discoveryResourcesI.initialize(Utility.generateId(), await this._initServerDiscoveryOpts({
-			address: this.address,
-			port: this.port,
-			grpc: {
-				port: grpc ? grpc.port : null,
-				tls: grpc ? (grpc.tls ? grpc.tls : false) : false
-			},
-			healthCheck: 'healthcheck',
-			https: false
-		}));
+		const heartbeatRequired = this._appConfig.get('discovery.heartbeatRequired', false);
+		if (heartbeatRequired) {
+			const heartbeatInterval = Number(this._appConfig.get('discovery.heartbeatInterval'), 300);
+			setInterval((async function () {
+				await this.discoveryResourcesI.initialize(Utility.generateId(), await this._initServerDiscoveryOpts({
+					address: this.address,
+					port: this.port,
+					grpc: {
+						port: grpc ? grpc.port : null,
+						secure: grpc ? (grpc.secure ? grpc.secure : false) : false
+					},
+					healthCheck: 'healthcheck',
+					secure: secure ? secure : false
+				})); // TODO:
+			}).bind(this), heartbeatInterval * 1000);
+		}
 	}
 
 	async _initServerDiscoveryOpts(opts) {
