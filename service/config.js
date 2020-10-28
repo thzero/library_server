@@ -7,18 +7,25 @@ class ConfigService extends Service {
 		this._config = config;
 	}
 
-	get(key) {
-		return this._config.get(key);
+	get(key, defaultValue) {
+		try {
+			return this._config.get(key);
+		}
+		catch (err) {
+			if (defaultValue !== undefined)
+				return defaultValue;
+			throw err;
+		}
 	}
 
-	getBackend(key) {
+	getBackend(key, defaultValue) {
 		if (String.isNullOrEmpty(key))
 			return null;
 
 		if (!this._config)
 			return null;
 
-		const configBackend = this._config['backend'];
+		const configBackend = this._config.get('backend', defaultValue);
 		if (!configBackend)
 			return null;
 
