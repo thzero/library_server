@@ -8,9 +8,9 @@ class ResourcesDiscoveryService extends BaseService {
 
 	async getService(correlationId, name) {
 		try {
-			this._enforceNotEmpty('ResourceDiscoveryService', 'getService', address, 'address', correlationId);
+			this._enforceNotEmpty('ResourceDiscoveryService', 'getService', name, 'name', correlationId);
 
-			return this._getService(name);
+			return this._getService(correlationId, name);
 		}
 		catch(err) {
 			return this._error('ResourceDiscoveryService', 'getService', null, err, null, null, correlationId);

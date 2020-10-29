@@ -18,6 +18,9 @@ class Service {
 		this._serviceValidation = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION);
 	}
 
+	async initPost() {
+	}
+
 	_checkUpdatedTimestamp(correlationId, value, requestedValue, objectType) {
 		if (!value && !requestedValue)
 			return this._success(correlationId);

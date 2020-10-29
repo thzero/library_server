@@ -42,6 +42,8 @@ class BootMain {
 
 		const plugins = this._initPlugins(args);
 
+		this._servicesPost = new Map();
+
 		await this._init(plugins);
 
 		const app = new Koa();
@@ -219,6 +221,11 @@ class BootMain {
 		await this._initServer(serverHttp);
 		await this._initServerDiscovery(serverHttp);
 
+		for (const [key, value] of this._servicesPost) {
+			console.log(`services.init.post - ${key}`);
+			await value.initPost();
+		}
+
 		this.loggerServiceI.info2(`Starting HTTP on: `, this.address);
 	}
 
@@ -264,6 +271,8 @@ class BootMain {
 			for (const [key, value] of this._services) {
 				console.log(`services.init - ${key}`);
 				await value.init(injector);
+
+				this._servicesPost.set(key, value);
 			}
 
 			this._services = new Map();
@@ -279,6 +288,8 @@ class BootMain {
 
 				console.log(`services.init.secondary - ${key}`);
 				await value.init(injector);
+
+				this._servicesPost.set(key, value);
 			}
 
 			Utility.initDateTime();
