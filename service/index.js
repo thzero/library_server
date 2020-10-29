@@ -47,7 +47,7 @@ class Service {
 			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
 			const error = Error(`Invalid ${name}`, true);
 			error.correlationId = correlationId;
-			return error;
+			throw error;
 		}
 	}
 
@@ -56,7 +56,7 @@ class Service {
 			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
 			const error = Error(`Invalid ${name}`, true);
 			error.correlationId = correlationId;
-			return error;
+			throw error;
 		}
 	}
 
@@ -96,22 +96,24 @@ class Service {
 		return this._successResponse(null, correlationId);
 	}
 
-	_enforceResponse(response) {
-		if (!response && !response.success)
-			throw response;
+	_enforceResponse(clazz, method, response, name, correlationId) {
+		if (!response || (response && !response.success))
+			return false;
 
-		return response;
+		return true;
 	}
 
 	_error(clazz, method, message, err, code, errors, correlationId) {
 		if (message)
 			this._logger.error(clazz, method, message, null, correlationId);
 		if (err)
-			this._logger.error(clazz, method, err.message, null, correlationId);
+			this._logger.exception(clazz, method, err, correlationId);
 		if (code)
 			this._logger.error(clazz, method, 'code', code, correlationId);
-		if (errors)
-			this._logger.error(clazz, method, null, errors, correlationId);
+		if (errors) {
+			for (const error of errors)
+				this._logger.exception(clazz, method, error, correlationId);
+		}
 		return Response.error(message, err, code, errors, correlationId);
 	}
 
