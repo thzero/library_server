@@ -111,8 +111,14 @@ class BootMain {
 
 		const env = (process.env.NODE_ENV || 'dev').toLowerCase();
 		if (env == 'dev') {
-			const document = swagger.loadDocumentSync('./config/swagger.yml');
-			app.use(swagger_ui(document, '/swagger'));
+			try {
+				const document = swagger.loadDocumentSync('./config/swagger.yml');
+				if (document)
+					app.use(swagger_ui(document, '/swagger'));
+			}
+			catch(err) {
+				this.loggerServiceI.warn('BootMain', 'start', 'No swagger document, not starting swagger endpoints.');
+			}
 		}
 
 		// auth-api-token
@@ -223,7 +229,8 @@ class BootMain {
 
 		for (const [key, value] of this._servicesPost) {
 			console.log(`services.init.post - ${key}`);
-			await value.initPost();
+			if (value.initPost)
+				await value.initPost();
 		}
 
 		this.loggerServiceI.info2(`Starting HTTP on: `, this.address);
