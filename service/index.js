@@ -32,12 +32,12 @@ class Service {
 		let valid = value.updatedTimestamp >= requestedValue.updatedTimestamp;
 		this._logger.debug('Service', '_checkUpdatedTimestamp', 'valid', valid, correlationId, );
 		if (!valid)
-			return this._error(correlationId).addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse(correlationId).paramIl8n(objectType) });
+			return this._error('Service', '_checkUpdatedTimestamp', null, err, null, null, correlationId).addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse(correlationId).paramIl8n(objectType) });
 
 		// valid = value.updatedTimestamp === requestedValue.updatedTimestamp;
 		// this._logger.debug('_checkUpdatedTimestamp.valid', valid);
 		// if (!valid)
-		// 	return this._error(correlatioNid).addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse(correlationId).paramIl8n(objectType) });
+		// 	return this._error('Service', '_checkUpdatedTimestamp', null, err, null, null, correlationId).addGeneric('Object already changed', LibraryCommonConstants.ErrorFields.ObjectChanged, { objectType: this._initResponse(correlationId).paramIl8n(objectType) });
 
 		return this._success(correlationId);
 	}
