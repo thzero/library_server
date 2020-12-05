@@ -39,6 +39,15 @@ class BaseUserService extends Service {
 		return respositoryResponse;
 	}
 
+	async refreshSettings(correlationId, params) {
+		const validationCheckExternalIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.settingsRefreshSchema, params);
+		if (!validationCheckExternalIdResponse.success)
+			return validationCheckExternalIdResponse;
+
+		const respositoryResponse = await this._repositoryUser.refreshSettings(correlationId, params.userId);
+		return respositoryResponse;
+	}
+
 	async update(correlationId, externalUser) {
 		const validationCheckExternalUserResponse = this._serviceValidation.check(correlationId, this._serviceValidation.externalUserSchema, externalUser);
 		if (!validationCheckExternalUserResponse.success)

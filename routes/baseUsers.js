@@ -53,6 +53,22 @@ class BaseUsersRoute extends BaseRoute {
 		);
 	}
 
+	_initializeRoutesRefreshSettings(router) {
+		return router.post('/refresh/settings',
+			authentication(true),
+			authorization('user'),
+			koaBody({
+				text: false,
+			}),
+			// eslint-disable-next-line
+			async (ctx, next) => {
+				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
+				const response = (await service.updateSettings(ctx.correlationId, ctx.request.body)).check(ctx);
+				ctx.body = Utility.stringify(response);
+			}
+		);
+	}
+
 	_initializeRoutesUpdate(router) {
 		return router.post('/update',
 			authentication(true),
