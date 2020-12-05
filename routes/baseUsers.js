@@ -17,6 +17,7 @@ class BaseUsersRoute extends BaseRoute {
 	_initializeRoutes(router) {
 		this._initializeRoutesGamerById(router);
 		this._initializeRoutesGamerByTag(router);
+		this._initializeRoutesRefreshSettings(router);
 		this._initializeRoutesUpdate(router);
 		this._initializeRoutesUpdateSettings(router);
 	}
@@ -63,7 +64,7 @@ class BaseUsersRoute extends BaseRoute {
 			// eslint-disable-next-line
 			async (ctx, next) => {
 				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
-				const response = (await service.updateSettings(ctx.correlationId, ctx.request.body)).check(ctx);
+				const response = (await service.refreshSettings(ctx.correlationId, ctx.request.body)).check(ctx);
 				ctx.body = Utility.stringify(response);
 			}
 		);
