@@ -6,6 +6,10 @@ class ResourcesDiscoveryService extends BaseService {
 	async cleanup() {
 	}
 
+	get allowsHeartbeat() {
+		return true;
+	}
+
 	async getService(correlationId, name) {
 		try {
 			this._enforceNotEmpty('ResourceDiscoveryService', 'getService', name, 'name', correlationId);
