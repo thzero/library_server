@@ -316,15 +316,7 @@ class BootMain {
 		if (!this.discoveryResourcesI)
 			return;
 
-		cleanupFuncs.push(new Promise( (resolve, reject) => {
-			try {
-				this.discoveryResourcesI.cleanup();
-				resolve();
-			}
-			catch (err) {
-				reject(err);
-			}
-		}));
+		cleanupFuncs.push(this.discoveryResourcesI.cleanup());
 	}
 
 	_initPlugins(plugins) {
