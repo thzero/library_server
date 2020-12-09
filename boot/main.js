@@ -189,6 +189,7 @@ class BootMain {
 			this.loggerServiceI.info2(`server is starting cleanup`);
 			const cleanupFuncs = [];
 			this._initCleanup(cleanupFuncs);
+			this._initCleanupDiscovery(cleanupFuncs);
 			return Promise.all(cleanupFuncs);
 		}
 
@@ -309,6 +310,21 @@ class BootMain {
 
 	_initCleanup(cleanupFuncs) {
 		// your clean logic, like closing database connections
+	}
+
+	_initCleanupDiscovery(cleanupFuncs) {
+		if (!this.discoveryResourcesI)
+			return;
+
+		cleanupFuncs.push(new Promise( (resolve, reject) => {
+			try {
+				this.discoveryResourcesI.cleanup();
+				resolve();
+			}
+			catch (err) {
+				reject(err);
+			}
+		}));
 	}
 
 	_initPlugins(plugins) {
