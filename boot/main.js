@@ -250,7 +250,6 @@ class BootMain {
 
 			await this._initRepositories();
 			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC, this._initRepositoriesUsageMetrics());
-			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC_DEFAULT, new defaultUsageMetricsRepository());
 
 			this._services = new Map();
 
@@ -337,7 +336,7 @@ class BootMain {
 	}
 
 	_initRepositoriesUsageMetrics() {
-		throw new NotImplementedError();
+		return new defaultUsageMetricsRepository();
 	}
 
 	_initRoute(route) {

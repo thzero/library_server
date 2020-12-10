@@ -15,8 +15,6 @@ class UsageMetricsService extends Service {
 		await super.init(injector);
 
 		this._repositoryUsageMetricsI = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC);
-		if (!this._repositoryUsageMetricsI)
-			this._repositoryUsageMetricsI = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC_DEFAULT);
 	}
 
 	async register(context, err) {
