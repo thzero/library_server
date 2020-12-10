@@ -5,6 +5,7 @@ const LibraryConstants = {
 		REPOSITORY_NEWS: 'repositoryNews',
 		REPOSITORY_PLANS: 'repositoryPlans',
 		REPOSITORY_USAGE_METRIC: 'repositoryUsageMetrics',
+		REPOSITORY_USAGE_METRIC_DEFAULT: 'repositoryUsageMetricsDefault',
 		REPOSITORY_USERS: 'repositoryUsers',
 		SERVICE_ADMIN_NEWS: 'serviceAdminNews',
 		SERVICE_ADMIN_USERS: 'serviceAdminUsers',
