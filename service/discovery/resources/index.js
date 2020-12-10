@@ -47,6 +47,10 @@ class ResourcesDiscoveryService extends BaseService {
 		throw new NotImplementedError();
 	}
 
+	async _register(correlationId, opts) {
+		throw new NotImplementedError();
+	}
+
 	async _listing(correlationId) {
 		throw new NotImplementedError();
 	}
