@@ -226,13 +226,14 @@ class BootMain {
 			this.address = await internalIp.v4();
 
 		await this._initServer(serverHttp);
-		await this._initServerDiscovery(serverHttp);
 
 		for (const [key, value] of this._servicesPost) {
 			console.log(`services.init.post - ${key}`);
 			if (value.initPost)
 				await value.initPost();
 		}
+
+		await this._initServerDiscovery(serverHttp);
 
 		this.loggerServiceI.info2(`Starting HTTP on: `, this.address);
 	}
@@ -377,11 +378,21 @@ class BootMain {
 		if (!this.discoveryResourcesI)
 			return;
 
+		const dns = this._appConfig.get('dns', null);
 		const grpc = this._appConfig.get('grpc', null);
 		const secure = this._appConfig.get('secure', false);
 
+		let dnsAddress = null;
+		if (dns) {
+			dnsAddress = dns.label;
+			if (dns.local)
+				dnsAddress += '.local';
+			else
+				dnsAddress += dns.namespace;
+		}
+
 		const opts = {
-			address: this.address,
+			address: dnsAddress ? dnsAddress : this.address,
 			port: this.port,
 			healthCheck: 'healthcheck',
 			secure: secure ? secure : false
@@ -396,11 +407,12 @@ class BootMain {
 
 		await this.discoveryResourcesI.initialize(Utility.generateId(), await this._initServerDiscoveryOpts(opts));
 
-		const heartbeatRequired = this._appConfig.get('discovery.heartbeatRequired', false);
+		const heartbeatRequired = this._appConfig.get('discovery.heartbeatRequired', true);
 		if (this.discoveryResourcesI.allowsHeartbeat && heartbeatRequired) {
-			const heartbeatInterval = Number(this._appConfig.get('discovery.heartbeatInterval'), 300);
+			await this.discoveryResourcesI.register(Utility.generateId(), await this._initServerDiscoveryOpts(opts));
+			const heartbeatInterval = Number(this._appConfig.get('discovery.heartbeatInterval', 300));
 			setInterval((async function () {
-				await this.discoveryResourcesI.initialize(Utility.generateId(), await this._initServerDiscoveryOpts(opts));
+				await this.discoveryResourcesI.register(Utility.generateId(), await this._initServerDiscoveryOpts(opts));
 			}).bind(this), heartbeatInterval * 1000);
 		}
 	}

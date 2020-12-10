@@ -39,11 +39,29 @@ class ResourcesDiscoveryService extends BaseService {
 		return this._listing(correlationId);
 	}
 
+	// options { name, ttl, description }
+	async register(correlationId, opts) {
+		try {
+			this._enforceNotEmpty('ResourceDiscoveryService', 'register', opts, 'opts', correlationId);
+			this._enforceNotEmpty('ResourceDiscoveryService', 'register', opts.address, 'address', correlationId);
+			this._enforceNotNull('ResourceDiscoveryService', 'register', opts.port, 'port', correlationId);
+
+			return await this._register(correlationId, opts);
+		}
+		catch(err) {
+			return this._error('ResourceDiscoveryService', 'register', null, err, null, null, correlationId);
+		}
+	}
+
 	async _getService(correlationId, name) {
 		throw new NotImplementedError();
 	}
 
 	async _initialize(correlationId, opts) {
+		throw new NotImplementedError();
+	}
+
+	async _register(correlationId, opts) {
 		throw new NotImplementedError();
 	}
 
