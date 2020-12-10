@@ -21,8 +21,6 @@ import TokenExpiredError from '..//errors/tokenExpired';
 require('@thzero/library_common/utility/string');
 import injector from '@thzero/library_common/utility/injector';
 
-import defaultUsageMetricsRepository from '../repository/usageMetrics/default';
-
 import configService from '../service/config';
 import loggerService from '../service/logger';
 import usageMetricsService from '../service/usageMetrics';
@@ -336,7 +334,7 @@ class BootMain {
 	}
 
 	_initRepositoriesUsageMetrics() {
-		return new defaultUsageMetricsRepository();
+		throw new NotImplementedError();
 	}
 
 	_initRoute(route) {
