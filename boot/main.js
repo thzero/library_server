@@ -263,9 +263,13 @@ class BootMain {
 			this.usageMetricsServiceI = this._initServicesUsageMetrics();
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
 
-			this.discoveryResourcesI = this._initServicesDiscoveryResources();
-			if (this.discoveryResourcesI)
-				this._injectService(LibraryConstants.InjectorKeys.SERVICE_DISCOVERY_RESOURCES, this.discoveryResourcesI);
+			this.resourceDiscoveryServiceI = this._initServicesDiscoveryResources();
+			if (this.resourceDiscoveryServiceI)
+				this._injectService(LibraryConstants.InjectorKeys.SERVICE_DISCOVERY_RESOURCES, this.resourceDiscoveryServiceI);
+
+			this.mdnsDiscoveryServiceI = this._initServicesDiscoveryMdns();
+			if (this.mdnsDiscoveryServiceI)
+				this._injectService(LibraryConstants.InjectorKeys.SERVICE_MDNS, this.mdnsDiscoveryServiceI);
 
 			for (const pluginService of plugins)
 				await pluginService.initServices(this._services);
@@ -314,10 +318,10 @@ class BootMain {
 	}
 
 	_initCleanupDiscovery(cleanupFuncs) {
-		if (!this.discoveryResourcesI)
-			return;
-
-		cleanupFuncs.push(this.discoveryResourcesI.cleanup());
+		if (this.resourceDiscoveryServiceI)
+			cleanupFuncs.push(this.resourceDiscoveryServiceI.cleanup());
+		if (this.mdnsDiscoveryServiceI)
+			cleanupFuncs.push(this.mdnsDiscoveryServiceI.cleanup());
 	}
 
 	_initPlugins(plugins) {
@@ -355,6 +359,10 @@ class BootMain {
 		return null;
 	}
 
+	_initServicesDiscoveryMdns() {
+		return null;
+	}
+
 	_initServicesLogger() {
 		return new loggerService();
 	}
@@ -375,7 +383,7 @@ class BootMain {
 	}
 
 	async _initServerDiscovery(serverHttp) {
-		if (!this.discoveryResourcesI)
+		if (!this.resourceDiscoveryServiceI)
 			return;
 
 		const dns = this._appConfig.get('dns', null);
@@ -405,20 +413,40 @@ class BootMain {
 			};
 		}
 
-		await this.discoveryResourcesI.initialize(Utility.generateId(), await this._initServerDiscoveryOpts(opts));
-
-		const heartbeatRequired = this._appConfig.get('discovery.heartbeatRequired', true);
-		if (this.discoveryResourcesI.allowsHeartbeat && heartbeatRequired) {
-			await this.discoveryResourcesI.register(Utility.generateId(), await this._initServerDiscoveryOpts(opts));
-			const heartbeatInterval = Number(this._appConfig.get('discovery.heartbeatInterval', 300));
-			setInterval((async function () {
-				await this.discoveryResourcesI.register(Utility.generateId(), await this._initServerDiscoveryOpts(opts));
-			}).bind(this), heartbeatInterval * 1000);
-		}
+		await this._initServerDiscoveryResources(Utility.cloneDeep(ops));
+		await this._initServerDiscoveryMdns(Utility.cloneDeep(ops));
 	}
 
-	async _initServerDiscoveryOpts(opts) {
+	async _initServerDiscoveryMdns(opts) {
+		if (!this.mdnsDiscoveryServiceI)
+			return;
+
+		await this.mdnsDiscoveryServiceI.initialize(Utility.generateId(), await this._initServerDiscoveryOptsMdns(opts));
+	}
+
+	async _initServerDiscoveryOptsMdns(opts) {
 		return opts;
+	}
+
+	async _initServerDiscoveryOptsResources(opts) {
+		return opts;
+	}
+
+	async _initServerDiscoveryResources(opts) {
+		if (!this.resourceDiscoveryServiceI)
+			return;
+
+		const opts = await this._initServerDiscoveryOptsResources(opts);
+		await this.resourceDiscoveryServiceI.initialize(Utility.generateId(), opts));
+
+		const heartbeatRequired = this._appConfig.get('discovery.heartbeatRequired', true);
+		if (this.resourceDiscoveryServiceI.allowsHeartbeat && heartbeatRequired) {
+			await this.resourceDiscoveryServiceI.register(Utility.generateId(), opts);
+			const heartbeatInterval = Number(this._appConfig.get('discovery.heartbeatInterval', 300));
+			setInterval((async function () {
+				await this.resourceDiscoveryServiceI.register(Utility.generateId(), opts);
+			}).bind(this), heartbeatInterval * 1000);
+		}
 	}
 
 	_injectRepository(key, repository) {
