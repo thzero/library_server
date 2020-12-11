@@ -269,7 +269,7 @@ class BootMain {
 
 			this.mdnsDiscoveryServiceI = this._initServicesDiscoveryMdns();
 			if (this.mdnsDiscoveryServiceI)
-				this._injectService(LibraryConstants.InjectorKeys.SERVICE_MDNS, this.mdnsDiscoveryServiceI);
+				this._injectService(LibraryConstants.InjectorKeys.SERVICE_DISCOVERY_MDNS, this.mdnsDiscoveryServiceI);
 
 			for (const pluginService of plugins)
 				await pluginService.initServices(this._services);
@@ -413,8 +413,8 @@ class BootMain {
 			};
 		}
 
-		await this._initServerDiscoveryResources(Utility.cloneDeep(ops));
-		await this._initServerDiscoveryMdns(Utility.cloneDeep(ops));
+		await this._initServerDiscoveryResources(Utility.cloneDeep(opts));
+		await this._initServerDiscoveryMdns(Utility.cloneDeep(opts));
 	}
 
 	async _initServerDiscoveryMdns(opts) {
@@ -436,15 +436,15 @@ class BootMain {
 		if (!this.resourceDiscoveryServiceI)
 			return;
 
-		const opts = await this._initServerDiscoveryOptsResources(opts);
-		await this.resourceDiscoveryServiceI.initialize(Utility.generateId(), opts));
+		const optsI = await this._initServerDiscoveryOptsResources(opts);
+		await this.resourceDiscoveryServiceI.initialize(Utility.generateId(), optsI);
 
 		const heartbeatRequired = this._appConfig.get('discovery.heartbeatRequired', true);
 		if (this.resourceDiscoveryServiceI.allowsHeartbeat && heartbeatRequired) {
-			await this.resourceDiscoveryServiceI.register(Utility.generateId(), opts);
+			await this.resourceDiscoveryServiceI.register(Utility.generateId(), optsI);
 			const heartbeatInterval = Number(this._appConfig.get('discovery.heartbeatInterval', 300));
 			setInterval((async function () {
-				await this.resourceDiscoveryServiceI.register(Utility.generateId(), opts);
+				await this.resourceDiscoveryServiceI.register(Utility.generateId(), optsI);
 			}).bind(this), heartbeatInterval * 1000);
 		}
 	}
