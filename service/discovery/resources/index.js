@@ -3,7 +3,7 @@ import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 import DiscoveryService from '../index';
 
 class ResourcesDiscoveryService extends DiscoveryService {
-	async cleanup() {
+	async cleanup(correlationId) {
 	}
 
 	get allowsHeartbeat() {
