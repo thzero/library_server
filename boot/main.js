@@ -383,31 +383,19 @@ class BootMain {
 	}
 
 	async _initServerDiscovery(serverHttp) {
-		if (!this.resourceDiscoveryServiceI)
+		if (!this.resourceDiscoveryServiceI && !this.mdnsDiscoveryServiceI)
 			return;
 
 		const dns = this._appConfig.get('dns', null);
 		const grpc = this._appConfig.get('grpc', null);
 		const secure = this._appConfig.get('secure', false);
 
-		let dnsAddress = null;
-		if (dns) {
-			if (dns.local) {
-				dnsAddress = dns.label.replace('.', '_');
-				dnsAddress += '.local';
-			}
-			else {
-				dnsAddress = dns.label;
-				dnsAddress += dns.namespace;
-			}
-		}
-
 		const opts = {
-			address: dnsAddress ? dnsAddress : this.address,
+			address: this.address,
 			port: this.port,
 			healthCheck: 'healthcheck',
 			secure: secure ? secure : false,
-			local: true
+			dns: dns
 		};
 
 		if (grpc) {
@@ -417,8 +405,8 @@ class BootMain {
 			};
 		}
 
-		await this._initServerDiscoveryResources(Utility.cloneDeep(opts));
 		await this._initServerDiscoveryMdns(Utility.cloneDeep(opts));
+		await this._initServerDiscoveryResources(Utility.cloneDeep(opts));
 	}
 
 	async _initServerDiscoveryMdns(opts) {
@@ -446,7 +434,7 @@ class BootMain {
 		const heartbeatRequired = this._appConfig.get('discovery.heartbeatRequired', true);
 		if (this.resourceDiscoveryServiceI.allowsHeartbeat && heartbeatRequired) {
 			await this.resourceDiscoveryServiceI.register(Utility.generateId(), optsI);
-			const heartbeatInterval = Number(this._appConfig.get('discovery.heartbeatInterval', 300));
+			const heartbeatInterval = Number(this._appConfig.get('discovery.heartbeatInterval', 30));
 			setInterval((async function () {
 				await this.resourceDiscoveryServiceI.register(Utility.generateId(), optsI);
 			}).bind(this), heartbeatInterval * 1000);
