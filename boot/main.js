@@ -392,18 +392,22 @@ class BootMain {
 
 		let dnsAddress = null;
 		if (dns) {
-			dnsAddress = dns.label;
-			if (dns.local)
+			if (dns.local) {
+				dnsAddress = dns.label.replace('.', '_');
 				dnsAddress += '.local';
-			else
+			}
+			else {
+				dnsAddress = dns.label;
 				dnsAddress += dns.namespace;
+			}
 		}
 
 		const opts = {
 			address: dnsAddress ? dnsAddress : this.address,
 			port: this.port,
 			healthCheck: 'healthcheck',
-			secure: secure ? secure : false
+			secure: secure ? secure : false,
+			local: true
 		};
 
 		if (grpc) {
