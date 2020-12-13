@@ -220,7 +220,17 @@ class BootMain {
 
 		createTerminus(serverHttp, terminusOptions);
 
-		serverHttp.listen(this.port);
+		const listen = async (port) => new Promise((resolve, reject) => {
+			serverHttp.listen(port, (err) => {
+				if (err) {
+					reject(err);
+					return;
+				}
+
+				resolve();
+			});
+		});
+		await listen(this.port);
 		this.address = serverHttp.address() ? serverHttp.address().address : null;
 		if (this.address === '::')
 			this.address = await internalIp.v4();
