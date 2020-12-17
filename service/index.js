@@ -63,7 +63,7 @@ class Service {
 	_enforceNotEmptyResponse(clazz, method, value, name, correlationId) {
 		if (String.isNullOrEmpty(value)) {
 			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
-			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
+			return Response.error(clazz, method, `Invalid ${name}`, null, null, null, correlationId);
 		}
 
 		return this._success(correlationId);
@@ -72,7 +72,7 @@ class Service {
 	_enforceNotNullResponse(clazz, method, value, name, correlationId) {
 		if (!value) {
 			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
-			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
+			return Response.error(clazz, method, `Invalid ${name}`, null, null, null, correlationId);
 		}
 
 		return this._success(correlationId);
@@ -81,7 +81,7 @@ class Service {
 	_enforceNotEmptyAsResponse(clazz, method, value, name, correlationId) {
 		if (String.isNullOrEmpty(value)) {
 			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
-			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
+			return Response.error(clazz, method, `Invalid ${name}`, null, null, null, correlationId);
 		}
 
 		return this._successResponse(null, correlationId);
@@ -90,7 +90,7 @@ class Service {
 	_enforceNotNullAsResponse(clazz, method, value, name, correlationId) {
 		if (!value) {
 			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
-			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
+			return Response.error(clazz, method, `Invalid ${name}`, null, null, null, correlationId);
 		}
 
 		return this._successResponse(null, correlationId);
@@ -114,7 +114,7 @@ class Service {
 			for (const error of errors)
 				this._logger.exception(clazz, method, error, correlationId);
 		}
-		return Response.error(message, err, code, errors, correlationId);
+		return Response.error(clazz, method, message, err, code, errors, correlationId);
 	}
 
 	_initResponse(correlationId) {
@@ -158,7 +158,7 @@ class Service {
 			this._logger.warn(clazz, method, 'code', code, correlationId);
 		if (errors)
 			this._logger.warn(clazz, method, null, errors, correlationId);
-		return Response.error(message, err, code, errors, correlationId);
+		return Response.error(clazz, method, message, err, code, errors, correlationId);
 	}
 }
 

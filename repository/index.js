@@ -33,7 +33,7 @@ class Repository {
 	_enforceNotEmptyResponse(clazz, method, value, name, correlationId) {
 		if (String.isNullOrEmpty(value)) {
 			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
-			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
+			return Response.error(clazz, method, `Invalid ${name}`, null, null, null, correlationId);
 		}
 
 		return this._success(correlationId);
@@ -42,7 +42,7 @@ class Repository {
 	_enforceNotNullResponse(clazz, method, value, name, correlationId) {
 		if (!value) {
 			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
-			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
+			return Response.error(clazz, method, `Invalid ${name}`, null, null, null, correlationId);
 		}
 
 		return this._success(correlationId);
@@ -51,7 +51,7 @@ class Repository {
 	_enforceNotEmptyAsResponse(clazz, method, value, name, correlationId) {
 		if (String.isNullOrEmpty(value)) {
 			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
-			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
+			return Response.error(clazz, method, `Invalid ${name}`, null, null, null, correlationId);
 		}
 
 		return this._successResponse(null, correlationId);
@@ -60,7 +60,7 @@ class Repository {
 	_enforceNotNullAsResponse(clazz, method, value, name, correlationId) {
 		if (!value) {
 			this._logger.error(clazz, method, `Invalid ${name}`, null, correlationId);
-			return Response.error(`Invalid ${name}`, null, null, null, correlationId);
+			return Response.error(clazz, method, `Invalid ${name}`, null, null, null, correlationId);
 		}
 
 		return this._successResponse(null, correlationId);
@@ -84,7 +84,7 @@ class Repository {
 			for (const error of errors)
 				this._logger.exception(clazz, method, error, correlationId);
 		}
-		return Response.error(message, err, code, errors, correlationId);
+		return Response.error(clazz, method, message, err, code, errors, correlationId);
 	}
 
 	_initResponse(correlationId) {
@@ -118,7 +118,7 @@ class Repository {
 			this._logger.warn(clazz, method, 'code', code, correlationId);
 		if (errors)
 			this._logger.warn(clazz, method, null, errors, correlationId);
-		return Response.error(message, err, code, errors, correlationId);
+		return Response.error(clazz, method, message, err, code, errors, correlationId);
 	}
 }
 
