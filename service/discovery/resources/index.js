@@ -19,6 +19,17 @@ class ResourcesDiscoveryService extends DiscoveryService {
 		}
 	}
 
+	async deregister(correlationId, name) {
+		try {
+			this._enforceNotEmpty('ResourceDiscoveryService', 'deregister', name, 'name', correlationId);
+
+			return this._deregister(correlationId);
+		}
+		catch(err) {
+			return this._error('ResourceDiscoveryService', 'deregister', null, err, null, null, correlationId);
+		}
+	}
+
 	async getService(correlationId, name) {
 		try {
 			this._enforceNotEmpty('ResourceDiscoveryService', 'getService', name, 'name', correlationId);
@@ -63,6 +74,10 @@ class ResourcesDiscoveryService extends DiscoveryService {
 	}
 
 	async _cleanup(correlationId) {
+		throw new NotImplementedError();
+	}
+
+	async _deregister(correlationId, name) {
 		throw new NotImplementedError();
 	}
 
