@@ -26,6 +26,9 @@ const LibraryConstants = {
 		SERVICE_VALIDATION_NEWS: 'serviceNewsValidation',
 		SERVICE_VERSION: 'serviceVersion'
 	},
+	HealthCheck: {
+		DefaultPath: '/healthcheck'
+	},
 	Headers: {
 		AuthKeys: {
 			API: 'x-api-key',
