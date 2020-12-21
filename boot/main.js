@@ -396,6 +396,20 @@ class BootMain {
 		if (!this.resourceDiscoveryServiceI && !this.mdnsDiscoveryServiceI)
 			return;
 
+		const opts = await this._initServerDiscoveryOpts();
+
+		await this._initServerDiscoveryMdns(Utility.cloneDeep(opts));
+		await this._initServerDiscoveryResources(Utility.cloneDeep(opts));
+	}
+
+	async _initServerDiscoveryMdns(opts) {
+		if (!this.mdnsDiscoveryServiceI)
+			return;
+
+		await this.mdnsDiscoveryServiceI.initialize(Utility.generateId(), await this._initServerDiscoveryOptsMdns(opts));
+	}
+
+	async _initServerDiscoveryOpts() {
 		const dns = this._appConfig.get('dns', null);
 		const grpc = this._appConfig.get('grpc', null);
 		const secure = this._appConfig.get('secure', false);
@@ -415,15 +429,7 @@ class BootMain {
 			};
 		}
 
-		await this._initServerDiscoveryMdns(Utility.cloneDeep(opts));
-		await this._initServerDiscoveryResources(Utility.cloneDeep(opts));
-	}
-
-	async _initServerDiscoveryMdns(opts) {
-		if (!this.mdnsDiscoveryServiceI)
-			return;
-
-		await this.mdnsDiscoveryServiceI.initialize(Utility.generateId(), await this._initServerDiscoveryOptsMdns(opts));
+		return opts;
 	}
 
 	async _initServerDiscoveryOptsMdns(opts) {
@@ -438,17 +444,7 @@ class BootMain {
 		if (!this.resourceDiscoveryServiceI)
 			return;
 
-		const optsI = await this._initServerDiscoveryOptsResources(opts);
-		await this.resourceDiscoveryServiceI.initialize(Utility.generateId(), optsI);
-
-		const heartbeatRequired = this._appConfig.get('discovery.heartbeatRequired', false);
-		if (this.resourceDiscoveryServiceI.allowsHeartbeat && heartbeatRequired) {
-			await this.resourceDiscoveryServiceI.register(Utility.generateId(), optsI);
-			const heartbeatInterval = Number(this._appConfig.get('discovery.heartbeatInterval', 30));
-			setInterval((async function () {
-				await this.resourceDiscoveryServiceI.register(Utility.generateId(), optsI);
-			}).bind(this), heartbeatInterval * 1000);
-		}
+		await this.resourceDiscoveryServiceI.initialize(Utility.generateId(), await this._initServerDiscoveryOptsResources(opts));
 	}
 
 	_injectRepository(key, repository) {
