@@ -441,7 +441,7 @@ class BootMain {
 		const optsI = await this._initServerDiscoveryOptsResources(opts);
 		await this.resourceDiscoveryServiceI.initialize(Utility.generateId(), optsI);
 
-		const heartbeatRequired = this._appConfig.get('discovery.heartbeatRequired', true);
+		const heartbeatRequired = this._appConfig.get('discovery.heartbeatRequired', false);
 		if (this.resourceDiscoveryServiceI.allowsHeartbeat && heartbeatRequired) {
 			await this.resourceDiscoveryServiceI.register(Utility.generateId(), optsI);
 			const heartbeatInterval = Number(this._appConfig.get('discovery.heartbeatInterval', 30));
