@@ -14,6 +14,9 @@ class UsageMetricsService extends Service {
 	async init(injector) {
 		await super.init(injector);
 
+		const healthCheckPath = this._config.get('healthcheck.path', LibraryConstants.HealthCheck.DefaultPath);
+		this.registerIgnore(healthCheckPath);
+
 		this._repositoryUsageMetricsI = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC);
 	}
 
@@ -21,6 +24,9 @@ class UsageMetricsService extends Service {
 		try {
 			if (!context)
 				return;
+
+			const path = context.request.path;
+			if ()
 
 			const url = context.request.path;
 			if (!String.isNullOrEmpty(url)) {

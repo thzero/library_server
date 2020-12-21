@@ -21,6 +21,8 @@ import TokenExpiredError from '..//errors/tokenExpired';
 require('@thzero/library_common/utility/string');
 import injector from '@thzero/library_common/utility/injector';
 
+import usageMetricsRepository from '../repository/usageMetrics/devnull';
+
 import configService from '../service/config';
 import loggerService from '../service/logger';
 import usageMetricsService from '../service/usageMetrics';
@@ -205,12 +207,23 @@ class BootMain {
 			)
 		}
 
+		const healthcheckPath = this._appConfig.get('healthcheck.path', LibraryConstants.HealthCheck.DefaultPath);
+		if (!healthcheckPath.startsWith('/'))
+			healthcheckPath = '/' + healthcheckPath;
+
+		const healthCheckOptions = {
+			verbatim: true // [optional = false] use object returned from /healthcheck verbatim in response
+		};
+		if (healthCheck)
+			healthCheckOptions[healthcheckPath] = healthCheck;
+
 		const terminusOptions = {
 			// health check options
-			healthChecks: {
-				'/healthcheck': healthCheck, // a function returning a promise indicating service health,
-				verbatim: true // [optional = false] use object returned from /healthcheck verbatim in response
-			},
+			// healthChecks: {
+			// 	healthcheckPath: healthCheck, // a function returning a promise indicating service health,
+			// 	verbatim: true // [optional = false] use object returned from /healthcheck verbatim in response
+			// },
+			healthChecks: healthCheckOptions,
 
 			// cleanup options
 			signals: [ 'SIGINT', 'SIGTERM' ],
@@ -349,7 +362,7 @@ class BootMain {
 	}
 
 	_initRepositoriesUsageMetrics() {
-		throw new NotImplementedError();
+		return new usageMetricsRepository();
 	}
 
 	_initRoute(route) {
