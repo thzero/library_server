@@ -111,8 +111,7 @@ class BootMain {
 
 		app.use(koaStatic('./public'));
 
-		const env = (process.env.NODE_ENV || 'dev').toLowerCase();
-		if (env == 'dev') {
+		if (Utility.isDev) {
 			try {
 				const document = swagger.loadDocumentSync('./config/swagger.yml');
 				if (document)
