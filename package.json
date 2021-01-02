@@ -27,7 +27,7 @@
     "@godaddy/terminus": "^4.5.0",
     "@koa/cors": "^3.1.0",
     "@koa/router": "^10.0.0",
-    "@thzero/library_common": "^0.12.3",
+    "@thzero/library_common": "^0.12.2",
     "async-mutex": "^0.2.6",
     "config": "^3.3.3",
     "dayjs": "^1.9.8",
@@ -37,8 +37,7 @@
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",
     "koa-helmet": "^6.0.0",
-    "koa-static": "^5.0.0",
-    "swagger2-koa": "^2.0.0"
+    "koa-static": "^5.0.0"
   },
   "devDependencies": {
     "@thzero/library_cli": "^0.12.0"
