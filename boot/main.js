@@ -6,9 +6,6 @@ import internalIp from 'internal-ip';
 
 import { createTerminus } from '@godaddy/terminus';
 
-import * as swagger from 'swagger2';
-import { ui as swagger_ui } from 'swagger2-koa';
-
 import config from 'config';
 
 import LibraryConstants from '../constants';
@@ -111,16 +108,7 @@ class BootMain {
 
 		app.use(koaStatic('./public'));
 
-		if (Utility.isDev) {
-			try {
-				const document = swagger.loadDocumentSync('./config/swagger.yml');
-				if (document)
-					app.use(swagger_ui(document, '/swagger'));
-			}
-			catch(err) {
-				this.loggerServiceI.warn('BootMain', 'start', 'No swagger document, not starting swagger endpoints.');
-			}
-		}
+		this._initPreAuth(app);
 
 		// auth-api-token
 		app.use(async (ctx, next) => {
@@ -155,6 +143,8 @@ class BootMain {
 			ctx.throw(401);
 		});
 
+		this._initPostAuth(app);
+
 		// usage metrics
 		app.use(async (ctx, next) => {
 			await next();
@@ -164,6 +154,8 @@ class BootMain {
 		});
 
 		this._routes = [];
+
+		this._initPreRoutes(app);
 
 		for (const pluginRoute of plugins)
 			await pluginRoute.initRoutes(this._routes);
@@ -254,6 +246,8 @@ class BootMain {
 			if (value.initPost)
 				await value.initPost();
 		}
+
+		this._initPostRoutes(app);
 
 		await this._initServerDiscovery(serverHttp);
 
@@ -355,6 +349,18 @@ class BootMain {
 			results.push(obj);
 		}
 		return results;
+	}
+
+	_initPostAuth(app) {
+	}
+
+	_initPreAuth(app) {
+	}
+
+	_initPostRoutes(app) {
+	}
+
+	_initPreRoutes(app) {
 	}
 
 	async _initRepositories() {
