@@ -1,4 +1,5 @@
 import LibraryConstants from '../constants';
+import LibraryCommonConstants from '@thzero/library_common/constants';
 
 import Response from '@thzero/library_common/response';
 import ExtractResponse from '@thzero/library_common/response/extract';
@@ -9,7 +10,7 @@ class Repository {
 	}
 
 	get _config() {
-		return this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_CONFIG)
+		return this._injector.getService(LibraryCommonConstants.InjectorKeys.SERVICE_CONFIG)
 	}
 
 	_enforce(clazz, method, value, name, correlationId) {
@@ -116,7 +117,7 @@ class Repository {
 	}
 
 	get _logger() {
-		return this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER)
+		return this._injector.getService(LibraryCommonConstants.InjectorKeys.SERVICE_LOGGER)
 	}
 
 	_success(correlationId) {
