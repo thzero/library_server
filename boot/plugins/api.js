@@ -1,4 +1,5 @@
 import LibraryConstants from '../../constants';
+import LibraryCommonConstants from '@thzero/library_common/constants';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
@@ -24,6 +25,10 @@ class ApiBootPlugin extends BootPlugin {
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_COMMUNICATION_REST, communicationRestService);
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_CRYPTO, this._initServicesCrypto());
 		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServicesVersion());
+
+		const validationServices = this._initServicesValidation();
+		if (validationServices)
+			this._injectService(LibraryCommonConstants.InjectorKeys.SERVICE_VALIDATION, validationServices);
 	}
 
 	_initRoutesHome() {
@@ -39,6 +44,10 @@ class ApiBootPlugin extends BootPlugin {
 	}
 
 	_initServicesCommunicationRest() {
+		return null;
+	}
+
+	_initServicesValidation() {
 		return null;
 	}
 

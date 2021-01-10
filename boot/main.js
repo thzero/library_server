@@ -14,7 +14,7 @@ import LibraryCommonConstants from '@thzero/library_common/constants';
 import Utility from '@thzero/library_common/utility';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented';
-import TokenExpiredError from '..//errors/tokenExpired';
+import TokenExpiredError from '../errors/tokenExpired';
 
 require('@thzero/library_common/utility/string');
 import injector from '@thzero/library_common/utility/injector';
@@ -22,7 +22,7 @@ import injector from '@thzero/library_common/utility/injector';
 import usageMetricsRepository from '../repository/usageMetrics/devnull';
 
 import configService from '../service/config';
-import loggerService from '../service/logger';
+import loggerService from '@thzero/library_common/service/logger';
 import usageMetricsService from '../service/usageMetrics';
 
 const ResponseTime = 'X-Response-Time';

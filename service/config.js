@@ -1,21 +1,8 @@
-import Service from './index';
+import ConfigService from '@thzero/library_common/service/config';
 
-class ConfigService extends Service {
+class ServerConfigService extends ConfigService {
 	constructor(config) {
-		super();
-
-		this._config = config;
-	}
-
-	get(key, defaultValue) {
-		try {
-			return this._config.get(key);
-		}
-		catch (err) {
-			if (defaultValue !== undefined)
-				return defaultValue;
-			throw err;
-		}
+		super(config);
 	}
 
 	getBackend(key) {
@@ -42,4 +29,4 @@ class ConfigService extends Service {
 	}
 }
 
-export default ConfigService;
+export default ServerConfigService;
