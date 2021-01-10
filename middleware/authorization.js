@@ -1,4 +1,5 @@
 import LibraryConstants from '../constants';
+import LibraryCommonConstants from '@thzero/library_common/constants';
 
 import injector from '@thzero/library_common/utility/injector';
 
@@ -102,8 +103,8 @@ const authorization = (roles, logical) => {
 		logical = logicalOr;
 
 	return async (ctx, next) => {
-		const config = injector.getService(LibraryConstants.InjectorKeys.SERVICE_CONFIG);
-		const logger = injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
+		const config = injector.getService(LibraryCommonConstants.InjectorKeys.SERVICE_CONFIG);
+		const logger = injector.getService(LibraryCommonConstants.InjectorKeys.SERVICE_LOGGER);
 		const security = injector.getService(LibraryConstants.InjectorKeys.SERVICE_SECURITY);
 
 		// logger.debug('token', ctx.state.token);
@@ -152,7 +153,7 @@ const authorization = (roles, logical) => {
 		(async () => {
 			const usageMetrics = injector.getService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC);
 			await usageMetrics.register(ctx).catch((err) => {
-				const logger = injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
+				const logger = injector.getService(LibraryCommonConstants.InjectorKeys.SERVICE_LOGGER);
 				logger.error(null, err);
 			});
 		})();

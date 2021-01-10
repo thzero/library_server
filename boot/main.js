@@ -9,6 +9,7 @@ import { createTerminus } from '@godaddy/terminus';
 import config from 'config';
 
 import LibraryConstants from '../constants';
+import LibraryCommonConstants from '@thzero/library_common/constants';
 
 import Utility from '@thzero/library_common/utility';
 
@@ -256,7 +257,7 @@ class BootMain {
 
 	async _init(plugins) {
 		try {
-			injector.addSingleton(LibraryConstants.InjectorKeys.SERVICE_CONFIG, this._appConfig);
+			injector.addSingleton(LibraryCommonConstants.InjectorKeys.SERVICE_CONFIG, this._appConfig);
 
 			this._repositories = new Map();
 
@@ -270,11 +271,11 @@ class BootMain {
 
 			this.loggerServiceI = this._initServicesLogger();
 			this._initServicesLoggers();
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
+			this._injectService(LibraryCommonConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
 
 			const monitoringService = this._initServicesMonitoring();
 			if (monitoringService)
-				this._injectService(LibraryConstants.InjectorKeys.SERVICE_MONITORING, monitoringService);
+				this._injectService(LibraryCommonConstants.InjectorKeys.SERVICE_MONITORING, monitoringService);
 
 			this.usageMetricsServiceI = this._initServicesUsageMetrics();
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
