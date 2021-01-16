@@ -37,7 +37,6 @@ class BootMain {
 		this._injector = injector;
 
 		// https://github.com/lorenwest/node-config/wiki
-		// this._appConfig = config.get('app');
 		this._appConfig = new configService(config.get('app'));
 
 		const plugins = this._initPlugins(args);
