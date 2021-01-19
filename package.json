@@ -1,9 +1,9 @@
 {
   "name": "@thzero/library_server",
-  "version": "0.13.5",
+  "version": "0.13.6",
   "version_major": 0,
   "version_minor": 13,
-  "version_patch": 5,
+  "version_patch": 6,
   "version_date": "01/19/2021",
   "description": "An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.",
   "author": "thZero",
@@ -42,9 +42,11 @@
     "koa-static": "^5.0.0"
   },
   "devDependencies": {
-    "@thzero/library_cli": "^0.13.1"
+    "@thzero/library_cli": "^0.13"
   },
   "peerDependencies": {
+    "@thzero/library_common": "^0.13",
+    "@thzero/library_common_service": "^0.13",
     "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
