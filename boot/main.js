@@ -22,7 +22,7 @@ import injector from '@thzero/library_common/utility/injector';
 import usageMetricsRepository from '../repository/usageMetrics/devnull';
 
 import configService from '../service/config';
-import loggerService from '@thzero/library_common/service/logger';
+import loggerService from '@thzero/library_common_service/logger';
 import usageMetricsService from '../service/usageMetrics';
 
 const ResponseTime = 'X-Response-Time';
