@@ -1,5 +1,5 @@
 import LibraryConstants from '../../constants';
-import LibraryCommonConstants from '@thzero/library_common/constants';
+import LibraryCommonServiceConstants from '@thzero/library_common_service/constants';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
@@ -28,7 +28,7 @@ class ApiBootPlugin extends BootPlugin {
 
 		const validationServices = this._initServicesValidation();
 		if (validationServices)
-			this._injectService(LibraryCommonConstants.InjectorKeys.SERVICE_VALIDATION, validationServices);
+			this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_VALIDATION, validationServices);
 	}
 
 	_initRoutesHome() {

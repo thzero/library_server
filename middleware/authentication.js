@@ -1,5 +1,6 @@
 import LibraryConstants from '../constants';
 import LibraryCommonConstants from '@thzero/library_common/constants';
+import LibraryCommonServiceConstants from '@thzero/library_common_service/constants';
 
 import injector from '@thzero/library_common/utility/injector';
 
@@ -9,7 +10,7 @@ function getAuthToken(context) {
 	if (!context)
 		return null;
 
-	const logger = injector.getService(LibraryCommonConstants.InjectorKeys.SERVICE_LOGGER);
+	const logger = injector.getService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_LOGGER);
 	const token = context.get(LibraryConstants.Headers.AuthKeys.AUTH);
 	logger.debug('middleware', 'getAuthToken', 'token', token, context.correlationId);
 	const split = token.split(LibraryConstants.Headers.AuthKeys.AUTH_BEARER + separator);
@@ -24,7 +25,7 @@ function getAuthToken(context) {
 
 const authentication = (required) => {
 	return async (ctx, next) => {
-		const logger = injector.getService(LibraryCommonConstants.InjectorKeys.SERVICE_LOGGER);
+		const logger = injector.getService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_LOGGER);
 
 		const token = getAuthToken(ctx);
 		logger.debug('middleware', 'authentication', 'token', token, ctx.correlationId);
@@ -54,7 +55,7 @@ const authentication = (required) => {
 		(async () => {
 			const usageMetrics = injector.getService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC);
 			await usageMetrics.register(ctx).catch((err) => {
-				const logger = injector.getService(LibraryCommonConstants.InjectorKeys.SERVICE_LOGGER);
+				const logger = injector.getService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_LOGGER);
 				logger.error('middleware', 'authentication', err, null, ctx.correlationId);
 			});
 		})();

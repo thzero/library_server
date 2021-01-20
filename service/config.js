@@ -1,4 +1,4 @@
-import ConfigService from '@thzero/library_common_service/config';
+import ConfigService from '@thzero/library_common_service/service/config';
 
 class ServerConfigService extends ConfigService {
 	constructor(config) {
