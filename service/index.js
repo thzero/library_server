@@ -1,4 +1,4 @@
-import Service from '@thzero/library_common_service/index';
+import Service from '@thzero/library_common_service/service/index';
 
 class ServerService extends Service {
 	constructor() {
