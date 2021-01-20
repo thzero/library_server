@@ -9,7 +9,7 @@ import { createTerminus } from '@godaddy/terminus';
 import config from 'config';
 
 import LibraryConstants from '../constants';
-import LibraryCommonConstants from '@thzero/library_common/constants';
+import LibraryCommonServiceConstants from '@thzero/library_common_service/constants';
 
 import Utility from '@thzero/library_common/utility';
 
@@ -22,7 +22,7 @@ import injector from '@thzero/library_common/utility/injector';
 import usageMetricsRepository from '../repository/usageMetrics/devnull';
 
 import configService from '../service/config';
-import loggerService from '@thzero/library_common_service/logger';
+import loggerService from '@thzero/library_common_service/service/logger';
 import usageMetricsService from '../service/usageMetrics';
 
 const ResponseTime = 'X-Response-Time';
@@ -256,7 +256,7 @@ class BootMain {
 
 	async _init(plugins) {
 		try {
-			injector.addSingleton(LibraryCommonConstants.InjectorKeys.SERVICE_CONFIG, this._appConfig);
+			injector.addSingleton(LibraryCommonServiceConstants.InjectorKeys.SERVICE_CONFIG, this._appConfig);
 
 			this._repositories = new Map();
 
@@ -270,11 +270,11 @@ class BootMain {
 
 			this.loggerServiceI = this._initServicesLogger();
 			this._initServicesLoggers();
-			this._injectService(LibraryCommonConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
+			this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
 
 			const monitoringService = this._initServicesMonitoring();
 			if (monitoringService)
-				this._injectService(LibraryCommonConstants.InjectorKeys.SERVICE_MONITORING, monitoringService);
+				this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_MONITORING, monitoringService);
 
 			this.usageMetricsServiceI = this._initServicesUsageMetrics();
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
