@@ -51,7 +51,7 @@ const authorizationCheckRoles = async (ctx, success, logical, security, logger) 
 	if (!(ctx.state.user && ctx.state.user.roles && Array.isArray(ctx.state.user.roles)))
 		return false;
 
-		logger.debug('middleware', 'authorizationCheckRoles', 'logical', logical, ctx.correlationId);
+	logger.debug('middleware', 'authorizationCheckRoles', 'logical', logical, ctx.correlationId);
 
 	let result;
 	let roleAct;
