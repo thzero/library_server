@@ -38,7 +38,7 @@ const authentication = (required) => {
 				const results = await service.verifyToken(ctx.correlationId, token);
 				logger.debug('middleware', 'authentication', 'results', results, ctx.correlationId);
 				if (!results || !results.success) {
-					logger.warn('middleware', 'authentication', 'Unauthorized... invalid token', null, ctx.correlationId);
+					logger.warn('middleware', 'authentication', 'Unauthenticated... invalid token', null, ctx.correlationId);
 					ctx.throw(401);
 					return;
 				}
