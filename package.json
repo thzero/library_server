@@ -1,10 +1,10 @@
 {
   "name": "@thzero/library_server",
-  "version": "0.13.21",
+  "version": "0.13.22",
   "version_major": 0,
   "version_minor": 13,
-  "version_patch": 21,
-  "version_date": "07/18/2021",
+  "version_patch": 22,
+  "version_date": "07/25/2021",
   "description": "An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.",
   "author": "thZero",
   "license": "MIT",
@@ -26,7 +26,7 @@
   "dependencies": {
     "@godaddy/terminus": "^4.9.0",
     "@koa/cors": "^3.1.0",
-    "@koa/router": "^10.0.0",
+    "@koa/router": "^10.1.0",
     "async-mutex": "^0.3.1",
     "config": "^3.3.6",
     "dayjs": "^1.10.6",
@@ -45,14 +45,14 @@
   "peerDependencies": {
     "@thzero/library_common": "^0.13",
     "@thzero/library_common_service": "^0.13",
-    "@babel/core": "^7.14.6",
+    "@babel/core": "^7.14.8",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
-    "@babel/preset-env": "^7.14.7",
+    "@babel/preset-env": "^7.14.8",
     "babel-loader": "^8.2.2",
     "eslint": "^7.31.0",
     "eslint-plugin-node": "^11.1.0",
-    "pino-pretty": "^5.1.1",
-    "webpack": "^5.45.1",
+    "pino-pretty": "^5.1.2",
+    "webpack": "^5.46.0",
     "webpack-cli": "^4.7.2"
   }
 }
