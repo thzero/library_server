@@ -11,7 +11,7 @@ import authorization from '../middleware/authorization';
 
 class BaseUsersRoute extends BaseRoute {
 	constructor(prefix) {
-		super(prefix ? prefix : '/api/user');
+		super(prefix ? prefix : '/api/users');
 	}
 
 	_initializeRoutes(router) {
