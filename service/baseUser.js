@@ -66,9 +66,15 @@ class BaseUserService extends Service {
 			this._initializeUser(user);
 		}
 		user.external = externalUser;
+		if (externalUser) {
+			if (String.isNullOrEmpty(user.email)) {
+				if (!String.isNullOrEmpty(externalUser.email)) {
+					user.email = externalUser.email;
+			}
+		}
 
 		const respositoryExternalResponse = await this._repositoryUser.updateFromExternal(correlationId, user.id, user);
-		return respositoryResponse;
+		return respositoryExternalResponse;
 	}
 
 	async updateSettings(correlationId, requestedSettings) {
