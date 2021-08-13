@@ -70,6 +70,7 @@ class BaseUserService extends Service {
 			if (String.isNullOrEmpty(user.email)) {
 				if (!String.isNullOrEmpty(externalUser.email)) {
 					user.email = externalUser.email;
+				}
 			}
 		}
 
