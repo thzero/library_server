@@ -21,13 +21,14 @@
   },
   "scripts": {
     "cli-update": "./node_modules/.bin/library-cli --updateversion --pi",
+    "cli-update-w": ".\\node_modules\\.bin\\library-cli --updateversion --pi",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@godaddy/terminus": "^4.9.0",
     "@koa/cors": "^3.1.0",
     "@koa/router": "^10.1.1",
-    "async-mutex": "^0.3.1",
+    "async-mutex": "^0.3.2",
     "config": "^3.3.6",
     "dayjs": "^1.10.6",
     "dayjs-plugin-utc": "^0.1.2",
@@ -40,7 +41,7 @@
     "koa-static": "^5.0.0"
   },
   "devDependencies": {
-    "@thzero/library_cli": "^0.13"
+    "@thzero/library_cli": "^0.13.17"
   },
   "peerDependencies": {
     "@thzero/library_common": "^0.13",
