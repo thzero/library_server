@@ -1,10 +1,10 @@
 {
   "name": "@thzero/library_server",
-  "version": "0.13.32",
+  "version": "0.13.33",
   "version_major": 0,
   "version_minor": 13,
-  "version_patch": 32,
-  "version_date": "09/01/2021",
+  "version_patch": 33,
+  "version_date": "09/18/2021",
   "description": "An opinionated library of common functionality to bootstrap a Koa based API application using MongoDb and Firebase.",
   "author": "thZero",
   "license": "MIT",
@@ -30,7 +30,7 @@
     "@koa/router": "^10.1.1",
     "async-mutex": "^0.3.2",
     "config": "^3.3.6",
-    "dayjs": "^1.10.6",
+    "dayjs": "^1.10.7",
     "dayjs-plugin-utc": "^0.1.2",
     "easy-rbac": "^3.1.1",
     "esm": "^3.2.25",
@@ -41,19 +41,19 @@
     "koa-static": "^5.0.0"
   },
   "devDependencies": {
-    "@thzero/library_cli": "^0.13.17"
+    "@thzero/library_cli": "^0.13.18"
   },
   "peerDependencies": {
     "@thzero/library_common": "^0.13",
     "@thzero/library_common_service": "^0.13",
-    "@babel/core": "^7.15.0",
+    "@babel/core": "^7.15.5",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
-    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-env": "^7.15.6",
     "babel-loader": "^8.2.2",
     "eslint": "^7.32.0",
     "eslint-plugin-node": "^11.1.0",
-    "pino-pretty": "^6.0.0",
-    "webpack": "^5.51.1",
+    "pino-pretty": "^7.0.1",
+    "webpack": "^5.53.0",
     "webpack-cli": "^4.8.0"
   }
 }
