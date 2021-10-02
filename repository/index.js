@@ -107,6 +107,14 @@ class Repository {
 		return Response.error(clazz, method, message, err, code, errors, correlationId);
 	}
 
+	_hasFailed(response) {
+		return Response.hasFailed(response);
+	}
+
+	_hasSucceeded(response) {
+		return Response.hasSucceeded(response);
+	}
+
 	_initResponse(correlationId) {
 		return new Response(correlationId);
 	}

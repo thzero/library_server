@@ -1,5 +1,4 @@
 import LibraryConstants from '../constants';
-import LibraryCommonConstants from '@thzero/library_common/constants';
 import LibraryCommonServiceConstants from '@thzero/library_common_service/constants';
 
 import injector from '@thzero/library_common/utility/injector';
@@ -37,7 +36,7 @@ const authentication = (required) => {
 				const service = injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
 				const results = await service.verifyToken(ctx.correlationId, token);
 				logger.debug('middleware', 'authentication', 'results', results, ctx.correlationId);
-				if (this._hasFailed(results)) {
+				if (!results || !results.success) {
 					logger.warn('middleware', 'authentication', 'Unauthenticated... invalid token', null, ctx.correlationId);
 					ctx.throw(401);
 					return;
