@@ -37,7 +37,7 @@ const authentication = (required) => {
 				const service = injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
 				const results = await service.verifyToken(ctx.correlationId, token);
 				logger.debug('middleware', 'authentication', 'results', results, ctx.correlationId);
-				if (!results || !results.success) {
+				if (this._hasFailed(results)) {
 					logger.warn('middleware', 'authentication', 'Unauthenticated... invalid token', null, ctx.correlationId);
 					ctx.throw(401);
 					return;

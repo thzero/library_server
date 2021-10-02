@@ -10,12 +10,12 @@ class BaseAdminService extends Service {
 			return this._error('BaseAdminService', 'create', null, null, null, null, correlationId);
 
 		const validationResponse = this._validateUser(correlationId, user);
-		if (!validationResponse.success)
+		if (this._hasFailed(validationResponse))
 			return validationResponse;
 
 		this._logger.debug('BaseAdminService', 'create', 'requestedValue', requestedValue, correlationId);
 		const validationCheckValueResponse = this._validateCreate(correlationId, requestedValue);
-		if (!validationCheckValueResponse.success)
+		if (this._hasFailed(validationCheckValueResponse))
 			return validationCheckValueResponse;
 
 		const respositoryResponse = await this._repository.create(correlationId, user.id, requestedValue);
@@ -27,7 +27,7 @@ class BaseAdminService extends Service {
 			return this._error('BaseAdminService', 'delete', null, null, null, null, correlationId);
 
 		const validationCheckIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.idSchema, id, null, this._validationCheckKey);
-		if (!validationCheckIdResponse.success)
+		if (this._hasFailed(validationCheckIdResponse))
 			return validationCheckIdResponse;
 
 		const respositoryResponse = await this._repository.delete(correlationId, id);
@@ -36,7 +36,7 @@ class BaseAdminService extends Service {
 
 	async search(correlationId, user, params) {
 		const validationCheckParamsResponse = this._validateSearch(correlationId, params);
-		if (!validationCheckParamsResponse.success)
+		if (this._hasFailed(validationCheckParamsResponse))
 			return validationCheckParamsResponse;
 
 		const respositoryResponse = await this._repository.search(correlationId, params);
@@ -48,25 +48,25 @@ class BaseAdminService extends Service {
 			return this._error('BaseAdminService', 'update', 'requestedValue', null, null, null, correlationId);
 
 		const validationResponse = this._validateUser(correlationId, user);
-		if (!validationResponse.success)
+		if (this._hasFailed(validationResponse))
 			return validationResponse;
 
 		const validationIdResponse = this._validateId(correlationId, id, this._validationCheckKey);
-		if (!validationIdResponse.success)
+		if (this._hasFailed(validationIdResponse))
 			return validationIdResponse;
 
 		this._logger.debug('BaseAdminService', 'update', 'requestedValue', requestedValue, correlationId);
 		const validationCheckValueUpdateResponse = this._validateUpdate(correlationId, requestedValue);
-		if (!validationCheckValueUpdateResponse.success)
+		if (this._hasFailed(validationCheckValueUpdateResponse))
 			return validationCheckValueUpdateResponse;
 
 		let value = this._initializeData();
 		const fetchRespositoryResponse = await this._repository.fetch(correlationId, id);
-		if (fetchRespositoryResponse.success && fetchRespositoryResponse.results)
+		if (this._hasSucceeded(fetchRespositoryResponse) && fetchRespositoryResponse.results)
 			value = Utility.map(this._initializeData(), fetchRespositoryResponse.results, true);
 
 		const validResponse = this._checkUpdatedTimestamp(correlationId, value, requestedValue, 'value');
-		if (!validResponse.success)
+		if (this._hasFailed(validResponse))
 			return validResponse;
 
 		value.map(requestedValue);
