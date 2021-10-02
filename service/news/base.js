@@ -29,7 +29,7 @@ class BaseNewsService extends Service {
 			return validationCheckNewsTiemstampResponse;
 
 		const respositoryResponse = await this._repositoryNews.latest(correlationId, timestamp);
-		if (!respositoryResponse.success)
+		if (this._hasFailed(respositoryResponse))
 			return respositoryResponse;
 
 		let data = respositoryResponse.results.data;

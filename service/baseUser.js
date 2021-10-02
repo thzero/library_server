@@ -5,7 +5,7 @@ import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 class BaseUserService extends Service {
 	async fetch(correlationId, userId) {
 		const validationCheckExternalIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.externalIdSchema, userId);
-		if (!validationCheckExternalIdResponse.success)
+		if (this._hasFailed(validationCheckExternalIdResponse))
 			return validationCheckExternalIdResponse;
 
 		const respositoryResponse = await this._repositoryUser.fetch(correlationId, userId);
@@ -14,7 +14,7 @@ class BaseUserService extends Service {
 
 	async fetchByExternalId(correlationId, externalUserId) {
 		const validationCheckExternalIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.externalIdSchema, externalUserId);
-		if (!validationCheckExternalIdResponse.success)
+		if (this._hasFailed(validationCheckExternalIdResponse))
 			return validationCheckExternalIdResponse;
 
 		const respositoryResponse = await this._repositoryUser.fetchByExternalId(correlationId, externalUserId);
@@ -23,7 +23,7 @@ class BaseUserService extends Service {
 
 	async fetchByGamerId(correlationId, requestedGamerId) {
 		const validationRequestedGamerIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.gamerIdSchema, requestedGamerId);
-		if (!validationRequestedGamerIdResponse.success)
+		if (this._hasFailed(validationRequestedGamerIdResponse))
 			return validationRequestedGamerIdResponse;
 
 		const respositoryResponse = await this._repositoryUser.fetchByGamerId(correlationId, requestedGamerId);
@@ -32,7 +32,7 @@ class BaseUserService extends Service {
 
 	async fetchByGamerTag(correlationId, requestedUserGamerTag) {
 		const validationRequestedGamerTagResponse = this._serviceValidation.check(correlationId, this._serviceValidation.gamerTagSchema, requestedUserGamerTag);
-		if (!validationRequestedGamerTagResponse.success)
+		if (this._hasFailed(validationRequestedGamerTagResponse))
 			return validationRequestedGamerTagResponse;
 
 		const respositoryResponse = await this._repositoryUser.fetchByGamerTag(correlationId, requestedUserGamerTag);
@@ -41,7 +41,7 @@ class BaseUserService extends Service {
 
 	async refreshSettings(correlationId, params) {
 		const validationCheckExternalIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.settingsRefreshSchema, params);
-		if (!validationCheckExternalIdResponse.success)
+		if (this._hasFailed(validationCheckExternalIdResponse))
 			return validationCheckExternalIdResponse;
 
 		const respositoryResponse = await this._repositoryUser.refreshSettings(correlationId, params.userId);
@@ -50,11 +50,11 @@ class BaseUserService extends Service {
 
 	async update(correlationId, externalUser) {
 		const validationCheckExternalUserResponse = this._serviceValidation.check(correlationId, this._serviceValidation.externalUserSchema, externalUser);
-		if (!validationCheckExternalUserResponse.success)
+		if (this._hasFailed(validationCheckExternalUserResponse))
 			return validationCheckExternalUserResponse;
 
 		const respositoryResponse = await this._repositoryUser.fetchByExternalId(correlationId, externalUser.id, true);
-		if (!respositoryResponse)
+		if (this._hasFailed(respositoryResponse))
 			return respositoryResponse;
 
 		let user = respositoryResponse.results;
@@ -80,15 +80,15 @@ class BaseUserService extends Service {
 
 	async updateSettings(correlationId, requestedSettings) {
 		const validationCheckSettingsResponse = this._serviceValidation.check(correlationId, this._serviceValidation.settingRequestSchema(), requestedSettings);
-		if (!validationCheckSettingsResponse.success)
+		if (this._hasFailed(validationCheckSettingsResponse))
 			return validationCheckSettingsResponse;
 
 		const validationSettingsResponse = await this._updateSettingsValidation(correlationId, requestedSettings);
-		if (!validationSettingsResponse.success)
+		if (this._hasFailed(validationSettingsResponse))
 			return validationSettingsResponse;
 
 		const updateSettingsResponse = await this._updateSettings(correlationId, requestedSettings);
-		if (!updateSettingsResponse.success)
+		if (this._hasFailed(updateSettingsResponse))
 			return updateSettingsResponse;
 
 		const respositoryResponse = await this._repositoryUser.updateSettings(correlationId, requestedSettings.userId, requestedSettings.settings);

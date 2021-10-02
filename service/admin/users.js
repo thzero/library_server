@@ -28,15 +28,15 @@ class BaseUsersAdminService extends BaseAdminService {
 			return this._error('BaseUsersAdminService', 'delete', null, null, null, null, correlationId);
 
 		const validationCheckIdResponse = this._serviceValidation.check(correlationId, this._serviceValidation.idSchema, id, null, this._validationCheckKey);
-		if (!validationCheckIdResponse.success)
+		if (this._hasFailed(validationCheckIdResponse))
 			return validationCheckIdResponse;
 
 		const fetchResponse = await this._serviceUser.fetch(correlationId, id);
-		if (!fetchResponse.success)
+		if (this._hasFailed(fetchResponse))
 			return fetchResponse;
 
 		const response = await this._serviceAuth.deleteUser(correlationId, id);
-		if (!response.success)
+		if (this._hasFailed(response))
 			return response;
 
 		const respositoryResponse = await this._repository.delete(correlationId, id);
@@ -45,31 +45,31 @@ class BaseUsersAdminService extends BaseAdminService {
 
 	async update(correlationId, user, id, requestedUser) {
 		const validationResponse = this._validateUser(correlationId, user);
-		if (!validationResponse.success)
+		if (this._hasFailed(validationResponse))
 			return validationResponse;
 
 		const validationIdResponse = this._validateId(correlationId, id, 'adminUsers');
-		if (!validationIdResponse.success)
+		if (this._hasFailed(validationIdResponse))
 			return validationIdResponse;
 
 		this._logger.debug('BaseUsersAdminService', 'update', 'requestedUser', requestedUser, correlationId);
 		const validationCheckUsersUpdateResponse = this._serviceValidation.check(correlationId, this._serviceValidation.userUpdateSchema, requestedUser, null, this._validationCheckKey);
-		if (!validationCheckUsersUpdateResponse.success)
+		if (this._hasFailed(validationCheckUsersUpdateResponse))
 			return validationCheckUsersUpdateResponse;
 
 		let userExisting = this._initializeData();
 		const fetchRespositoryResponse = await this._repository.fetch(correlationId, id);
-		if (fetchRespositoryResponse.success && fetchRespositoryResponse.results)
+		if (this._hasSuceeded(fetchRespositoryResponse) && fetchRespositoryResponse.results)
 			userExisting = Utility.map(this._initializeData(), fetchRespositoryResponse.results, true);
 
 		const validResponse = this._checkUpdatedTimestamp(correlationId, userExisting, requestedUser, 'users');
-		if (!validResponse.success)
+		if (this._hasFailed(validResponse))
 			return validResponse;
 
 		userExisting.map(requestedUser);
 
 		const respositoryResponse = await this._repository.update(correlationId, user.id, userExisting);
-		if (!respositoryResponse.success)
+		if (this._hasFailed(respositoryResponse))
 			return respositoryResponse;
 
 		if (!user.external && !user.external.id)

@@ -124,9 +124,7 @@ class Repository {
 	}
 
 	_successResponse(value, correlationId) {
-		const response = Response.success(correlationId);
-		response.results = value;
-		return response;
+		return Response.success(correlationId, value);
 	}
 
 	_warn(clazz, method, message, err, code, errors, correlationId) {
