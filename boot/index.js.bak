@@ -132,9 +132,7 @@ class BootMain {
 		let obj;
 		const results = [];
 		for (const plugin of args) {
-			obj = plugin;
-			if (!this._isObject(obj))
-				obj = new plugin();
+			obj = new plugin();
 			obj.init(this._appConfig, injector);
 			results.push(obj);
 		}
@@ -353,10 +351,6 @@ class BootMain {
 	}
 
 	_initShutdown() {
-	}
-
-	_isObject(objValue) {
-		return objValue && typeof objValue === 'object';
 	}
 
 	_registerServicesLogger(key, service) {
