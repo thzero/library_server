@@ -1,4 +1,6 @@
-import internalIp from 'internal-ip';
+// import internalIp from 'internal-ip';
+// Until author fixes the issue with version 7+
+import {internalIpV6, internalIpV4} from '@thzero/library_server/utility/internalIp';
 
 import { createTerminus } from '@godaddy/terminus';
 
@@ -105,7 +107,7 @@ class BootMain {
 		await listen(this.port);
 		this.address = serverHttp.address() ? serverHttp.address().address : null;
 		if (this.address === '::')
-			this.address = await internalIp.v4();
+			this.address = await internalIpV4();
 
 		await this._initServer(serverHttp);
 
