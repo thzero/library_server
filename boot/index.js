@@ -1,5 +1,4 @@
-// import internalIp from 'internal-ip';
-// Until author fixes the issue with version 7+
+import http from 'http';
 import {internalIpV6, internalIpV4} from '@thzero/library_server/utility/internalIp';
 
 import { createTerminus } from '@godaddy/terminus';
@@ -13,7 +12,22 @@ import Utility from '@thzero/library_common/utility';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
-require('@thzero/library_common/utility/string');
+// require('@thzero/library_server/utility/string.cjs');
+String.isNullOrEmpty = function(value) {
+	//return !(typeof value === 'string' && value.length > 0)
+	return !value;
+}
+
+String.isString = function(value) {
+	return (typeof value === "string" || value instanceof String);
+}
+
+String.trim = function(value) {
+	if (!value || !String.isString(value))
+		return value;
+	return value.trim();
+}
+
 import injector from '@thzero/library_common/utility/injector';
 
 import usageMetricsRepository from '../repository/usageMetrics/devnull';
@@ -46,7 +60,7 @@ class BootMain {
 		this.loggerServiceI.info2(`process.env.PORT: ${process.env.PORT}`);
 		this.port = process.env.PORT || this.port;
 		this.loggerServiceI.info2(`selected.port: ${this.port}`);
-		const serverHttp = require('http').createServer(app.callback());
+		const serverHttp = http.createServer(app.callback());
 
 		function onSignal() {
 			this.loggerServiceI.info2(`server is starting cleanup`);

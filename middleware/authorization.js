@@ -3,7 +3,21 @@ import LibraryCommonServiceConstants from '@thzero/library_common_service/consta
 
 import injector from '@thzero/library_common/utility/injector';
 
-require('@thzero/library_common/utility/string');
+// require('../utility/string.cjs');
+String.isNullOrEmpty = function(value) {
+	//return !(typeof value === 'string' && value.length > 0)
+	return !value;
+}
+
+String.isString = function(value) {
+	return (typeof value === "string" || value instanceof String);
+}
+
+String.trim = function(value) {
+	if (!value || !String.isString(value))
+		return value;
+	return value.trim();
+}
 
 const logicalAnd = 'and';
 const logicalOr = 'or';

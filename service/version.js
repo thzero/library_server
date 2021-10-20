@@ -1,10 +1,20 @@
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import fs from 'fs';
+import path from 'path';
 
 import Service from './index';
 
 class VersionService extends Service {
 	async version(correlationId) {
-		throw new NotImplementedError();
+		const filePath = path.join(process.cwd(), 'package.json');
+		const file = fs.readFileSync(filePath, 'utf8');
+		if (String.isNullOrEmpty(file))
+			throw Error('Invalid package.json file for versioning; expected in the <app root> folder.');
+
+		const packageObj = JSON.parse(file);
+		if (!packageObj)
+			throw Error('Invalid package.json file for versioning.');
+
+		return this._generate(correlationId, packageObj.version_major, packageObj.version_minor, packageObj.version_patch, packageObj.version_date);
 	}
 
 	_generate(correlationId, version_major, version_minor, version_patch, version_date) {
