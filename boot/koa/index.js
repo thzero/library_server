@@ -8,7 +8,6 @@ import Utility from '@thzero/library_common/utility';
 
 import TokenExpiredError from '../../errors/tokenExpired';
 
-require('@thzero/library_common/utility/string');
 import injector from '@thzero/library_common/utility/injector';
 
 import BootMain from '@thzero/library_server/boot';
