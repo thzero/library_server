@@ -46,8 +46,8 @@
     "@thzero/library_cli": "^0.13.21"
   },
   "peerDependencies": {
-    "@thzero/library_common": "^0.14",
-    "@thzero/library_common_service": "^0.14",
+    "@thzero/library_common": "^0.15",
+    "@thzero/library_common_service": "^0.15",
     "@babel/core": "^7.15.8",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@babel/preset-env": "^7.15.8",
