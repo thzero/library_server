@@ -3,6 +3,8 @@ node_modules
 node_modules2
 /dist
 
+.npmrc
+
 # local env files
 .env.local
 .env.*.local
@@ -24,8 +26,6 @@ firebase-debug.log*
 *.sw?
 
 !.vscode/launch.json
-
-.npmrc
 
 /config/development.json
 /config/productionManual.json
