@@ -47,15 +47,6 @@
   },
   "peerDependencies": {
     "@thzero/library_common": "^0.15",
-    "@thzero/library_common_service": "^0.15",
-    "@babel/core": "^7.16.7",
-    "@babel/plugin-proposal-class-properties": "^7.16.7",
-    "@babel/preset-env": "^7.16.7",
-    "babel-loader": "^8.2.3",
-    "eslint": "^8.5.0",
-    "eslint-plugin-node": "^11.1.0",
-    "pino-pretty": "^7.3.0",
-    "webpack": "^5.65.0",
-    "webpack-cli": "^4.9.1"
+    "@thzero/library_common_service": "^0.15"
   }
 }
