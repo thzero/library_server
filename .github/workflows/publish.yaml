@@ -43,6 +43,9 @@ jobs:
     - name: Update Package Version
       run: |
         npm run cli-update -- --silent
+    - name: Git Safe Directory Workspace
+      run: |
+        git config --global --add safe.directory /github/workspace
     - name: Git Check
       id: git-changes
       if: success()
