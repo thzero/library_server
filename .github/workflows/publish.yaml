@@ -46,11 +46,11 @@ jobs:
     - name: Check for uncommitted changes
       id: git-changes
       if: success()
-      uses: thzero/check-uncommitted-changes-action@v1.0.0
+      uses: thzero/check-uncommitted-changes-action@v1.0.1
     - name: Git Check Output
       run: |
         echo changed? ${{ steps.git-changes.outputs.changed }}
-        echo changed? ${{ steps.git-changes.outputs.changes }}
+        echo changes? ${{ steps.git-changes.outputs.changes }}
     - name: Git Commit Version
       if: steps.git-changes.outputs.changed == 1 && success()
       run: |
@@ -62,11 +62,11 @@ jobs:
     - name: Check for uncommitted changes
       id: git-changes-version
       if: success()
-      uses: thzero/check-uncommitted-changes-action@v1.0.0
+      uses: thzero/check-uncommitted-changes-action@v1.0.1
     - name: Requires Pull Request?
       run: |
         echo changed? ${{ steps.git-changes-version.outputs.changed }}
-        echo changed? ${{ steps.git-changes-version.outputs.changes }}
+        echo changes? ${{ steps.git-changes-version.outputs.changes }}
     - name: Pull Request
       id: pull-request
       if: steps.git-changes-version.outputs.changed == 1 && success()
