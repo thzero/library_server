@@ -75,7 +75,7 @@ jobs:
         echo ${{ steps.pull-request.outputs.pr_url }}
         echo ${{ steps.pull-request.outputs.pr_number }}
     - name: Merge pull request
-      if: steps.check-changes.outputs.outcome == success()e && steps.pull-request.outputs.pr_number > 0 && success()
+      if: steps.check-changes.outputs.outcome == success() && steps.pull-request.outputs.pr_number > 0 && success()
       uses: sudo-bot/action-pull-request-merge@v1.1.1
       with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
