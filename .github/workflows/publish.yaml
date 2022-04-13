@@ -49,6 +49,7 @@ jobs:
       uses: mskri/check-uncommitted-changes-action@v1.0.1
     - name: Git Check Output
       run: |
+        echo changed? ${{ steps.check-changes.outputs }}
         echo changed? ${{ steps.check-changes.outputs.outcome }}
     - name: Git Commit Version
       if: steps.check-changes.outputs.outcome == success() && success()
@@ -60,6 +61,7 @@ jobs:
         git push
     - name: Requires Pull Request?
       run: |
+        echo changed? ${{ steps.check-changes.outputs }}
         echo changed? ${{ steps.check-changes.outputs.outcome }}
     - name: Pull Request
       id: pull-request
