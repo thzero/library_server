@@ -44,43 +44,47 @@ jobs:
       run: |
         npm run cli-update -- --silent
     - name: Check for uncommitted changes
-      id: check-changes
+      id: git-changes
       if: success()
-      uses: mskri/check-uncommitted-changes-action@v1.0.1
+      uses: thzero/check-uncommitted-changes-action@v1.0.0
     - name: Git Check Output
       run: |
-        echo changed? ${{ steps.check-changes.outputs.outcome }}
+        echo changed? ${{ steps.git-changes.outputs.changed }}
     - name: Git Commit Version
-      if: steps.check-changes.outputs.outcome == '' && success()
+      if: steps.git-changes.outputs.changed == 1 && success()
       run: |
         git config --global user.name '${{ github.repository_owner }}'
         git config --global user.email '${{ github.repository_owner }}@users.noreply.github.com'
         git add .
         git commit -m '${{ github.event.inputs.label }}'
         git push
+    - name: Check for uncommitted changes
+      id: git-changes
+      if: success()
+      uses: thzero/check-uncommitted-changes-action@v1.0.0
     - name: Requires Pull Request?
       run: |
-        echo changed? ${{ steps.check-changes.outputs.outcome }}
+        echo changed? ${{ steps.git-changes.outputs.changed }}
     - name: Pull Request
       id: pull-request
-      if: steps.check-changes.outputs.outcome == '' && success()
+      if: steps.git-changes.outputs.changed == 1 && success()
       uses: repo-sync/pull-request@v2
       with:
         source_branch: dev
         destination_branch: master
         github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Pull Request Output
-      if: steps.check-changes.outputs.outcome == '' && success()
+      if: steps.git-changes.outputs.changed == 1 && success()
       run: |
         echo ${{ steps.pull-request.outputs.pr_url }}
         echo ${{ steps.pull-request.outputs.pr_number }}
     - name: Merge pull request
-      if: steps.check-changes.outputs.outcome == '' && steps.pull-request.outputs.pr_number > 0 && success()
+      if: steps.git-changes.outputs.changed == 1 && steps.pull-request.outputs.pr_number > 0 && success()
       uses: sudo-bot/action-pull-request-merge@v1.1.1
       with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ steps.pull-request.outputs.pr_number }}
     - run: npm publish --access public
-      if: steps.check-changes.outputs.outcome == '' && success()
+      if: steps.git-changes.outputs.changed == 1 && success()
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
