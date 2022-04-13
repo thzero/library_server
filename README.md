@@ -14,7 +14,7 @@ An opinionated library of common functionality to bootstrap a Koa based API appl
 
 #### Mongo
 
-Mongo is required as the server side data source.
+Mongo is the only currently supposed option as the server side data source.
 
 * Install the MongoDb (either locally or in the cloud) server
   * Recommendation is MongoDb Atlas (https://www.mongodb.com/cloud/atlas) for development/sandbox
