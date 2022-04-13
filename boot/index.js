@@ -12,6 +12,8 @@ import Utility from '@thzero/library_common/utility';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
+import nullMonitoringService from '../service/monitoring';
+
 // require('@thzero/library_server/utility/string.cjs');
 String.isNullOrEmpty = function(value) {
 	//return !(typeof value === 'string' && value.length > 0)
@@ -176,8 +178,9 @@ class BootMain {
 			this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
 
 			const monitoringService = this._initServicesMonitoring();
-			if (monitoringService)
-				this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_MONITORING, monitoringService);
+			if (!monitoringService)
+				monitoringService = nullMonitoringService();	
+			this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_MONITORING, monitoringService);
 
 			this.usageMetricsServiceI = this._initServicesUsageMetrics();
 			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
