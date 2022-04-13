@@ -32,7 +32,7 @@ jobs:
     - name: Node Dependencies
       run: |
         npm install --no-package-lock
-    - name: Package Info
+    - name: Update Package Version
       run: |
         cat package.json
     - name: Initialize Node.js ${{ matrix.node-version }}
@@ -43,6 +43,9 @@ jobs:
     - name: Update Package Version
       run: |
         npm run cli-update -- --silent
+    - name: Git Safe Directory Workspace
+      run: |
+        git config --global --add safe.directory /github/workspace
     - name: Git Check
       id: git-changes
       if: success()
