@@ -179,7 +179,7 @@ class BootMain {
 
 			const monitoringService = this._initServicesMonitoring();
 			if (!monitoringService)
-				monitoringService = nullMonitoringService();	
+				monitoringService = new nullMonitoringService();	
 			this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_MONITORING, monitoringService);
 
 			this.usageMetricsServiceI = this._initServicesUsageMetrics();
