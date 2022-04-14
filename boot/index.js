@@ -177,7 +177,7 @@ class BootMain {
 			this._initServicesLoggers();
 			this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
 
-			const monitoringService = this._initServicesMonitoring();
+			let monitoringService = this._initServicesMonitoring();
 			if (!monitoringService)
 				monitoringService = new nullMonitoringService();	
 			this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_MONITORING, monitoringService);
