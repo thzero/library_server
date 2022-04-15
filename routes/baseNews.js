@@ -7,8 +7,12 @@ import BaseRoute from './index';
 import authentication from '../middleware/authentication';
 
 class BaseNewsRoute extends BaseRoute {
-	constructor(prefix) {
-		super(prefix ? prefix : '/api/news');
+	constructor(prefix, version) {
+		super(prefix ? prefix : '/news');
+	}
+
+	get id() {
+		return 'news';
 	}
 
 	_initializeRoutes(router) {

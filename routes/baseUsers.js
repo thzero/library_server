@@ -10,8 +10,12 @@ import authentication from '../middleware/authentication';
 import authorization from '../middleware/authorization';
 
 class BaseUsersRoute extends BaseRoute {
-	constructor(prefix) {
-		super(prefix ? prefix : '/api/users');
+	constructor(prefix, version) {
+		super(prefix ? prefix : '/users');
+	}
+
+	get id() {
+		return 'users';
 	}
 
 	_initializeRoutes(router) {

@@ -9,6 +9,14 @@ class NewsAdminRoute extends AdminRoute {
 		serviceKey = serviceKey ? serviceKey : LibraryConstants.InjectorKeys.SERVICE_ADMIN_NEWS;
 		super(urlFragment, role, serviceKey);
 	}
+
+	get id() {
+		return 'admin-news';
+	}
+
+	get _version() {
+		return 'v1';
+	}
 }
 
 export default NewsAdminRoute;

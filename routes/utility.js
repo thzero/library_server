@@ -11,7 +11,11 @@ import authentication from '../middleware/authentication';
 
 class UtilityRoute extends BaseRoute {
 	constructor(prefix) {
-		super(prefix ? prefix : '/api/utility');
+		super(prefix ? prefix : '');
+	}
+
+	get id() {
+		return 'utility';
 	}
 
 	_initializeRoutes(router) {
@@ -28,6 +32,10 @@ class UtilityRoute extends BaseRoute {
 				ctx.body = Utility.stringify(response);
 			}
 		);
+	}
+
+	get _version() {
+		return 'v1';
 	}
 }
 

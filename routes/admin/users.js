@@ -10,8 +10,16 @@ class UsersAdminRoute extends AdminRoute {
 		super(urlFragment, role, serviceKey);
 	}
 
+	get id() {
+		return 'admin-users';
+	}
+
 	_allowsCreate() {
 		return false;
+	}
+
+	get _version() {
+		return 'v1';
 	}
 }
 

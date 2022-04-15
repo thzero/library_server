@@ -2,7 +2,11 @@ import BaseRoute from './index';
 
 class HomeRoute extends BaseRoute {
 	constructor(prefix) {
-		super(prefix ? prefix : '/api');
+		super(prefix ? prefix : '');
+	}
+
+	get id() {
+		return 'home';
 	}
 
 	_initializeRoutes(router) {
@@ -10,6 +14,10 @@ class HomeRoute extends BaseRoute {
 		router.get('/', (ctx, next) => {
 			ctx.status = 404;
 		});
+	}
+
+	get _version() {
+		return 'v1';
 	}
 }
 
