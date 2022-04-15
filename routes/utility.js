@@ -11,7 +11,7 @@ import authentication from '../middleware/authentication';
 
 class UtilityRoute extends BaseRoute {
 	constructor(prefix) {
-		super(prefix ? prefix : '');
+		super(prefix ? prefix : '/utility');
 	}
 
 	get id() {

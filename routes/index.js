@@ -28,6 +28,8 @@ class BaseRoute {
 
 		const api = config.get('api', { });
 		let prefix = api.prefix !== null && api.prefix !== undefined ? api.prefix : 'api';
+		if (!String.isNullOrEmpty(prefix) && (prefix !== '/'))
+			prefix = '/' + prefix;
 		
 		let version = !String.isNullOrEmpty(api.version) ? api.version : null;
 		if (!String.isNullOrEmpty(this._version))
