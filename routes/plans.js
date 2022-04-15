@@ -6,11 +6,15 @@ import BaseRoute from './index';
 
 class PlansRoute extends BaseRoute {
 	constructor(prefix) {
-		super(prefix ? prefix : '/api');
+		super(prefix ? prefix : '/plans');
+	}
+
+	get id() {
+		return 'plans';
 	}
 
 	_initializeRoutes(router) {
-		router.get('/plans',
+		router.get('/',
 			// eslint-disable-next-line
 			async (ctx, next) => {
 				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_PLANS);
@@ -18,6 +22,10 @@ class PlansRoute extends BaseRoute {
 				ctx.body = Utility.stringify(response);
 			}
 		);
+	}
+
+	get _version() {
+		return 'v1';
 	}
 }
 

@@ -12,7 +12,7 @@ class AdminBaseRoute extends BaseRoute {
 		if (!urlFragment)
 			throw Error('Invalid url fragment');
 
-		super(`/api/admin/${urlFragment}`);
+		super(`/admin/${urlFragment}`);
 
 		this._options = {
 			role: role,

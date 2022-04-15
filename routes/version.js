@@ -6,7 +6,11 @@ import BaseRoute from './index';
 
 class VersionRoute extends BaseRoute {
 	constructor(prefix) {
-		super(prefix ? prefix : '/api');
+		super(prefix ? prefix : '');
+	}
+
+	get id() {
+		return 'version';
 	}
 
 	_initializeRoutes(router) {
@@ -18,6 +22,10 @@ class VersionRoute extends BaseRoute {
 				ctx.body = Utility.stringify(response);
 			}
 		);
+	}
+
+	get _version() {
+		return 'v1';
 	}
 }
 

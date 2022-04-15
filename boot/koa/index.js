@@ -132,14 +132,21 @@ class KoaBootMain extends BootMain {
 			await pluginRoute.initRoutes(this._routes);
 
 		await this._initRoutes();
+				
+		console.log();
 
 		for (const route of this._routes) {
-			await route.init(injector)
+			await route.init(injector, this._appConfig);
 			app
 				.use(route.router.routes())
 				.use(route.router.allowedMethods());
-			console.log(route.router.stack.map(i => i.path));
-			console.log(route.router.stack.map(i => i.methods));
+
+			console.log([ route.id ]);
+
+			for (let i = 0; i < route.router.stack.length; i++)
+				console.log([ route.router.stack[i].path, route.router.stack[i].methods ]);
+
+			console.log();
 		}
 
 		return app;
