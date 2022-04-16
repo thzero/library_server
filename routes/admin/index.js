@@ -44,7 +44,7 @@ class AdminBaseRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(self._options.serviceKey);
 				const response = (await service.create(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}
@@ -58,7 +58,7 @@ class AdminBaseRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(self._options.serviceKey);
 				const response = (await service.delete(ctx.correlationId, ctx.state.user, ctx.params.id)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}
@@ -75,7 +75,7 @@ class AdminBaseRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(self._options.serviceKey);
 				const response = (await service.update(ctx.correlationId, ctx.state.user, ctx.params.id, ctx.request.body)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}
@@ -94,7 +94,7 @@ class AdminBaseRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(this._options.serviceKey);
 				const response = (await service.search(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 

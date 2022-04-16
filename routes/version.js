@@ -19,7 +19,7 @@ class VersionRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VERSION);
 				const response = (await service.version(ctx.correlationId)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}
