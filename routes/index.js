@@ -57,6 +57,14 @@ class BaseRoute {
 		return this._router;
 	}
 
+	_jsonResponse(ctx, json) {
+		if (!ctx)
+			throw Error('Invalid context for response.');
+			
+		ctx.type = 'application/json; charset=utf-8';
+		ctx.body = json;
+	}
+
 	_initializeRoutes(router) {
 	}
 
