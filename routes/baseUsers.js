@@ -78,8 +78,8 @@ class BaseUsersRoute extends BaseRoute {
 			// eslint-disable-next-line
 			async (ctx, next) => {
 				// const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
-				const response = (await service.refreshSettings(ctx.correlationId, ctx.request.body)).check(ctx);
-				// const response = (await ctx.router.serviceUsers.refreshSettings(ctx.correlationId, ctx.request.body)).check(ctx);
+				// const response = (await service.refreshSettings(ctx.correlationId, ctx.request.body)).check(ctx);
+				const response = (await ctx.router.serviceUsers.refreshSettings(ctx.correlationId, ctx.request.body)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
