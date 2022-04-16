@@ -7,6 +7,14 @@ import BaseRoute from './index';
 class PlansRoute extends BaseRoute {
 	constructor(prefix) {
 		super(prefix ? prefix : '/plans');
+
+		// this._servicePlans = null;
+	}
+
+	async init(injector, config) {
+		const router = await super.init(injector, config);
+		router.servicePlans = injector.getService(LibraryConstants.InjectorKeys.SERVICE_PLANS);
+		// this._servicePlans = injector.getService(LibraryConstants.InjectorKeys.SERVICE_PLANS);
 	}
 
 	get id() {
@@ -17,8 +25,7 @@ class PlansRoute extends BaseRoute {
 		router.get('/',
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_PLANS);
-				const response = (await service.listing(ctx.correlationId)).check(ctx);
+				const response = (await router.servicePlans.listing(ctx.correlationId)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
