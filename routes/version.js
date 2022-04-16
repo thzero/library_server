@@ -25,6 +25,8 @@ class VersionRoute extends BaseRoute {
 		router.get('/version',
 			// eslint-disable-next-line
 			async (ctx, next) => {
+				// const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VERSION);
+				// const response = (await service.version(ctx.correlationId)).check(ctx);
 				const response = (await ctx.router.serviceVersion.version(ctx.correlationId)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}

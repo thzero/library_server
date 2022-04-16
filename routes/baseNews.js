@@ -28,6 +28,8 @@ class BaseNewsRoute extends BaseRoute {
 			authentication(false),
 			// eslint-disable-next-line
 			async (ctx, next) => {
+				// const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_NEWS);
+				// const response = (await service.latest(ctx.correlationId, ctx.state.user, parseInt(ctx.params.date))).check(ctx);
 				const response = (await ctx.router.serviceNews.latest(ctx.correlationId, ctx.state.user, parseInt(ctx.params.date))).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
