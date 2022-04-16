@@ -25,7 +25,9 @@ class PlansRoute extends BaseRoute {
 		router.get('/',
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const response = (await router.servicePlans.listing(ctx.correlationId)).check(ctx);
+				// const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_PLANS);
+				// const response = (await service.servicePlans.listing(ctx.correlationId)).check(ctx);
+				const response = (await ctx.router.servicePlans.listing(ctx.correlationId)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);

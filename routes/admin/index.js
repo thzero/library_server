@@ -50,7 +50,9 @@ class AdminBaseRoute extends BaseRoute {
 			}),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const response = (await router.service.create(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
+				// const service = this._injector.getService(this._options.serviceKey);
+				// const response = (await router.service.create(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
+				const response = (await ctx.router.service.create(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
@@ -63,7 +65,9 @@ class AdminBaseRoute extends BaseRoute {
 			authorization([ `${self._options.role}.delete` ]),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const response = (await router.service.delete(ctx.correlationId, ctx.state.user, ctx.params.id)).check(ctx);
+				// const service = this._injector.getService(this._options.serviceKey);
+				// const response = (await service.delete(ctx.correlationId, ctx.state.user, ctx.params.id)).check(ctx);
+				const response = (await ctx.router.service.delete(ctx.correlationId, ctx.state.user, ctx.params.id)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
@@ -79,7 +83,9 @@ class AdminBaseRoute extends BaseRoute {
 			}),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const response = (await router.service.update(ctx.correlationId, ctx.state.user, ctx.params.id, ctx.request.body)).check(ctx);
+				// const service = this._injector.getService(this._options.serviceKey);
+				// const response = (await service.update(ctx.correlationId, ctx.state.user, ctx.params.id, ctx.request.body)).check(ctx);
+				const response = (await ctx.router.service.update(ctx.correlationId, ctx.state.user, ctx.params.id, ctx.request.body)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
@@ -97,9 +103,10 @@ class AdminBaseRoute extends BaseRoute {
 			}),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const service = this._injector.getService(this._options.serviceKey);
-				const response = (await service.search(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
-				this._jsonResponse(ctx, Utility.stringify(response));
+				// const service = this._injector.getService(this._options.serviceKey);
+				// const response = (await service.search(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
+				const response = (await ctx.router.service.update(ctx.correlationId, ctx.state.user, ctx.params.id, ctx.request.body)).check(ctx);
+				tthis._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 
