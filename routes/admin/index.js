@@ -106,7 +106,7 @@ class AdminBaseRoute extends BaseRoute {
 				// const service = this._injector.getService(this._options.serviceKey);
 				// const response = (await service.search(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
 				const response = (await ctx.router.service.search(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
-				tthis._jsonResponse(ctx, Utility.stringify(response));
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 
