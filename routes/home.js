@@ -16,8 +16,12 @@ class HomeRoute extends BaseRoute {
 		});
 	}
 
+	get _ignoreApi() {
+		return true;
+	}
+
 	get _version() {
-		return 'v1';
+		return '';
 	}
 }
 

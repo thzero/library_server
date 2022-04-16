@@ -27,12 +27,15 @@ class BaseRoute {
 		this._injector = injector;
 
 		const api = config.get('api', { });
-		let prefix = api.prefix !== null && api.prefix !== undefined ? api.prefix : 'api';
-		if (!String.isNullOrEmpty(prefix) && (prefix !== '/'))
-			prefix = '/' + prefix;
+		let prefix = '';
+		if (!this._ignoreApi) {
+			prefix = api.prefix !== null && api.prefix !== undefined ? api.prefix : 'api';
+			if (!String.isNullOrEmpty(prefix) && (prefix !== '/'))
+				prefix = '/' + prefix;
+		}
 		
 		let version = !String.isNullOrEmpty(api.version) ? api.version : null;
-		if (!String.isNullOrEmpty(this._version))
+		if (this._version !== null && this._version !== undefined)
 			version = this._version;
 		if (!String.isNullOrEmpty(this.id) && api.apis && Array.isArray(api.apis))
 			version = api.apis[this.id];
@@ -55,6 +58,10 @@ class BaseRoute {
 	}
 
 	_initializeRoutes(router) {
+	}
+
+	get _ignoreApi() {
+		return false;
 	}
 
 	get _version() {
