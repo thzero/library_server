@@ -19,7 +19,7 @@ class PlansRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_PLANS);
 				const response = (await service.listing(ctx.correlationId)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}

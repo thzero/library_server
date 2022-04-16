@@ -37,7 +37,7 @@ class BaseUsersRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
 				const response = (await service.fetchByGamerId(ctx.correlationId, ctx.params.gamerId)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}
@@ -53,7 +53,7 @@ class BaseUsersRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
 				const response = (await service.fetchByGamerTag(ctx.correlationId, ctx.params.gamerTag)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}
@@ -69,7 +69,7 @@ class BaseUsersRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
 				const response = (await service.refreshSettings(ctx.correlationId, ctx.request.body)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}
@@ -85,7 +85,7 @@ class BaseUsersRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
 				const response = (await service.update(ctx.correlationId, ctx.request.body)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}
@@ -101,7 +101,7 @@ class BaseUsersRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
 				const response = (await service.updateSettings(ctx.correlationId, ctx.request.body)).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}

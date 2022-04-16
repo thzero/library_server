@@ -22,7 +22,7 @@ class BaseNewsRoute extends BaseRoute {
 			async (ctx, next) => {
 				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_NEWS);
 				const response = (await service.latest(ctx.correlationId, ctx.state.user, parseInt(ctx.params.date))).check(ctx);
-				ctx.body = Utility.stringify(response);
+				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
 	}
