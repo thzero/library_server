@@ -12,6 +12,14 @@ import authorization from '../middleware/authorization';
 class BaseUsersRoute extends BaseRoute {
 	constructor(prefix, version) {
 		super(prefix ? prefix : '/users');
+
+		// this._serviceUsers = null;
+	}
+
+	async init(injector, config) {
+		const router = await super.init(injector, config);
+		router.serviceUsers = injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
+		// this._serviceUsers = injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
 	}
 
 	get id() {
@@ -35,8 +43,7 @@ class BaseUsersRoute extends BaseRoute {
 			}),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
-				const response = (await service.fetchByGamerId(ctx.correlationId, ctx.params.gamerId)).check(ctx);
+				const response = (await ctx.router.serviceUsers.fetchByGamerId(ctx.correlationId, ctx.params.gamerId)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
@@ -51,8 +58,7 @@ class BaseUsersRoute extends BaseRoute {
 			}),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
-				const response = (await service.fetchByGamerTag(ctx.correlationId, ctx.params.gamerTag)).check(ctx);
+				const response = (await ctx.router.serviceUsers.fetchByGamerTag(ctx.correlationId, ctx.params.gamerTag)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
@@ -67,8 +73,7 @@ class BaseUsersRoute extends BaseRoute {
 			}),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
-				const response = (await service.refreshSettings(ctx.correlationId, ctx.request.body)).check(ctx);
+				const response = (await ctx.router.serviceUsers.refreshSettings(ctx.correlationId, ctx.request.body)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
@@ -83,8 +88,7 @@ class BaseUsersRoute extends BaseRoute {
 			}),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
-				const response = (await service.update(ctx.correlationId, ctx.request.body)).check(ctx);
+				const response = (await ctx.router.serviceUsers.update(ctx.correlationId, ctx.request.body)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
@@ -99,8 +103,7 @@ class BaseUsersRoute extends BaseRoute {
 			}),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_USERS);
-				const response = (await service.updateSettings(ctx.correlationId, ctx.request.body)).check(ctx);
+				const response = (await ctx.router.serviceUsers.updateSettings(ctx.correlationId, ctx.request.body)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);

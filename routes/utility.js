@@ -12,6 +12,14 @@ import authentication from '../middleware/authentication';
 class UtilityRoute extends BaseRoute {
 	constructor(prefix) {
 		super(prefix ? prefix : '/utility');
+
+		// this._serviceUtility = null;
+	}
+
+	async init(injector, config) {
+		const router = await super.init(injector, config);
+		router.serviceUtility = injector.getService(LibraryConstants.InjectorKeys.SERVICE_UTILITY);
+		// this._serviceUtility = injector.getService(LibraryConstants.InjectorKeys.SERVICE_UTILITY);
 	}
 
 	get id() {
@@ -27,8 +35,7 @@ class UtilityRoute extends BaseRoute {
 				text: false,
 			}),
 			async (ctx, next) => {
-				const service = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_UTILITY);
-				const response = (await service.logger(ctx.correlationId, ctx.request.body)).check(ctx);
+				const response = (await ctx.router.serviceUtility.logger(ctx.correlationId, ctx.request.body)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);

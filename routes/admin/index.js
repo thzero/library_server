@@ -18,6 +18,14 @@ class AdminBaseRoute extends BaseRoute {
 			role: role,
 			serviceKey: serviceKey
 		}
+
+		// this._service = null;
+	}
+
+	async init(injector, config) {
+		const router = await super.init(injector, config);
+		router.service = injector.getService(this._options.serviceKey);
+		// this._service = injector.getService(this._options.serviceKey);
 	}
 
 	_allowsCreate() {
@@ -42,8 +50,7 @@ class AdminBaseRoute extends BaseRoute {
 			}),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const service = this._injector.getService(self._options.serviceKey);
-				const response = (await service.create(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
+				const response = (await router.service.create(ctx.correlationId, ctx.state.user, ctx.request.body)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
@@ -56,8 +63,7 @@ class AdminBaseRoute extends BaseRoute {
 			authorization([ `${self._options.role}.delete` ]),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const service = this._injector.getService(self._options.serviceKey);
-				const response = (await service.delete(ctx.correlationId, ctx.state.user, ctx.params.id)).check(ctx);
+				const response = (await router.service.delete(ctx.correlationId, ctx.state.user, ctx.params.id)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
@@ -73,8 +79,7 @@ class AdminBaseRoute extends BaseRoute {
 			}),
 			// eslint-disable-next-line
 			async (ctx, next) => {
-				const service = this._injector.getService(self._options.serviceKey);
-				const response = (await service.update(ctx.correlationId, ctx.state.user, ctx.params.id, ctx.request.body)).check(ctx);
+				const response = (await router.service.update(ctx.correlationId, ctx.state.user, ctx.params.id, ctx.request.body)).check(ctx);
 				this._jsonResponse(ctx, Utility.stringify(response));
 			}
 		);
