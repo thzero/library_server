@@ -23,7 +23,7 @@ class ExtendedUsersApiBootPlugin extends UsersApiBootPlugin {
 	}
 
 	_initServicesPlans() {
-		throw NotImplementedError();
+		throw new NotImplementedError();
 	}
 }
 
