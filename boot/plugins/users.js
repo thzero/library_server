@@ -31,7 +31,7 @@ class UsersApiBootPlugin extends BootPlugin {
 	}
 
 	_initRoutesUsers() {
-		throw NotImplementedError();
+		throw new NotImplementedError();
 	}
 
 	_initServicesAuth() {
