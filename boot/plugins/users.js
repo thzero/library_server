@@ -4,8 +4,6 @@ import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 import BootPlugin from './index';
 
-import usersRoute from '../../routes/users';
-
 class UsersApiBootPlugin extends BootPlugin {
 	async _initRoutes() {
 		await super._initRoutes();
@@ -33,7 +31,7 @@ class UsersApiBootPlugin extends BootPlugin {
 	}
 
 	_initRoutesUsers() {
-		return new usersRoute();
+		throw NotImplementedError();
 	}
 
 	_initServicesAuth() {

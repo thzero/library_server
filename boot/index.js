@@ -1,4 +1,3 @@
-import http from 'http';
 import {internalIpV6, internalIpV4} from '@thzero/library_server/utility/internalIp';
 
 import { createTerminus } from '@godaddy/terminus';
@@ -54,15 +53,14 @@ class BootMain {
 
 		const plugins = this._determinePlugins(args);
 		await await this._initPlugins(plugins);
-
-		const app = await this._initApp(args, plugins);
-
+		
 		this.port = this._appConfig.get('port');
 		this.loggerServiceI.info2(`config.port: ${this.port}`);
 		this.loggerServiceI.info2(`process.env.PORT: ${process.env.PORT}`);
 		this.port = process.env.PORT || this.port;
 		this.loggerServiceI.info2(`selected.port: ${this.port}`);
-		const serverHttp = http.createServer(app.callback());
+
+		const results = await this._initApp(args, plugins);
 
 		function onSignal() {
 			this.loggerServiceI.info2(`server is starting cleanup`);
@@ -108,10 +106,11 @@ class BootMain {
 			onShutdown: onShutdown.bind(this) // [optional] called right before exiting
 		};
 
-		createTerminus(serverHttp, terminusOptions);
+		createTerminus(results.server, terminusOptions);
 
+		const self = this;
 		const listen = async (port) => new Promise((resolve, reject) => {
-			serverHttp.listen(port, (err) => {
+			self._initAppListen(results.app, results.server, port, (err) => {
 				if (err) {
 					reject(err);
 					return;
@@ -121,25 +120,29 @@ class BootMain {
 			});
 		});
 		await listen(this.port);
-		this.address = serverHttp.address() ? serverHttp.address().address : null;
+		this.address = results.server.address() ? results.server.address().address : null;
 		if (this.address === '::')
 			this.address = await internalIpV4();
 
-		await this._initServer(serverHttp);
+		await this._initServer(results.server);
 
 		for (const [key, value] of this._servicesPost) {
 			console.log(`services.init.post - ${key}`);
 			if (value.initPost)
 				await value.initPost();
 		}
-		this._initAppPost(app, args);
+		this._initAppPost(results.app, args);
 
-		await this._initServerDiscovery(serverHttp);
+		await this._initServerDiscovery(results.server);
 
 		this.loggerServiceI.info2(`Starting HTTP on: `, this.address);
 	}
 
 	async _initApp(args, plugins) {
+		throw new NotImplementedError();
+	}
+
+	_initAppListen(app, server, port, err) {
 		throw new NotImplementedError();
 	}
 

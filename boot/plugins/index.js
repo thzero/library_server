@@ -2,7 +2,6 @@ class BootPlugin {
 	async init(config, injector) {
 		this._config = config;
 		this._injector = injector;
-
 	}
 
 	async initRoutes(routes) {

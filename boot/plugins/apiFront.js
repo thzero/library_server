@@ -1,8 +1,8 @@
 import LibraryConstants from '../../constants';
 
-import ApiBootPlugin from './api';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
-import utilityRoute from '../../routes/utility';
+import ApiBootPlugin from './api';
 
 import utilityService from '../../service/utility';
 
@@ -20,7 +20,7 @@ class FrontApiBootPlugin extends ApiBootPlugin {
 	}
 
 	_initRoutesUtility() {
-		return new utilityRoute();
+		throw NotImplementedError();
 	}
 
 	_initServicesUtility() {
