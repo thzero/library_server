@@ -4,8 +4,6 @@ import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 import UsersApiBootPlugin from './users';
 
-import plansService from '../../service/plans';
-
 class ExtendedUsersApiBootPlugin extends UsersApiBootPlugin {
 	async _initRepositories() {
 		await super._initRepositories();
@@ -25,7 +23,7 @@ class ExtendedUsersApiBootPlugin extends UsersApiBootPlugin {
 	}
 
 	_initServicesPlans() {
-		return new plansService();
+		throw NotImplementedError();
 	}
 }
 

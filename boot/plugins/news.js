@@ -4,8 +4,6 @@ import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 import BootPlugin from './index';
 
-import newsRoute from '../../routes/news';
-
 class NewsApiBootPlugin extends BootPlugin {
 	async _initRoutes() {
 		await super._initRoutes();
@@ -31,7 +29,7 @@ class NewsApiBootPlugin extends BootPlugin {
 	}
 
 	_initRoutesNews() {
-		return new newsRoute();
+		throw NotImplementedError();
 	}
 
 	_initServicesNews() {

@@ -17,12 +17,12 @@ class UsageMetricsService extends Service {
 		this._repositoryUsageMetricsI = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC);
 	}
 
-	async register(context, err) {
+	async register(usageMetrics, err) {
 		try {
-			if (!context)
+			if (!usageMetrics)
 				return;
 
-			const url = context.request.path;
+			const url = usageMetrics.url;
 			if (!String.isNullOrEmpty(url)) {
 				for (const ignore of this._ignore) {
 					if (url === ignore)
@@ -30,16 +30,6 @@ class UsageMetricsService extends Service {
 				}
 			}
 
-			const usageMetrics = {};
-			usageMetrics.correlationId = context.correlationId;
-			usageMetrics.href = context.request.href;
-			usageMetrics.headers = context.request.headers;
-			usageMetrics.host = context.request.host;
-			usageMetrics.hostname = context.request.hostname;
-			usageMetrics.querystring = context.request.querystring;
-			usageMetrics.type = context.request.type;
-			usageMetrics.token = context.request.token;
-			usageMetrics.err = err;
 			await this._repositoryUsageMetrics.register(usageMetrics);
 			return this._success(usageMetrics.correlationId);
 		}

@@ -1,10 +1,9 @@
-import koaRouter from '@koa/router';
-
 class BaseRoute {
 	constructor(prefix) {
 		if (prefix === null || prefix === undefined)
 			throw Error('Invalid prefix');
 
+		this.app = null;
 		this._prefix = prefix;
 	}
 
@@ -16,14 +15,15 @@ class BaseRoute {
 		return this._router;
 	}
 
-	async init(injector, config) {
+	async init(injector, app, config) {
 		if (!injector)
 			throw Error('Invalid injector for route.');
 		if (!config)
-			throw Error('Invalid injector for route.');
+			throw Error('Invalid config for route.');
 		if (this._prefix === null || this._prefix === undefined)
 			throw Error('Invalid prefix for route.');
 
+		this.app = app;
 		this._injector = injector;
 
 		const api = config.get('api', { });
@@ -48,21 +48,17 @@ class BaseRoute {
 
 		this._prefix = prefix + this._prefix;
 
-		this._router = new koaRouter({
-			prefix: this._prefix
-		});
+		this._router = this._initializeRouter(app, config);
+		if (this._router === null || this._router === undefined)
+			throw Error('Invalid router.');
 
 		this._initializeRoutes(this._router);
 
 		return this._router;
 	}
 
-	_jsonResponse(ctx, json) {
-		if (!ctx)
-			throw Error('Invalid context for response.');
-			
-		ctx.type = 'application/json; charset=utf-8';
-		ctx.body = json;
+	_initializeRouter(app, config) {
+		return null;
 	}
 
 	_initializeRoutes(router) {

@@ -1,10 +1,9 @@
 import LibraryConstants from '../../constants';
 import LibraryCommonServiceConstants from '@thzero/library_common_service/constants';
 
-import BootPlugin from './index';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
-import homeRoute from '../../routes/home';
-import versionRoute from '../../routes/version';
+import BootPlugin from './index';
 
 import cryptoService from '../../service/crypto';
 import versionService from '../../service/version';
@@ -31,11 +30,11 @@ class ApiBootPlugin extends BootPlugin {
 	}
 
 	_initRoutesHome() {
-		return new homeRoute();
+		throw NotImplementedError();
 	}
 
 	_initRoutesVersion() {
-		return new versionRoute();
+		throw NotImplementedError();
 	}
 
 	_initServicesCrypto() {
