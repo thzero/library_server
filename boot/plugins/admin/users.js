@@ -4,8 +4,6 @@ import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 import AdminBootPlugin from './index';
 
-import adminUsersRoute from '../../../routes/admin/users'
-
 class UsersAdminBootPlugin extends AdminBootPlugin {
 	async _initRoutes() {
 		this._initRoute(this._initRoutesAdminUsers());
@@ -24,7 +22,7 @@ class UsersAdminBootPlugin extends AdminBootPlugin {
 	}
 
 	_initRoutesAdminUsers() {
-		return new adminUsersRoute();
+		throw new NotImplementedError();
 	}
 
 	_initServicesAdminUsers() {

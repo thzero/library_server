@@ -30,11 +30,11 @@ class ApiBootPlugin extends BootPlugin {
 	}
 
 	_initRoutesHome() {
-		throw NotImplementedError();
+		throw new NotImplementedError();
 	}
 
 	_initRoutesVersion() {
-		throw NotImplementedError();
+		throw new NotImplementedError();
 	}
 
 	_initServicesCrypto() {
