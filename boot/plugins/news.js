@@ -29,7 +29,7 @@ class NewsApiBootPlugin extends BootPlugin {
 	}
 
 	_initRoutesNews() {
-		throw new NotImplementedError();
+		throw NotImplementedError();
 	}
 
 	_initServicesNews() {

@@ -20,7 +20,7 @@ class FrontApiBootPlugin extends ApiBootPlugin {
 	}
 
 	_initRoutesUtility() {
-		throw new NotImplementedError();
+		throw NotImplementedError();
 	}
 
 	_initServicesUtility() {

@@ -4,8 +4,6 @@ import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 import AdminBootPlugin from './index';
 
-import adminNewsRoute from '../../../routes/admin/news';
-
 class NewsAdminBootPlugin extends AdminBootPlugin {
 	async _initRoutes() {
 		this._initRoute(this._initRoutesAdminNews());
@@ -24,7 +22,7 @@ class NewsAdminBootPlugin extends AdminBootPlugin {
 	}
 
 	_initRoutesAdminNews() {
-		return new adminNewsRoute();
+		throw new NotImplementedError();;
 	}
 
 	_initServicesAdminNews() {
