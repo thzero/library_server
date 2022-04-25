@@ -54,6 +54,8 @@ class BootMain {
 		const plugins = this._determinePlugins(args);
 		await await this._initPlugins(plugins);
 		
+		this.ip = this._appConfig.get('ip', null);
+		this.loggerServiceI.info2(`config.port: ${this.ip}`);
 		this.port = this._appConfig.get('port');
 		this.loggerServiceI.info2(`config.port: ${this.port}`);
 		this.loggerServiceI.info2(`process.env.PORT: ${process.env.PORT}`);
@@ -108,7 +110,6 @@ class BootMain {
 
 		createTerminus(results.server, terminusOptions);
 
-		const address = this._appConfig.get('ip', null);
 		const self = this;
 		const listen = async (port, address) => new Promise((resolve, reject) => {
 			self._initAppListen(results.app, results.server, address, port, (err) => {
@@ -120,7 +121,7 @@ class BootMain {
 				resolve();
 			});
 		});
-		await listen(this.port, address);
+		await listen(this.port, this.ip);
 		this.address = results.server.address() ? results.server.address().address : null;
 		if (this.address === '::')
 			this.address = await internalIpV4();
