@@ -108,9 +108,10 @@ class BootMain {
 
 		createTerminus(results.server, terminusOptions);
 
+		const address = this._appConfig.get('ip', null);
 		const self = this;
-		const listen = async (port) => new Promise((resolve, reject) => {
-			self._initAppListen(results.app, results.server, port, (err) => {
+		const listen = async (port, address) => new Promise((resolve, reject) => {
+			self._initAppListen(results.app, results.server, address, port, (err) => {
 				if (err) {
 					reject(err);
 					return;
@@ -119,7 +120,7 @@ class BootMain {
 				resolve();
 			});
 		});
-		await listen(this.port);
+		await listen(this.port, address);
 		this.address = results.server.address() ? results.server.address().address : null;
 		if (this.address === '::')
 			this.address = await internalIpV4();
@@ -142,7 +143,7 @@ class BootMain {
 		throw new NotImplementedError();
 	}
 
-	_initAppListen(app, server, port, err) {
+	_initAppListen(app, server, address, port, err) {
 		throw new NotImplementedError();
 	}
 
