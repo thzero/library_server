@@ -55,9 +55,9 @@ class BootMain {
 		await await this._initPlugins(plugins);
 		
 		this.ip = this._appConfig.get('ip', null);
-		this.loggerServiceI.info2(`config.port: ${this.ip}`);
+		this.loggerServiceI.info2(`config.ip.override: ${this.ip}`);
 		this.port = this._appConfig.get('port');
-		this.loggerServiceI.info2(`config.port: ${this.port}`);
+		this.loggerServiceI.info2(`config.port.override: ${this.port}`);
 		this.loggerServiceI.info2(`process.env.PORT: ${process.env.PORT}`);
 		this.port = process.env.PORT || this.port;
 		this.loggerServiceI.info2(`selected.port: ${this.port}`);
