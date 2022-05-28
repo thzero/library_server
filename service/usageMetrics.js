@@ -30,6 +30,8 @@ class UsageMetricsService extends Service {
 				}
 			}
 
+			usageMetrics.date = new Date(new Date(Utilities.getTimestamp()).toISOString());
+
 			await this._repositoryUsageMetrics.register(usageMetrics);
 			return this._success(usageMetrics.correlationId);
 		}
