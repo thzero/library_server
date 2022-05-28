@@ -1,5 +1,7 @@
 import LibraryConstants from '../constants';
 
+import Utilities from '@thzero/library_common/utility/index';
+
 import Service from './index';
 
 class UsageMetricsService extends Service {
