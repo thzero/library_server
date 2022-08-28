@@ -54,13 +54,13 @@ class BootMain {
 		const plugins = this._determinePlugins(args);
 		await await this._initPlugins(plugins);
 		
-		this.ip = this._appConfig.get('ip', null);
-		this.loggerServiceI.info2(`config.ip.override: ${this.ip}`);
-		this.port = this._appConfig.get('port');
-		this.loggerServiceI.info2(`config.port.override: ${this.port}`);
-		this.loggerServiceI.info2(`process.env.PORT: ${process.env.PORT}`);
-		this.port = process.env.PORT || this.port;
-		this.loggerServiceI.info2(`selected.port: ${this.port}`);
+		// this.ip = this._appConfig.get('ip', null);
+		// this.loggerServiceI.info2(`config.ip.override: ${this.ip}`);
+		// this.port = this._appConfig.get('port');
+		// this.loggerServiceI.info2(`config.port.override: ${this.port}`);
+		// this.loggerServiceI.info2(`process.env.PORT: ${process.env.PORT}`);
+		// this.port = process.env.PORT || this.port;
+		// this.loggerServiceI.info2(`selected.port: ${this.port}`);
 
 		const results = await this._initApp(args, plugins);
 
@@ -109,6 +109,43 @@ class BootMain {
 		};
 
 		createTerminus(results.server, terminusOptions);
+		
+		// const self = this;
+		// const listen = async (port, address) => new Promise((resolve, reject) => {
+		// 	self._initAppListen(results.app, results.server, address, port, (err) => {
+		// 		if (err) {
+		// 			reject(err);
+		// 			return;
+		// 		}
+
+		// 		resolve();
+		// 	});
+		// });
+		// await listen(this.port, this.ip);
+		// this.address = results.server.address() ? results.server.address().address : null;
+		// if (this.address === '::')
+		// 	this.address = await internalIpV4();
+
+		await this._initServer(results.server);
+
+		for (const [key, value] of this._servicesPost) {
+			console.log(`services.init.post - ${key}`);
+			if (value.initPost)
+				await value.initPost();
+		}
+		this._initAppPost(results.app, args);
+
+		await this._initServerDiscovery(results.server);
+
+		console.log();
+		this.ip = this._appConfig.get('ip', null);
+		console.log(`config.ip.override: ${this.ip}`);
+		this.port = this._appConfig.get('port');
+		console.log(`config.port.override: ${this.port}`);
+		console.log(`process.env.PORT: ${process.env.PORT}`);
+		this.port = process.env.PORT || this.port;
+		console.log(`selected.port: ${this.port}`);
+		console.log();
 
 		const self = this;
 		const listen = async (port, address) => new Promise((resolve, reject) => {
@@ -126,18 +163,8 @@ class BootMain {
 		if (this.address === '::')
 			this.address = await internalIpV4();
 
-		await this._initServer(results.server);
-
-		for (const [key, value] of this._servicesPost) {
-			console.log(`services.init.post - ${key}`);
-			if (value.initPost)
-				await value.initPost();
-		}
-		this._initAppPost(results.app, args);
-
-		await this._initServerDiscovery(results.server);
-
-		this.loggerServiceI.info2(`Starting HTTP on: `, this.address);
+		console.log();
+		console.log(`Starting HTTP on: ${this.address}:${this.port}`);
 	}
 
 	async _initApp(args, plugins) {
