@@ -1,4 +1,4 @@
-import Repository from '../index';
+import Repository from '../index.js';
 
 class DevNullUsageMetricsRepository extends Repository {
 	async register(usageMetrics) {

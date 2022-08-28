@@ -1,8 +1,8 @@
-import Utility from '@thzero/library_common/utility';
+import Utility from '@thzero/library_common/utility/index.js';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
-import Service from '../index';
+import Service from '../index.js';
 
 class BaseAdminService extends Service {
 	async create(correlationId, user, requestedValue) {

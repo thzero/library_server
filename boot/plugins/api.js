@@ -1,12 +1,12 @@
-import LibraryConstants from '../../constants';
-import LibraryCommonServiceConstants from '@thzero/library_common_service/constants';
+import LibraryConstants from '../../constants.js';
+import LibraryCommonServiceConstants from '@thzero/library_common_service/constants.js';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
-import BootPlugin from './index';
+import BootPlugin from './index.js';
 
-import cryptoService from '../../service/crypto';
-import versionService from '../../service/version';
+import cryptoService from '../../service/crypto.js';
+import versionService from '../../service/version.js';
 
 class ApiBootPlugin extends BootPlugin {
 	async _initRoutesPost() {

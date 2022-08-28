@@ -1,6 +1,6 @@
-import LibraryConstants from '../constants';
+import LibraryConstants from '../constants.js';
 
-import Service from './index';
+import Service from './index.js';
 
 class PlansService extends Service {
 	constructor() {

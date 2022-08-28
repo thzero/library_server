@@ -1,6 +1,6 @@
 import LibraryConstants from '../constants';
 
-import Service from './index';
+import Service from './index.js';
 
 class ExternalService extends Service {
 	constructor() {

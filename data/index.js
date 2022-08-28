@@ -1,4 +1,4 @@
-import Utility from '@thzero/library_common/utility';
+import Utility from '@thzero/library_common/utility/index.js';
 
 class Data {
 	constructor() {

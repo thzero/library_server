@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import Service from './index';
+import Service from './index.js';
 
 const encoder = new TextEncoder();
 

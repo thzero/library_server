@@ -1,4 +1,4 @@
-import Service from './index';
+import Service from './index.js';
 
 class UtilityService extends Service {
 	async logger(content, correlationId) {

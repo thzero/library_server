@@ -1,4 +1,4 @@
-import BootPlugin from '../index';
+import BootPlugin from '../index.js';
 
 class AdminBootPlugin extends BootPlugin {
 }

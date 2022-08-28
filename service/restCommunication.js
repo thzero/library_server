@@ -1,4 +1,4 @@
-import CommunicationService from './communication';
+import CommunicationService from './communication.js';
 
 class RestCommunicationService extends CommunicationService {
 	// eslint-disable-next-line

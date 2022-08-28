@@ -1,8 +1,8 @@
-import LibraryConstants from '../../constants';
+import LibraryConstants from '../../constants.js';
 
-import BaseAdminService from './index';
+import BaseAdminService from './index.js';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
 class BaseUsersAdminService extends BaseAdminService {
 	constructor() {

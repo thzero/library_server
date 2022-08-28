@@ -1,6 +1,6 @@
-import Service from './index';
+import Service from './index.js';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
 class BaseUserService extends Service {
 	async fetch(correlationId, userId) {

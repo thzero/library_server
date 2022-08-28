@@ -1,4 +1,4 @@
-import Data from './index';
+import Data from './index.js';
 
 class NamedData extends Data {
 	constructor() {

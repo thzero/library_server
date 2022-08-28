@@ -1,4 +1,4 @@
-import BaseNewsJoiBaseValidationService from './joi';
+import BaseNewsJoiBaseValidationService from './joi.js';
 
 class NewsValidationService extends BaseNewsJoiBaseValidationService {
 }

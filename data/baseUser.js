@@ -1,6 +1,6 @@
-import Data from './index';
+import Data from './index.js';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
 class BaseUserData extends Data {
 	constructor() {

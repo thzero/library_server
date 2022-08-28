@@ -1,4 +1,4 @@
-import BaseNewsAdminService from './baseNews';
+import BaseNewsAdminService from './baseNews.js';
 
 class NewsAdminService extends BaseNewsAdminService {
 }

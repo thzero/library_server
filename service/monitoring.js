@@ -1,4 +1,4 @@
-import BaseMonitoringService from '@thzero/library_common_service/service/monitoring';
+import BaseMonitoringService from '@thzero/library_common_service/service/monitoring.js';
 
 class NullMonitoringService extends BaseMonitoringService {
 	constructor() {

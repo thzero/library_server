@@ -1,8 +1,8 @@
-import LibraryConstants from '../constants';
+import LibraryConstants from '../constants.js';
 
-import Utilities from '@thzero/library_common/utility/index';
+import Utilities from '@thzero/library_common/utility/index.js';
 
-import Service from './index';
+import Service from './index.js';
 
 class UsageMetricsService extends Service {
 	constructor() {

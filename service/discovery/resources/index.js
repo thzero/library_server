@@ -1,6 +1,6 @@
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
-import DiscoveryService from '../index';
+import DiscoveryService from '../index.js';
 
 class ResourcesDiscoveryService extends DiscoveryService {
 	async cleanup(correlationId) {
