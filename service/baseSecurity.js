@@ -1,6 +1,6 @@
 import rbac from 'easy-rbac'
 
-import Service from './index';
+import Service from './index.js';
 
 class BaseSecurityService extends Service {
 	constructor() {

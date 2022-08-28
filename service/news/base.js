@@ -1,6 +1,6 @@
-import LibraryConstants from '../../constants';
+import LibraryConstants from '../../constants.js';
 
-import Service from '../../service/index';
+import Service from '../../service/index.js';
 
 class BaseNewsService extends Service {
 	constructor() {

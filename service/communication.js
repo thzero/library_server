@@ -1,4 +1,4 @@
-import Service from './index';
+import Service from './index.js';
 
 class CommunicationService extends Service {
 }

@@ -1,8 +1,8 @@
-import LibraryConstants from '../../../constants';
+import LibraryConstants from '../../../constants.js';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
-import AdminBootPlugin from './index';
+import AdminBootPlugin from './index.js';
 
 class NewsAdminBootPlugin extends AdminBootPlugin {
 	async _initRoutes() {

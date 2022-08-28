@@ -1,10 +1,10 @@
-import LibraryConstants from '../../constants';
+import LibraryConstants from '../../constants.js';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
-import UsersApiBootPlugin from './users';
+import UsersApiBootPlugin from './users.js';
 
-import plansService from '../../service/plans';
+import plansService from '../../service/plans.js';
 
 class ExtendedUsersApiBootPlugin extends UsersApiBootPlugin {
 	async _initRepositories() {

@@ -1,8 +1,8 @@
-import LibraryConstants from '../../constants';
+import LibraryConstants from '../../constants.js';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
-import BootPlugin from './index';
+import BootPlugin from './index.js';
 
 class NewsApiBootPlugin extends BootPlugin {
 	async _initRoutes() {

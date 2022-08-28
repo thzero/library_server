@@ -1,10 +1,10 @@
-import LibraryConstants from '../../constants';
+import LibraryConstants from '../../constants.js';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
-import ApiBootPlugin from './api';
+import ApiBootPlugin from './api.js';
 
-import utilityService from '../../service/utility';
+import utilityService from '../../service/utility.js';
 
 class FrontApiBootPlugin extends ApiBootPlugin {
 	async _initRoutesPre() {

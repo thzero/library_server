@@ -1,7 +1,7 @@
-import LibraryCommonServiceConstants from '@thzero/library_common_service/constants';
+import LibraryCommonServiceConstants from '@thzero/library_common_service/constants.js';
 
-import Response from '@thzero/library_common/response';
-import ExtractResponse from '@thzero/library_common/response/extract';
+import Response from '@thzero/library_common/response/index.js';
+import ExtractResponse from '@thzero/library_common/response/extract.js';
 
 class Repository {
 	async init(injector) {

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import Service from './index';
+import Service from './index.js';
 
 class VersionService extends Service {
 	async version(correlationId) {
