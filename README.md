@@ -12,6 +12,10 @@ An opinionated library of common functionality to bootstrap an API application u
 
 ### Requirements
 
+#### NodeJs
+
+Requires [NodeJs ](https://nodejs.org) version 18+.
+
 #### Mongo
 
 Mongo is the only currently supposed option as the server side data source.
