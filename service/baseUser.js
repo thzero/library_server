@@ -53,11 +53,11 @@ class BaseUserService extends Service {
 		if (this._hasFailed(validationCheckExternalUserResponse))
 			return validationCheckExternalUserResponse;
 
+		let user = null;
 		const respositoryResponse = await this._repositoryUser.fetchByExternalId(correlationId, externalUser.id, true);
-		if (this._hasFailed(respositoryResponse))
-			return respositoryResponse;
+		if (this._hasSucceeded(respositoryResponse))
+			user = respositoryResponse.results;
 
-		let user = respositoryResponse.results;
 		if (!user) {
 			user = this._initiateUser();
 			user.id = externalUser.id;
