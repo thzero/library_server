@@ -1,6 +1,6 @@
 import LibraryConstants from '../constants.js';
 
-import Utilities from '@thzero/library_common/utility/index.js';
+import Utility from '@thzero/library_common/utility/index.js';
 
 import Service from './index.js';
 
@@ -32,7 +32,7 @@ class UsageMetricsService extends Service {
 				}
 			}
 
-			usageMetrics.date = new Date(new Date(Utilities.getTimestamp()).toISOString());
+			usageMetrics.date = new Date(new Date(Utility.getTimestamp()).toISOString());
 
 			await this._repositoryUsageMetrics.register(usageMetrics);
 			return this._success(usageMetrics.correlationId);
