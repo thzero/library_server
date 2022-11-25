@@ -6,15 +6,15 @@
 
 An opinionated library of common functionality to bootstrap an API application using MongoDb and Firebase.  Currently either Fastify or Koa can be used as the web server; Fastify will be the focus going forward due to lack of support and updates with the Koa stack.
 
-### Installation
-
-[![NPM](https://nodei.co/npm/@thzero/library_server.png?compact=true)](https://npmjs.org/package/@thzero/library_server)
-
 ### Requirements
 
 #### NodeJs
 
 Requires [NodeJs ](https://nodejs.org) version 18+.
+
+### Installation
+
+[![NPM](https://nodei.co/npm/@thzero/library_server.png?compact=true)](https://npmjs.org/package/@thzero/library_server)
 
 #### Mongo
 
