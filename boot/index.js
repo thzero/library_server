@@ -14,19 +14,31 @@ import NotImplementedError from '@thzero/library_common/errors/notImplemented.js
 import nullMonitoringService from '../service/monitoring.js';
 
 // require('@thzero/library_server/utility/string.cjs');
-String.isNullOrEmpty = function(value) {
-	//return !(typeof value === 'string' && value.length > 0)
-	return !value;
-}
+import String2 from '@thzero/library_common/utility/string.js';
 
-String.isString = function(value) {
-	return (typeof value === "string" || value instanceof String);
-}
+// String.capitalize = function(word) {
+// 	if (String.isNullOrEmpty(word))
+// 		return word;
+// 	return word[0].toUpperCase() + word.slice(1).toLowerCase();
+// };
 
-String.trim = function(value) {
-	if (!value || !String.isString(value))
-		return value;
-	return value.trim();
+// String.isNullOrEmpty = function(value) {
+// 	//return !(typeof value === 'string' && value.length > 0)
+// 	return !value;
+// }
+
+// String.isString = function(value) {
+// 	return (typeof value === "string" || value instanceof String);
+// }
+
+// String.trim = function(value) {
+// 	if (!value || !String.isString(value))
+// 		return value;
+// 	return value.trim();
+// }
+
+for (const funcName in String2) {
+	String[funcName] = String2[funcName];
 }
 
 import injector from '@thzero/library_common/utility/injector.js';
