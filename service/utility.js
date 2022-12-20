@@ -118,6 +118,8 @@ class UtilityService extends Service {
 
 					items = fileI.default();
 					items.forEach(element => {
+						if (element.category !== 'server')
+							return;
 						if (this._openSourceResponse.results.filter(l => l.name === element.name).length > 0)
 							return;
 						this._openSourceResponse.results.push(element);
