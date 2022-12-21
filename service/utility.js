@@ -1,7 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import { Mutex as asyncMutex } from 'async-mutex';
 
 import LibraryConstants from '@thzero/library_server/constants.js';
+
+import Utility from '@thzero/library_common/utility/index.js';
 
 import Service from './index.js';
 
@@ -13,6 +16,11 @@ class UtilityService extends Service {
 		this._serviceVersion = null;
 
 		this._openSourceResponse = null;
+
+		this._initializeResponse = null;
+		this._mutexInitialize = new asyncMutex();
+		this._ttlInitialize = null;
+		this._ttlInitializeDiff = 1000 * 30;
 	}
 
 	async init(injector) {
@@ -25,24 +33,41 @@ class UtilityService extends Service {
 	}
 
 	async initialize(correlationId) {
-		const response = this._initResponse(correlationId);
-		response.results = {};
+		const now = Utility.getTimestamp();
+		const ttlInitialize = this._ttlInitialize ? this._ttlInitialize : 0;
+		const delta = now - ttlInitialize;
+		if (this._initializeResponse && (delta <= this._ttlInitializeDiff))
+			return this._initializeResponse;
 
-		const responsePlans = await this._servicePlans.listing(correlationId);
-		if (this._hasFailed(responsePlans))
-			return responsePlans;
+		const release = await this._mutexInitialize.acquire();
+		try {
+			if (this._initializeResponse)
+				return this._initializeResponse;
 
-		response.results.plans = responsePlans.results;
+			const response = this._initResponse(correlationId);
+			response.results = {};
 
-		const responseVersion = await this._serviceVersion.version(correlationId);
-		if (this._hasFailed(responseVersion))
-			return responseVersion;
+			const responsePlans = await this._servicePlans.listing(correlationId);
+			if (this._hasFailed(responsePlans))
+				return responsePlans;
 
-		response.results.version = responseVersion.results;
+			response.results.plans = responsePlans.results;
 
-		this._intialize(correlationId, response);
+			const responseVersion = await this._serviceVersion.version(correlationId);
+			if (this._hasFailed(responseVersion))
+				return responseVersion;
 
-		return response;
+			response.results.version = responseVersion.results;
+
+			await this._intialize(correlationId, response);
+
+			this._ttlInitialize = Utility.getTimestamp();
+			this._initializeResponse = response;
+			return response;
+		}
+		finally {
+			release();
+		}
 	}
 
 	async logger(content, correlationId) {
@@ -147,95 +172,6 @@ class UtilityService extends Service {
 
 	_openSource(correlationId, openSource) {
 	}
-
-	// async _openSourceServer(correlationId) {
-	// 	return [
-	// 		{
-	// 			category: 'server',
-	// 			name: '@thzero/library_common',
-	// 			url: 'https://github.com/thzero/library_common',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/thzero/library_common/blob/master/license.md'
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			name: '@thzero/library_common_service',
-	// 			url: 'https://github.com/thzero/library_common_service',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/thzero/library_common_service/blob/master/license.md'
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			name: '@thzero/library_server',
-	// 			url: 'https://github.com/thzero/library_server',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/thzero/library_server/blob/master/license.md'
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			name: 'async-mutex',
-	// 			url: 'https://github.com/DirtyHairy/async-mutex',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/DirtyHairy/async-mutex/blob/master/LICENSE'
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			name: 'config',
-	// 			url: 'https://github.com/lorenwest/node-config',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/lorenwest/node-config/blob/master/LICENSE'
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			name: 'dayjs',
-	// 			url: 'https://github.com/iamkun/dayjs',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/iamkun/dayjs/blob/dev/LICENSE'
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			name: 'dayjs-plugin-utc',
-	// 			url: 'https://github.com/guisturdy/dayjs-plugin-utc',
-	// 			licenseName: '??',
-	// 			licenseUrl: ''
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			name: 'easy-rbac',
-	// 			url: 'https://github.com/DeadAlready/easy-rbac',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/DeadAlready/easy-rbac/blob/master/LICENSE'
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			name: 'ipaddr.js',
-	// 			url: 'https://github.com/whitequark/ipaddr.js',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/whitequark/ipaddr.js/blob/master/LICENSE'
-	// 		},
-	// 		{
-	// 			category: 'client',
-	// 			name: 'lodash',
-	// 			url: 'https://github.com/lodash/lodash',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/lodash/lodash/blob/master/LICENSE'
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			name: 'terminus',
-	// 			url: 'https://github.com/godaddy/terminus',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/godaddy/terminus/blob/master/LICENSE'
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			name: 'uuid',
-	// 			url: 'https://github.com/kelektiv/node-uuid',
-	// 			licenseName: 'MIT',
-	// 			licenseUrl: 'https://github.com/kelektiv/node-uuid/blob/master/LICENSE.md'
-	// 		}
-	// 	];
-	// }
 }
 
 export default UtilityService;
