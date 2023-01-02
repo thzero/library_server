@@ -43,7 +43,7 @@ class Repository {
 	}
 
 	_enforceNotEmptyMultiple(clazz, method, values, names, correlationId) {
-		const valid  = true;
+		let valid = true;
 		for (const value of values)
 			valid &= String.isNullOrEmpty(value);
 		if (!valid) {
@@ -83,7 +83,7 @@ class Repository {
 	}
 
 	_enforceNotNullMultiple(clazz, method, values, names, correlationId) {
-		const valid  = true;
+		let valid = true;
 		for (const value of values)
 			valid &= values;
 		if (!valid) {
