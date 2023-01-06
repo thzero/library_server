@@ -1,7 +1,5 @@
 import os from 'os';
 
-const uuidTranslator = shortUUID();
-
 class OsUtility {
 	static get isLinux() {
 		const type = os.type();
