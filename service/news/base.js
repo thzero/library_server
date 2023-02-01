@@ -1,4 +1,4 @@
-import LibraryConstants from '../../constants.js';
+import LibraryServerConstants from '../../constants.js';
 
 import Service from '../../service/index.js';
 
@@ -14,9 +14,9 @@ class BaseNewsService extends Service {
 	async init(injector) {
 		await super.init(injector);
 
-		this._repositoryNewsI = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_NEWS);
+		this._repositoryNewsI = this._injector.getService(LibraryServerConstants.InjectorKeys.REPOSITORY_NEWS);
 
-		this._serviceValidationNews = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS);
+		this._serviceValidationNews = this._injector.getService(LibraryServerConstants.InjectorKeys.SERVICE_VALIDATION_NEWS);
 	}
 
 	async latest(correlationId, user, timestamp) {

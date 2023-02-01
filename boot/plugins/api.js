@@ -1,4 +1,4 @@
-import LibraryConstants from '../../constants.js';
+import LibraryServerConstants from '../../constants.js';
 import LibraryCommonServiceConstants from '@thzero/library_common_service/constants.js';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
@@ -20,9 +20,9 @@ class ApiBootPlugin extends BootPlugin {
 	async _initServices() {
 		const communicationRestService = this._initServicesCommunicationRest();
 		if (communicationRestService)
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_COMMUNICATION_REST, communicationRestService);
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_CRYPTO, this._initServicesCrypto());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VERSION, this._initServicesVersion());
+			this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_COMMUNICATION_REST, communicationRestService);
+		this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_CRYPTO, this._initServicesCrypto());
+		this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_VERSION, this._initServicesVersion());
 
 		const validationServices = this._initServicesValidation();
 		if (validationServices)

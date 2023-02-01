@@ -1,4 +1,4 @@
-import LibraryConstants from '../../constants.js';
+import LibraryServerConstants from '../../constants.js';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
@@ -14,14 +14,14 @@ class NewsApiBootPlugin extends BootPlugin {
 	async _initRepositories() {
 		await super._initRepositories();
 
-		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_NEWS, this._initRepositoriesNews());
+		this._injectRepository(LibraryServerConstants.InjectorKeys.REPOSITORY_NEWS, this._initRepositoriesNews());
 	}
 
 	async _initServices() {
 		await super._initServices();
 
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_NEWS, this._initServicesNews());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS, this._initServicesNewsValidation());
+		this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_NEWS, this._initServicesNews());
+		this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_VALIDATION_NEWS, this._initServicesNewsValidation());
 	}
 
 	_initRepositoriesNews() {

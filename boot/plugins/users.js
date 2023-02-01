@@ -1,4 +1,4 @@
-import LibraryConstants from '../../constants.js';
+import LibraryServerConstants from '../../constants.js';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
@@ -16,14 +16,14 @@ class UsersApiBootPlugin extends BootPlugin {
 	async _initRepositories() {
 		await super._initRepositories();
 
-		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USERS, this._initRepositoriesUsers());
+		this._injectRepository(LibraryServerConstants.InjectorKeys.REPOSITORY_USERS, this._initRepositoriesUsers());
 	}
 
 	async _initServices() {
 		await super._initServices();
 
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_AUTH, this._initServicesAuth());
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_USERS, this._initServicesUser());
+		this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_AUTH, this._initServicesAuth());
+		this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_USERS, this._initServicesUser());
 	}
 
 	_initRepositoriesUsers() {

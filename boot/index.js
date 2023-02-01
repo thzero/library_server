@@ -4,10 +4,10 @@ import config from 'config';
 
 import {internalIpV4} from '@thzero/library_server/utility/internalIp/index.js';
 
-import LibraryConstants from '../constants.js';
+import LibraryServerConstants from '../constants.js';
 import LibraryCommonServiceConstants from '@thzero/library_common_service/constants.js';
 
-import Utility from '@thzero/library_common/utility/index.js';
+import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
@@ -96,7 +96,7 @@ class BootMain {
 			)
 		}
 
-		const healthcheckPath = this._appConfig.get('healthcheck.path', LibraryConstants.HealthCheck.DefaultPath);
+		const healthcheckPath = this._appConfig.get('healthcheck.path', LibraryServerConstants.HealthCheck.DefaultPath);
 		if (!healthcheckPath.startsWith('/'))
 			healthcheckPath = '/' + healthcheckPath;
 
@@ -213,7 +213,7 @@ class BootMain {
 				await pluginRepository.initRepositories(this._repositories);
 
 			await this._initRepositories();
-			this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC, this._initRepositoriesUsageMetrics());
+			this._injectRepository(LibraryServerConstants.InjectorKeys.REPOSITORY_USAGE_METRIC, this._initRepositoriesUsageMetrics());
 
 			this._services = new Map();
 
@@ -227,15 +227,15 @@ class BootMain {
 			this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_MONITORING, monitoringService);
 
 			this.usageMetricsServiceI = this._initServicesUsageMetrics();
-			this._injectService(LibraryConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
+			this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_USAGE_METRIC, this.usageMetricsServiceI);
 
 			this.resourceDiscoveryServiceI = this._initServicesDiscoveryResources();
 			if (this.resourceDiscoveryServiceI)
-				this._injectService(LibraryConstants.InjectorKeys.SERVICE_DISCOVERY_RESOURCES, this.resourceDiscoveryServiceI);
+				this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_DISCOVERY_RESOURCES, this.resourceDiscoveryServiceI);
 
 			this.mdnsDiscoveryServiceI = this._initServicesDiscoveryMdns();
 			if (this.mdnsDiscoveryServiceI)
-				this._injectService(LibraryConstants.InjectorKeys.SERVICE_DISCOVERY_MDNS, this.mdnsDiscoveryServiceI);
+				this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_DISCOVERY_MDNS, this.mdnsDiscoveryServiceI);
 
 			for (const pluginService of plugins)
 				await pluginService.initServices(this._services);
@@ -271,7 +271,7 @@ class BootMain {
 				this._servicesPost.set(key, value);
 			}
 
-			Utility.initDateTime();
+			LibraryCommonUtility.initDateTime();
 		}
 		finally {
 			this._repositories = null;
@@ -354,15 +354,15 @@ class BootMain {
 
 		const opts = await this._initServerDiscoveryOpts();
 
-		await this._initServerDiscoveryMdns(Utility.cloneDeep(opts));
-		await this._initServerDiscoveryResources(Utility.cloneDeep(opts));
+		await this._initServerDiscoveryMdns(LibraryCommonUtility.cloneDeep(opts));
+		await this._initServerDiscoveryResources(LibraryCommonUtility.cloneDeep(opts));
 	}
 
 	async _initServerDiscoveryMdns(opts) {
 		if (!this.mdnsDiscoveryServiceI)
 			return;
 
-		await this.mdnsDiscoveryServiceI.initialize(Utility.generateId(), await this._initServerDiscoveryOptsMdns(opts));
+		await this.mdnsDiscoveryServiceI.initialize(LibraryCommonUtility.generateId(), await this._initServerDiscoveryOptsMdns(opts));
 	}
 
 	async _initServerDiscoveryOpts() {
@@ -400,7 +400,7 @@ class BootMain {
 		if (!this.resourceDiscoveryServiceI)
 			return;
 
-		await this.resourceDiscoveryServiceI.initialize(Utility.generateId(), await this._initServerDiscoveryOptsResources(opts));
+		await this.resourceDiscoveryServiceI.initialize(LibraryCommonUtility.generateId(), await this._initServerDiscoveryOptsResources(opts));
 	}
 
 	_injectRepository(key, repository) {
