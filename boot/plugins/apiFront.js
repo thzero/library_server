@@ -1,4 +1,4 @@
-import LibraryConstants from '../../constants.js';
+import LibraryServerConstants from '../../constants.js';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
@@ -16,7 +16,7 @@ class FrontApiBootPlugin extends ApiBootPlugin {
 	async _initServices() {
 		super._initServices();
 
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_UTILITY, this._initServicesUtility());
+		this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_UTILITY, this._initServicesUtility());
 	}
 
 	_initRoutesUtility() {

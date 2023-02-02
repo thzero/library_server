@@ -1,4 +1,4 @@
-import LibraryConstants from '../../constants.js';
+import LibraryServerConstants from '../../constants.js';
 
 import BaseAdminService from './index.js';
 
@@ -16,9 +16,9 @@ class BaseNewsAdminService extends BaseAdminService {
 	async init(injector) {
 		await super.init(injector);
 
-		this._repositoryNews = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_NEWS);
+		this._repositoryNews = this._injector.getService(LibraryServerConstants.InjectorKeys.REPOSITORY_ADMIN_NEWS);
 
-		this._serviceValidationNews = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VALIDATION_NEWS);
+		this._serviceValidationNews = this._injector.getService(LibraryServerConstants.InjectorKeys.SERVICE_VALIDATION_NEWS);
 	}
 
 	_initializeData() {

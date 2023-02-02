@@ -1,4 +1,4 @@
-import LibraryConstants from '../../../constants.js';
+import LibraryServerConstants from '../../../constants.js';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
@@ -10,11 +10,11 @@ class UsersAdminBootPlugin extends AdminBootPlugin {
 	}
 
 	async _initRepositories() {
-		this._injectRepository(LibraryConstants.InjectorKeys.REPOSITORY_ADMIN_USERS, this._initRepositoriesAdminUsers());
+		this._injectRepository(LibraryServerConstants.InjectorKeys.REPOSITORY_ADMIN_USERS, this._initRepositoriesAdminUsers());
 	}
 
 	async _initServices() {
-		this._injectService(LibraryConstants.InjectorKeys.SERVICE_ADMIN_USERS, this._initServicesAdminUsers());
+		this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_ADMIN_USERS, this._initServicesAdminUsers());
 	}
 
 	_initRepositoriesAdminUsers() {

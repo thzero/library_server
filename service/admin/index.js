@@ -1,4 +1,4 @@
-import Utility from '@thzero/library_common/utility/index.js';
+import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
@@ -63,7 +63,7 @@ class BaseAdminService extends Service {
 		let value = this._initializeData();
 		const fetchRespositoryResponse = await this._repository.fetch(correlationId, id);
 		if (this._hasSucceeded(fetchRespositoryResponse) && fetchRespositoryResponse.results)
-			value = Utility.map(this._initializeData(), fetchRespositoryResponse.results, true);
+			value = LibraryCommonUtility.map(this._initializeData(), fetchRespositoryResponse.results, true);
 
 		const validResponse = this._checkUpdatedTimestamp(correlationId, value, requestedValue, 'value');
 		if (this._hasFailed(validResponse))

@@ -1,11 +1,11 @@
-import Utility from '@thzero/library_common/utility/index.js';
+import CommonUtility from '@thzero/library_common/utility/index.js';
 
 class Data {
 	constructor() {
-		this.id = Utility.generateId();
-		this.createdTimestamp = Utility.getTimestamp();
+		this.id = CommonUtility.generateId();
+		this.createdTimestamp = CommonUtility.getTimestamp();
 		this.createdUserId = null;
-		this.updatedTimestamp = Utility.getTimestamp();
+		this.updatedTimestamp = CommonUtility.getTimestamp();
 		this.updatedUserId = null;
 	}
 

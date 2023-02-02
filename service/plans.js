@@ -1,4 +1,4 @@
-import LibraryConstants from '../constants.js';
+import LibraryServerConstants from '../constants.js';
 
 import Service from './index.js';
 
@@ -12,7 +12,7 @@ class PlansService extends Service {
 	async init(injector) {
 		await super.init(injector);
 
-		this._repositoryPlansI = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_PLANS);
+		this._repositoryPlansI = this._injector.getService(LibraryServerConstants.InjectorKeys.REPOSITORY_PLANS);
 	}
 
 	async listing(correlationId) {

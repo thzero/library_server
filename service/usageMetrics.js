@@ -1,6 +1,6 @@
-import LibraryConstants from '../constants.js';
+import LibraryServerConstants from '../constants.js';
 
-import Utility from '@thzero/library_common/utility/index.js';
+import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
 
 import Service from './index.js';
 
@@ -16,7 +16,7 @@ class UsageMetricsService extends Service {
 	async init(injector) {
 		await super.init(injector);
 
-		this._repositoryUsageMetricsI = this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC);
+		this._repositoryUsageMetricsI = this._injector.getService(LibraryServerConstants.InjectorKeys.REPOSITORY_USAGE_METRIC);
 	}
 
 	async register(usageMetrics, err) {
@@ -32,7 +32,7 @@ class UsageMetricsService extends Service {
 				}
 			}
 
-			usageMetrics.date = new Date(new Date(Utility.getTimestamp()).toISOString());
+			usageMetrics.date = new Date(new Date(LibraryCommonUtility.getTimestamp()).toISOString());
 
 			await this._repositoryUsageMetrics.register(usageMetrics);
 			return this._success(usageMetrics.correlationId);
@@ -50,7 +50,7 @@ class UsageMetricsService extends Service {
 	}
 
 	get _repositoryUsageMetrics() {
-		return this._injector.getService(LibraryConstants.InjectorKeys.REPOSITORY_USAGE_METRIC)
+		return this._injector.getService(LibraryServerConstants.InjectorKeys.REPOSITORY_USAGE_METRIC)
 	}
 }
 

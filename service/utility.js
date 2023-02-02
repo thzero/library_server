@@ -2,9 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { Mutex as asyncMutex } from 'async-mutex';
 
-import LibraryConstants from '@thzero/library_server/constants.js';
+import LibraryServerConstants from '@thzero/library_server/constants.js';
 
-import Utility from '@thzero/library_common/utility/index.js';
+import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
 
 import Service from './index.js';
 
@@ -26,14 +26,14 @@ class UtilityService extends Service {
 	async init(injector) {
 		await super.init(injector);
 
-		this._servicePlans = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_PLANS);
-		this._serviceVersion = this._injector.getService(LibraryConstants.InjectorKeys.SERVICE_VERSION);
+		this._servicePlans = this._injector.getService(LibraryServerConstants.InjectorKeys.SERVICE_PLANS);
+		this._serviceVersion = this._injector.getService(LibraryServerConstants.InjectorKeys.SERVICE_VERSION);
 
 		await this._initializeOopenSource();
 	}
 
 	async initialize(correlationId) {
-		const now = Utility.getTimestamp();
+		const now = LibraryCommonUtility.getTimestamp();
 		const ttlInitialize = this._ttlInitialize ? this._ttlInitialize : 0;
 		const delta = now - ttlInitialize;
 		if (this._initializeResponse && (delta <= this._ttlInitializeDiff))
@@ -61,7 +61,7 @@ class UtilityService extends Service {
 
 			await this._intialize(correlationId, response);
 
-			this._ttlInitialize = Utility.getTimestamp();
+			this._ttlInitialize = LibraryCommonUtility.getTimestamp();
 			this._initializeResponse = response;
 			return response;
 		}
