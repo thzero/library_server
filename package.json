@@ -1,11 +1,11 @@
 {
   "name": "@thzero/library_server",
   "type": "module",
-  "version": "0.17.2",
+  "version": "0.17.3",
   "version_major": 0,
   "version_minor": 17,
-  "version_patch": 2,
-  "version_date": "02/02/2023",
+  "version_patch": 3,
+  "version_date": "02/03/2023",
   "description": "An opinionated library of common functionality to bootstrap an API application using MongoDb and Firebase.  Currently either Fastify or Koa can be used as the web server.",
   "author": "thZero",
   "license": "MIT",
@@ -29,7 +29,7 @@
     "@thzero/library_common_service": "^0.17",
     "@godaddy/terminus": "^4.11.2",
     "async-mutex": "^0.4.0",
-    "config": "^3.3.8",
+    "config": "^3.3.9",
     "default-gateway": "^6.0.3",
     "easy-rbac": "^3.2.0",
     "ipaddr.js": "^2.0.1"
