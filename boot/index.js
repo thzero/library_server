@@ -207,7 +207,7 @@ class BootMain {
 	async _initAppPost(app, args) {
 	}
 
-	async _initIdGenerator() {
+	_initIdGenerator() {
 		return null;
 	}
 
