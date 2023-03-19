@@ -23,10 +23,10 @@ export default () => {
         },
         {
             category: 'server',
-            name: '@thzero/library_service',
-            url: 'https://github.com/thzero/library_service',
+            name: '@thzero/library_server',
+            url: 'https://github.com/thzero/library_server',
             licenseName: 'MIT',
-            licenseUrl: 'https://github.com/thzero/library_service/blob/master/license.md'
+            licenseUrl: 'https://github.com/thzero/library_server/blob/master/license.md'
         },
         {
             category: 'server',
