@@ -362,7 +362,7 @@ class BootMain {
 		if (!this.mdnsDiscoveryServiceI)
 			return;
 
-		await this.mdnsDiscoveryServiceI.initialize(LibraryCommonUtility.generateId(), await this._initServerDiscoveryOptsMdns(opts));
+		await this.mdnsDiscoveryServiceI.initialize(LibraryCommonUtility.correlationId(), await this._initServerDiscoveryOptsMdns(opts));
 	}
 
 	async _initServerDiscoveryOpts() {
@@ -400,7 +400,7 @@ class BootMain {
 		if (!this.resourceDiscoveryServiceI)
 			return;
 
-		await this.resourceDiscoveryServiceI.initialize(LibraryCommonUtility.generateId(), await this._initServerDiscoveryOptsResources(opts));
+		await this.resourceDiscoveryServiceI.initialize(LibraryCommonUtility.correlationId(), await this._initServerDiscoveryOptsResources(opts));
 	}
 
 	_injectRepository(key, repository) {
