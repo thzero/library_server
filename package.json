@@ -25,11 +25,16 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@godaddy/terminus": "^4.11.2"
+    "@godaddy/terminus": "^4.11.2",
+    "async-mutex": "^0.4.0",
+    "config": "^3.3.9",
+    "default-gateway": "^6.0.3",
+    "easy-rbac": "^3.2.0",
+    "ipaddr.js": "^2.0.1"
   },
   "peerDependencies": {
-    "@thzero/library_server": "^0.17",
+    "@thzero/library_common": "^0.17",
     "@thzero/library_common_service": "^0.17",
-    "@thzero/library_common": "^0.17"
+    "@thzero/library_server": "^0.17"
   }
 }
