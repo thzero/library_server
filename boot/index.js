@@ -56,6 +56,10 @@ class BootMain {
 			return process.exit(99);
 		});
 
+		const idGeneratorOverride = this._initIdGenerator();
+		if (idGeneratorOverride)
+			LibraryCommonUtility.setIdGenerator(idGeneratorOverride);
+
 		this._injector = injector;
 
 		// https://github.com/lorenwest/node-config/wiki
@@ -179,17 +183,6 @@ class BootMain {
 		console.log(`Starting HTTP on: ${this.address}:${this.port}`);
 	}
 
-	async _initApp(args, plugins) {
-		throw new NotImplementedError();
-	}
-
-	_initAppListen(app, server, address, port, err) {
-		throw new NotImplementedError();
-	}
-
-	async _initAppPost(app, args) {
-	}
-
 	_determinePlugins(args) {
 		let obj;
 		const results = [];
@@ -201,6 +194,21 @@ class BootMain {
 			results.push(obj);
 		}
 		return results;
+	}
+
+	async _initApp(args, plugins) {
+		throw new NotImplementedError();
+	}
+
+	_initAppListen(app, server, address, port, err) {
+		throw new NotImplementedError();
+	}
+
+	async _initAppPost(app, args) {
+	}
+
+	async _initIdGenerator() {
+		return null;
 	}
 
 	async _initPlugins(plugins) {
