@@ -59,6 +59,12 @@ class BootMain {
 		const idGeneratorOverride = this._initIdGenerator();
 		if (idGeneratorOverride)
 			LibraryCommonUtility.setIdGenerator(idGeneratorOverride);
+		const idGeneratorLengthLong = this._initIdGeneratorLengthLong();
+		if (idGeneratorLengthLong)
+			LibraryCommonUtility.setIdGeneratorLengthLong(idGeneratorLengthLong);
+		const idGeneratorLengthShort = this._initIdGeneratorLengthShort();
+		if (idGeneratorLengthShort)
+			LibraryCommonUtility.setIdGeneratorLengthShort(idGeneratorLengthShort);
 
 		this._injector = injector;
 
@@ -208,6 +214,14 @@ class BootMain {
 	}
 
 	_initIdGenerator() {
+		return null;
+	}
+
+	_initIdGeneratorLengthLong() {
+		return null;
+	}
+
+	_initIdGeneratorLengthShort() {
 		return null;
 	}
 
