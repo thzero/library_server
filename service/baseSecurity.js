@@ -20,7 +20,7 @@ class BaseSecurityService extends Service {
 	}
 
 	// eslint-disable-next-line
-	async validate(sub, dom, obj, act) {
+	async validate(correlationId, sub, dom, obj, act) {
 		if (!this._enforcer)
 			throw Error('No enforcer found');
 
