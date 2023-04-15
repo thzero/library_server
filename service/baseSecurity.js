@@ -126,6 +126,24 @@ class BaseSecurityService extends Service {
 		}
 	}
 
+	initializeOptionsLogical(correlationId, options) {
+		if (!options)
+			return logicalOr;
+
+		let logical = options.logical;
+		if (String.isNullOrEmpty(logical) || (logical !== logicalAnd) || (logical !== logicalOr))
+			logical = logicalOr;
+
+		return logical;
+	}
+
+	initializeOptionsRoles(correlationId, options) {
+		let roles = [];
+		if (options.roles && Array.isArray(options.roles) && (options.roles.length > 0))
+			roles = options.roles;
+		return roles;
+	}
+
 	// eslint-disable-next-line
 	async validate(correlationId, sub, dom, obj, act) {
 		if (!this._enforcer)
