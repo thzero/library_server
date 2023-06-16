@@ -20,9 +20,13 @@ class BaseNewsService extends Service {
 	}
 
 	async latest(correlationId, user, timestamp) {
-		this._logger.debug('BaseNewsService', 'latest', 'date', timestamp, correlationId);
-		if (!timestamp)
-			return this._error('BaseNewsService', 'latest', 'Invalid timestamp.', null, null, null, correlationId);
+		this._enforceNotEmpty('BaseNewsService', 'latest', timestamp, 'timestamp', correlationId);
+		try {
+			timestamp = parseInt(timestamp);
+		}
+		catch (err) {
+			return this._error('BaseNewsService', 'latest', 'Invalid timestamp.', null, err, null, correlationId);
+		}
 
 		const validationCheckNewsTiemstampResponse = this._serviceValidation.check(correlationId, this._serviceValidationNews.newsTimestampSchema, timestamp, null, 'news');
 		if (!validationCheckNewsTiemstampResponse.success)
