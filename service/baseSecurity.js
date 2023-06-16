@@ -95,7 +95,7 @@ class BaseSecurityService extends Service {
 				roleObj = roleParts[0];
 				roleAct = roleParts.length >= 2 ? roleParts[1] : null
 
-				result = await this.validate(userRole, null, roleObj, roleAct);
+				result = await this.validate(correlationId, userRole, null, roleObj, roleAct);
 				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'result', result, correlationId);
 				if (logical === BaseSecurityService.logicalOr) {
 					if (result)
@@ -128,11 +128,11 @@ class BaseSecurityService extends Service {
 
 	initializeOptionsLogical(correlationId, options) {
 		if (!options)
-			return logicalOr;
+			return BaseSecurityService.logicalOr;
 
 		let logical = options.logical;
-		if (String.isNullOrEmpty(logical) || (logical !== logicalAnd) || (logical !== logicalOr))
-			logical = logicalOr;
+		if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd) || (logical !== BaseSecurityService.logicalOr))
+			logical = BaseSecurityService.logicalOr;
 
 		return logical;
 	}
