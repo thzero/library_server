@@ -25,12 +25,12 @@ class ServerConfigService extends ConfigService {
 				if (item.key.toLowerCase() === key)
 					return item;
 			}
-	
-			return null;
 		}
 		catch (err) {
-			return this._error('ServerConfigService', 'getBackend', null, err, null, null, correlationId);
+			this._error('ServerConfigService', 'getBackend', null, err, null, null, correlationId);
 		}
+	
+		return null;
 	}
 }
 
