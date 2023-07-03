@@ -16,8 +16,12 @@ class PlansService extends Service {
 	}
 
 	async listing(correlationId) {
-		const respositoryResponse = await this._repositoryPlans.listing(correlationId);
-		return respositoryResponse;
+		try {
+			return await this._repositoryPlans.listing(correlationId);
+		}
+		catch (err) {
+			return this._error('PlansService', 'correlationId', null, err, null, null, correlationId);
+		}
 	}
 
 	get _repositoryPlans() {

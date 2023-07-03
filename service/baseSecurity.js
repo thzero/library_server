@@ -20,95 +20,107 @@ class BaseSecurityService extends Service {
 	}
 	
 	async authorizationCheckClaims(correlationId, claims, roles, logical) {
-		if (!claims)
-			return false;
-		if (!(claims && Array.isArray(claims)))
-			return false;
-		if (!roles)
-			return true;
+		try {
+			if (!claims)
+				return false;
+			if (!(claims && Array.isArray(claims)))
+				return false;
+			if (!roles)
+				return true;
 
-		if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd) || (logical !== BaseSecurityService.logicalOr))
-			logical = BaseSecurityService.logicalOr;
+			if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd) || (logical !== BaseSecurityService.logicalOr))
+				logical = BaseSecurityService.logicalOr;
 
-		let success = (logical === BaseSecurityService.logicalOr ? false : true);
+			let success = (logical === BaseSecurityService.logicalOr ? false : true);
 
-		let result;
-		let roleAct;
-		let roleObj;
-		let roleParts;
-		for (const claim of claims) {
-			this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'authorization.claim', claim, correlationId);
+			let result;
+			let roleAct;
+			let roleObj;
+			let roleParts;
+			for (const claim of claims) {
+				this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'authorization.claim', claim, correlationId);
 
-			for (const role of roles) {
-				this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'role', role, correlationId);
+				for (const role of roles) {
+					this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'role', role, correlationId);
 
-				roleParts = role.split('.');
-				if (roleParts && roleParts.length < 1)
-					success = false;
+					roleParts = role.split('.');
+					if (roleParts && roleParts.length < 1)
+						success = false;
 
-				roleObj = roleParts[0];
-				roleAct = roleParts.length >= 2 ? roleParts[1] : null
+					roleObj = roleParts[0];
+					roleAct = roleParts.length >= 2 ? roleParts[1] : null
 
-				result = await this.validate(claim, null, roleObj, roleAct);
-				this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'result', result, correlationId);
-				if (logical === BaseSecurityService.logicalOr)
-					success = success || result;
-				else
-					success = success && result;
+					result = await this.validate(claim, null, roleObj, roleAct);
+					this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'result', result, correlationId);
+					if (logical === BaseSecurityService.logicalOr)
+						success = success || result;
+					else
+						success = success && result;
+				}
 			}
-		}
 
-		return success;
+			return success;
+		}
+		catch (err) {
+			this._error('BaseSecurityService', 'authorizationCheckClaims', null, err, null, null, correlationId);
+			return false;
+		}
 	}
 
 	async authorizationCheckRoles(correlationId, user, roles, logical) {
-		if (!user)
-			return false;
-		if (!roles)
-			return true;
+		try {
+			if (!user)
+				return false;
+			if (!roles)
+				return true;
 
-		this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'user', user, correlationId);
-		if (!(user && user.roles && Array.isArray(user.roles)))
-			return false;
+			this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'user', user, correlationId);
+			if (!(user && user.roles && Array.isArray(user.roles)))
+				return false;
 
-		this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'logical', logical, correlationId);
+			this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'logical', logical, correlationId);
 
-		if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd) || (logical !== BaseSecurityService.logicalOr))
-			logical = BaseSecurityService.logicalOr;
+			if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd) || (logical !== BaseSecurityService.logicalOr))
+				logical = BaseSecurityService.logicalOr;
 
-		let success = (logical === BaseSecurityService.logicalOr ? false : true);
+			let success = (logical === BaseSecurityService.logicalOr ? false : true);
 
-		let result;
-		let roleAct;
-		let roleObj;
-		let roleParts;
-		for (const userRole of user.roles) {
-			this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'userRole', userRole, correlationId);
+			let result;
+			let roleAct;
+			let roleObj;
+			let roleParts;
+			for (const userRole of user.roles) {
+				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'userRole', userRole, correlationId);
 
-			for (const role of roles) {
-				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'role', role, correlationId);
+				for (const role of roles) {
+					this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'role', role, correlationId);
 
-				roleParts = role.split('.');
-				if (roleParts && roleParts.length < 1)
-					success = false;
+					roleParts = role.split('.');
+					if (roleParts && roleParts.length < 1)
+						success = false;
 
-				roleObj = roleParts[0];
-				roleAct = roleParts.length >= 2 ? roleParts[1] : null
+					roleObj = roleParts[0];
+					roleAct = roleParts.length >= 2 ? roleParts[1] : null
 
-				result = await this.validate(correlationId, userRole, null, roleObj, roleAct);
-				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'result', result, correlationId);
-				if (logical === BaseSecurityService.logicalOr) {
-					if (result)
-						return result;
+					result = await this.validate(correlationId, userRole, null, roleObj, roleAct);
+					this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'result', result, correlationId);
+					if (logical === BaseSecurityService.logicalOr) {
+						if (result)
+							return result;
 
-					success = false;
+						success = false;
+					}
+					else
+						success = success && result;
 				}
-				else
-					success = success && result;
 			}
-		}
 
-		return success;
+			return success;
+		}
+		catch (err) {
+			this._error('BaseSecurityService', 'authorizationCheckRoles', null, err, null, null, correlationId);
+			return false;
+		}
 	}
 
 	initializeRoles(correlationId, requestRoles, roles) {
@@ -157,8 +169,7 @@ class BaseSecurityService extends Service {
 			array.push(act);
 
 		const role = array.join(':');
-		const results = await this._enforcer.can(sub, role);
-		return results;
+		return await this._enforcer.can(sub, role);
 	}
 
 	_initModel() {

@@ -21,28 +21,34 @@ class BaseNewsService extends Service {
 
 	async latest(correlationId, user, timestamp) {
 		this._enforceNotEmpty('BaseNewsService', 'latest', timestamp, 'timestamp', correlationId);
+
 		try {
-			timestamp = parseInt(timestamp);
+			try {
+				timestamp = parseInt(timestamp);
+			}
+			catch (err) {
+				return this._error('BaseNewsService', 'latest', 'Invalid timestamp.', null, err, null, correlationId);
+			}
+	
+			const validationCheckNewsTiemstampResponse = this._serviceValidation.check(correlationId, this._serviceValidationNews.newsTimestampSchema, timestamp, null, 'news');
+			if (!validationCheckNewsTiemstampResponse.success)
+				return validationCheckNewsTiemstampResponse;
+	
+			const respositoryResponse = await this._repositoryNews.latest(correlationId, timestamp);
+			if (this._hasFailed(respositoryResponse))
+				return respositoryResponse;
+	
+			let data = respositoryResponse.results.data;
+			if (data)
+				data = data.filter(l => (l.requiresAuth && user) || !l.requiresAuth);
+			respositoryResponse.results.data = data;
+			respositoryResponse.results.count = data.length;
+	
+			return respositoryResponse;
 		}
 		catch (err) {
-			return this._error('BaseNewsService', 'latest', 'Invalid timestamp.', null, err, null, correlationId);
+			return this._error('BaseNewsService', 'latest', null, err, null, null, correlationId);
 		}
-
-		const validationCheckNewsTiemstampResponse = this._serviceValidation.check(correlationId, this._serviceValidationNews.newsTimestampSchema, timestamp, null, 'news');
-		if (!validationCheckNewsTiemstampResponse.success)
-			return validationCheckNewsTiemstampResponse;
-
-		const respositoryResponse = await this._repositoryNews.latest(correlationId, timestamp);
-		if (this._hasFailed(respositoryResponse))
-			return respositoryResponse;
-
-		let data = respositoryResponse.results.data;
-		if (data)
-			data = data.filter(l => (l.requiresAuth && user) || !l.requiresAuth);
-		respositoryResponse.results.data = data;
-		respositoryResponse.results.count = data.length;
-
-		return respositoryResponse;
 	}
 
 	get _repositoryNews() {
