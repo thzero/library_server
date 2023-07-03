@@ -8,6 +8,8 @@ import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
 
 import Service from './index.js';
 
+import Response from '@thzero/library_common/response/index.js';
+
 class UtilityService extends Service {
 	constructor() {
 		super();
@@ -65,41 +67,50 @@ class UtilityService extends Service {
 			this._initializeResponse = response;
 			return response;
 		}
+		catch (err) {
+			return this._error('UtilityService', 'initialize', null, err, null, null, correlationId);
+		}
 		finally {
 			release();
 		}
 	}
 
 	async logger(content, correlationId) {
-		if (!content)
-			return this._error('UtilityService', 'logger');
-
-		const type = content.type;
-		switch(type) {
-			case 'DEBUG':
-				this._logger.debug('UtilityService', 'logger', content.message, content.data, correlationId, true);
-				break;
-			case 'ERROR':
-				this._logger.error('UtilityService', 'logger', content.message, content.data, correlationId, true);
-				break;
-			case 'EXCEPTION':
-				this._logger.exception('UtilityService', 'logger', content.ex, correlationId, true);
-				break;
-			case 'FATAL':
-				this._logger.fatal('UtilityService', 'logger', content.message, content.data, correlationId, true);
-				break;
-			case 'INFO':
-				this._logger.info('UtilityService', 'logger', content.message, content.data, correlationId, true);
-				break;
-			case 'TRACE':
-				this._logger.trace('UtilityService', 'logger', content.message, content.data, correlationId, true);
-				break;
-			case 'WARN':
-				this._logger.warn('UtilityService', 'logger', content.message, content.data, correlationId, true);
-				break;
+		try {
+			if (!content)
+				return this._error('UtilityService', 'logger');
+	
+			const type = content.type;
+			switch(type) {
+				case 'DEBUG':
+					this._logger.debug('UtilityService', 'logger', content.message, content.data, correlationId, true);
+					break;
+				case 'ERROR':
+					this._logger.error('UtilityService', 'logger', content.message, content.data, correlationId, true);
+					break;
+				case 'EXCEPTION':
+					this._logger.exception('UtilityService', 'logger', content.ex, correlationId, true);
+					break;
+				case 'FATAL':
+					this._logger.fatal('UtilityService', 'logger', content.message, content.data, correlationId, true);
+					break;
+				case 'INFO':
+					this._logger.info('UtilityService', 'logger', content.message, content.data, correlationId, true);
+					break;
+				case 'TRACE':
+					this._logger.trace('UtilityService', 'logger', content.message, content.data, correlationId, true);
+					break;
+				case 'WARN':
+					this._logger.warn('UtilityService', 'logger', content.message, content.data, correlationId, true);
+					break;
+			}
+	
+			return this._success(correlationId);
 		}
-
-		return this._success(correlationId);
+		catch (err) {
+			console.log(`UtilityService.initialize - ${correlationId}`, err);
+			return Response.error('ServerConfigService', 'getBackend', null, err, null, null, correlationId);
+		}
 	}
 	
 	async openSource(correlationId) {

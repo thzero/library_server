@@ -130,6 +130,14 @@ class Repository {
 		return Response.error(clazz, method, message, err, code, errors, correlationId);
 	}
 
+	_errorResponse(clazz, method, value, code, correlationId) {
+		if (code)
+			this._logger.error(clazz, method, 'code', code, correlationId);
+		const response = Response.error(null, null, null, null, code, null, correlationId);
+		response.results = value;
+		return response;
+	}
+
 	_hasFailed(response) {
 		return Response.hasFailed(response);
 	}
