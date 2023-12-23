@@ -160,8 +160,6 @@ class BootMain {
 		}
 		this._initAppPost(results.app, args);
 
-		await this._initServerDiscovery(results.server);
-
 		console.log();
 		this.ip = this._appConfig.get('ip', null);
 		console.log(`config.ip.override: ${this.ip}`);
@@ -171,6 +169,8 @@ class BootMain {
 		this.port = process.env.PORT || this.port;
 		console.log(`selected.port: ${this.port}`);
 		console.log();
+
+		await this._initServerDiscovery(results.server);
 
 		const self = this;
 		const listen = async (port, address) => new Promise((resolve, reject) => {
