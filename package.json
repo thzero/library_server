@@ -1,10 +1,10 @@
 {
   "name": "@thzero/library_server",
   "type": "module",
-  "version": "0.17.18",
+  "version": "0.17.19",
   "version_major": 0,
   "version_minor": 17,
-  "version_patch": 18,
+  "version_patch": 19,
   "version_date": "01/06/2024",
   "description": "An opinionated library of common functionality to bootstrap an API using either Fastify or Koa as the web server.",
   "author": "thZero",
