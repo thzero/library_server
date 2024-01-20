@@ -170,8 +170,6 @@ class BootMain {
 		console.log(`selected.port: ${this.port}`);
 		console.log();
 
-		await this._initServerDiscovery(results.server);
-
 		const self = this;
 		const listen = async (port, address) => new Promise((resolve, reject) => {
 			self._initAppListen(results.app, results.server, address, port, (err) => {
@@ -190,6 +188,8 @@ class BootMain {
 
 		console.log();
 		console.log(`Starting HTTP on: ${this.address}:${this.port}`);
+
+		await this._initServerDiscovery();
 	}
 
 	_determinePlugins(args) {
@@ -377,7 +377,7 @@ class BootMain {
 	async _initServer(serverHttp) {
 	}
 
-	async _initServerDiscovery(serverHttp) {
+	async _initServerDiscovery() {
 		if (!this.resourceDiscoveryServiceI && !this.mdnsDiscoveryServiceI)
 			return;
 
