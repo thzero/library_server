@@ -4,7 +4,7 @@ import { Mutex as asyncMutex } from 'async-mutex';
 
 import LibraryServerConstants from '@thzero/library_server/constants.js';
 
-import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
+import LibraryMomentUtility from '@thzero/library_common/utility/moment.js';
 
 import Service from './index.js';
 
@@ -35,7 +35,7 @@ class UtilityService extends Service {
 	}
 
 	async initialize(correlationId) {
-		const now = LibraryCommonUtility.getTimestamp();
+		const now = LibraryMomentUtility.getTimestamp();
 		const ttlInitialize = this._ttlInitialize ? this._ttlInitialize : 0;
 		const delta = now - ttlInitialize;
 		if (this._initializeResponse && (delta <= this._ttlInitializeDiff))
@@ -63,7 +63,7 @@ class UtilityService extends Service {
 
 			await this._intialize(correlationId, response);
 
-			this._ttlInitialize = LibraryCommonUtility.getTimestamp();
+			this._ttlInitialize = LibraryMomentUtility.getTimestamp();
 			this._initializeResponse = response;
 			return response;
 		}

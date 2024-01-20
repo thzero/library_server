@@ -8,6 +8,7 @@ import LibraryServerConstants from '../constants.js';
 import LibraryCommonServiceConstants from '@thzero/library_common_service/constants.js';
 
 import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
+import LibraryMomentUtility from '@thzero/library_common/utility/moment.js';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
@@ -300,7 +301,7 @@ class BootMain {
 				this._servicesPost.set(key, value);
 			}
 
-			LibraryCommonUtility.initDateTime();
+			LibraryMomentUtility.initDateTime();
 		}
 		finally {
 			this._repositories = null;
