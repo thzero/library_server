@@ -47,7 +47,6 @@ import injector from '@thzero/library_common/utility/injector.js';
 import usageMetricsRepository from '../repository/usageMetrics/devnull.js';
 
 import configService from '../service/config.js';
-import healthService from '../service/health.js';
 import loggerService from '@thzero/library_common_service/service/logger.js';
 import usageMetricsService from '../service/usageMetrics.js';
 
@@ -358,10 +357,6 @@ class BootMain {
 
 	_initServicesDiscoveryMdns() {
 		return null;
-	}
-
-	_initServicesHealth() {
-		return new healthService();
 	}
 
 	_initServicesLogger() {
