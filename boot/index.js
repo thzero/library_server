@@ -191,6 +191,8 @@ class BootMain {
 		console.log(`Starting HTTP on: ${this.address}:${this.port}`);
 
 		await this._initServerDiscovery();
+
+		await this._initServerStart(injector);
 	}
 
 	_determinePlugins(args) {
@@ -431,6 +433,9 @@ class BootMain {
 			return;
 
 		await this.resourceDiscoveryServiceI.initialize(LibraryCommonUtility.correlationId(), await this._initServerDiscoveryOptsResources(opts));
+	}
+
+	async _initServerStart() {
 	}
 
 	_injectRepository(key, repository) {
