@@ -49,6 +49,10 @@ class UsageMetricsService extends Service {
 		this._ignore.push(url);
 	}
 
+	async listing(correlationId) {
+		return await this._repositoryUsageMetrics.listing(correlationId);
+	}
+
 	async tag(correlationId, user, tag) {
 		this._enforceNotNull('UsageMetricsService', 'tag', 'user', user, correlationId);
 		this._enforceNotNull('UsageMetricsService', 'tag', 'tag', tag, correlationId);
