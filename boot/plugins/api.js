@@ -14,6 +14,9 @@ class ApiBootPlugin extends BootPlugin {
 	}
 
 	async _initRoutesPre() {
+		const routeUsageMetrics = this._initRoutesUsageMetrics();
+		if (routeUsageMetrics)
+			this._initRoute(routeUsageMetrics);
 		this._initRoute(this._initRoutesVersion());
 	}
 
@@ -31,6 +34,10 @@ class ApiBootPlugin extends BootPlugin {
 
 	_initRoutesHome() {
 		throw new NotImplementedError();
+	}
+
+	_initRoutesUsageMetrics() {
+		return null;
 	}
 
 	_initRoutesVersion() {
