@@ -6,6 +6,11 @@ class DevNullUsageMetricsRepository extends Repository {
 		// Do nothing here.
 		return this._success(correlationId);
 	}
+
+	async tag(correlationId, userId, tag) {
+		// Do nothing here.
+		return this._success(correlationId);
+	}
 }
 
 export default DevNullUsageMetricsRepository;
