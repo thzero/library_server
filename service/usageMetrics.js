@@ -49,8 +49,14 @@ class UsageMetricsService extends Service {
 		this._ignore.push(url);
 	}
 
-	async listing(correlationId) {
-		return await this._repositoryUsageMetrics.listing(correlationId);
+	async listing(correlationId, user, params) {
+		this._enforceNotNull('UsageMetricsService', 'listing', 'user', user, correlationId);
+
+		const validationResponse = this._serviceValidation.check(correlationId, this._serviceValidation.usageMetricsMeasurementTagParams, params ?? {});
+		if (this._hasFailed(validationResponse))
+			return validationResponse;
+
+		return await this._repositoryUsageMetrics.listing(correlationId, params);
 	}
 
 	async tag(correlationId, user, tag) {
