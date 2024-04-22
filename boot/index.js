@@ -436,6 +436,15 @@ class BootMain {
 	}
 
 	async _initServerStart() {
+		for(const service of injector.getServices()) {
+			if (service.dependency) {
+				console.log(service.key);
+				if (service.dependency && service.dependency.instantiate) {
+					console.log(`services.instantiate - ${service.key}`);
+					await service.dependency.instantiate();
+				}
+			}
+		}
 	}
 
 	_injectRepository(key, repository) {
