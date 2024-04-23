@@ -439,8 +439,10 @@ class BootMain {
 		for(const service of injector.getServices()) {
 			if (service.dependency) {
 				if (service.dependency && service.dependency.initialize) {
-					console.log(`services.initialize - ${service.key}`);
-					await service.dependency.initialize();
+					if (service.dependency.initialize.length === 0) {
+						console.log(`services.initialize - ${service.key}`);
+						await service.dependency.initialize();
+					}
 				}
 			}
 		}
