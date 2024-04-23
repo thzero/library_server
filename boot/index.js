@@ -75,6 +75,7 @@ class BootMain {
 		// https://github.com/lorenwest/node-config/wiki
 		this._appConfig = new configService(config.get('app'));
 
+		this._repositoriesPost = new Map();
 		this._servicesPost = new Map();
 
 		const plugins = this._determinePlugins(args);
@@ -153,15 +154,39 @@ class BootMain {
 		// 	this.address = await internalIpV4();
 
 		await this._initServer(results.server);
+		
+		console.log('----repositories.init.post-------------');
+
+		for (const [key, value] of this._repositoriesPost) {
+			if (value.initPost) {
+				console.log(`repositories.init.post - ${key}`);
+				await value.initPost();
+			}
+		}
+		
+		console.log('----repositories.init.post.complete----');
+		console.log();
+		
+		console.log('----services.init.post-----------------');
 
 		for (const [key, value] of this._servicesPost) {
-			console.log(`services.init.post - ${key}`);
-			if (value.initPost)
+			if (value.initPost) {
+				console.log(`services.init.post - ${key}`);
 				await value.initPost();
+			}
 		}
-		this._initAppPost(results.app, args);
-
+		
+		console.log('----services.init.post.complete--------');
 		console.log();
+		
+		console.log('----services.init.app.post-------------');
+
+		this._initAppPost(results.app, args);
+		
+		console.log('----services.init.app.post.complete----');
+		console.log();
+
+		console.log('----server.startup.config--------------');
 		this.ip = this._appConfig.get('ip', null);
 		console.log(`config.ip.override: ${this.ip}`);
 		this.port = this._appConfig.get('port');
@@ -169,7 +194,6 @@ class BootMain {
 		console.log(`process.env.PORT: ${process.env.PORT}`);
 		this.port = process.env.PORT || this.port;
 		console.log(`selected.port: ${this.port}`);
-		console.log();
 
 		const self = this;
 		const listen = async (port, address) => new Promise((resolve, reject) => {
@@ -189,6 +213,9 @@ class BootMain {
 
 		console.log();
 		console.log(`Starting HTTP on: ${this.address}:${this.port}`);
+
+		console.log('----server.startup.config.complete-----');
+		console.log();
 
 		await this._initServerDiscovery();
 
@@ -241,14 +268,21 @@ class BootMain {
 
 			this._repositories = new Map();
 
+			console.log();
+			console.log('----repository.injection-------------------------');
 			for (const pluginRepository of plugins)
 				await pluginRepository.initRepositories(this._repositories);
 
 			await this._initRepositories();
+
 			this._injectRepository(LibraryServerConstants.InjectorKeys.REPOSITORY_USAGE_METRIC, this._initRepositoriesUsageMetrics());
+
+			console.log('----repository.injection.complete----------------');
+			console.log();
 
 			this._services = new Map();
 
+			console.log('----services.injection---------------------------');
 			this.loggerServiceI = this._initServicesLogger();
 			this._initServicesLoggers();
 			this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_LOGGER, this.loggerServiceI);
@@ -274,11 +308,21 @@ class BootMain {
 
 			await this._initServices();
 
+			console.log('----services.injection.complete------------------');
+			console.log();
+
+			console.log('----repositories.injection.init------------------');
 			for (const [key, value] of this._repositories) {
 				console.log(`repositories.init - ${key}`);
 				await value.init(injector);
+
+				this._repositoriesPost.set(key, value);
 			}
 
+			console.log('----repositories.injection.init.complete---------');
+			console.log();
+
+			console.log('----services.injection.init----------------------');
 			for (const [key, value] of this._services) {
 				console.log(`services.init - ${key}`);
 				await value.init(injector);
@@ -286,12 +330,21 @@ class BootMain {
 				this._servicesPost.set(key, value);
 			}
 
+			console.log('----services.injection.init.complete-------------');
+			console.log();
+
 			this._services = new Map();
 
+			console.log('----services.injection.secondary-----------------');
 			await this._initServicesSecondary();
 
 			for (const pluginService of plugins)
 				await pluginService.initServicesSecondary(this._services);
+
+			console.log('----services.injection.secondary.complete--------');
+			console.log();
+
+			console.log('----services.injection.initsecondary-------------');
 
 			for (const [key, value] of this._services) {
 				if (value.initialized)
@@ -302,6 +355,9 @@ class BootMain {
 
 				this._servicesPost.set(key, value);
 			}
+
+			console.log('----services.injection.initsecondary.complete----');
+			console.log();
 
 			LibraryMomentUtility.initDateTime();
 		}
@@ -435,17 +491,7 @@ class BootMain {
 		await this.resourceDiscoveryServiceI.initializeDiscovery(await this._initServerDiscoveryOptsResources(opts));
 	}
 
-	async _initServerStart() {
-		for(const service of injector.getServices()) {
-			if (service.dependency) {
-				if (service.dependency && service.dependency.initialize) {
-					if (service.dependency.initialize.length === 0) {
-						console.log(`services.initialize - ${service.key}`);
-						await service.dependency.initialize();
-					}
-				}
-			}
-		}
+	async _initServerStart(injector) {
 	}
 
 	_injectRepository(key, repository) {
