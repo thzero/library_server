@@ -394,7 +394,7 @@ class BootMain {
 		if (!this.mdnsDiscoveryServiceI)
 			return;
 
-		await this.mdnsDiscoveryServiceI.initialize(LibraryCommonUtility.correlationId(), await this._initServerDiscoveryOptsMdns(opts));
+		await this.mdnsDiscoveryServiceI.initializeDiscovery(await this._initServerDiscoveryOptsMdns(opts));
 	}
 
 	async _initServerDiscoveryOpts() {
@@ -432,16 +432,15 @@ class BootMain {
 		if (!this.resourceDiscoveryServiceI)
 			return;
 
-		await this.resourceDiscoveryServiceI.initialize(LibraryCommonUtility.correlationId(), await this._initServerDiscoveryOptsResources(opts));
+		await this.resourceDiscoveryServiceI.initializeDiscovery(await this._initServerDiscoveryOptsResources(opts));
 	}
 
 	async _initServerStart() {
 		for(const service of injector.getServices()) {
 			if (service.dependency) {
-				console.log(service.key);
-				if (service.dependency && service.dependency.instantiate) {
-					console.log(`services.instantiate - ${service.key}`);
-					await service.dependency.instantiate();
+				if (service.dependency && service.dependency.initialize) {
+					console.log(`services.initialize - ${service.key}`);
+					await service.dependency.initialize();
 				}
 			}
 		}

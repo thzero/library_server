@@ -42,16 +42,16 @@ class ResourcesDiscoveryService extends DiscoveryService {
 	}
 
 	// options { name, ttl, description }
-	async initialize(correlationId, opts) {
+	async initializeDiscovery(opts) {
 		try {
-			this._enforceNotEmpty('ResourceDiscoveryService', 'initialize', opts, 'opts', correlationId);
-			this._enforceNotEmpty('ResourceDiscoveryService', 'initialize', opts.address, 'address', correlationId);
-			this._enforceNotNull('ResourceDiscoveryService', 'initialize', opts.port, 'port', correlationId);
+			this._enforceNotEmpty('ResourceDiscoveryService', 'initializeDiscovery', opts, 'opts', null);
+			this._enforceNotEmpty('ResourceDiscoveryService', 'initializeDiscovery', opts.address, 'address', null);
+			this._enforceNotNull('ResourceDiscoveryService', 'initializeDiscovery', opts.port, 'port', null);
 
-			return await this._initialize(correlationId, opts);
+			return await this._initializeDiscovery(opts);
 		}
 		catch(err) {
-			return this._error('ResourceDiscoveryService', 'initialize', null, err, null, null, correlationId);
+			return this._error('ResourceDiscoveryService', 'initializeDiscovery', null, err, null, null, null);
 		}
 	}
 
@@ -85,7 +85,7 @@ class ResourcesDiscoveryService extends DiscoveryService {
 		throw new NotImplementedError();
 	}
 
-	async _initialize(correlationId, opts) {
+	async _initializeDiscovery(opts) {
 		throw new NotImplementedError();
 	}
 
