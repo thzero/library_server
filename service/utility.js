@@ -129,7 +129,8 @@ class UtilityService extends Service {
 			const dir = path.join(path.resolve(__dirname), 'node_modules', '@thzero');
 			const dirs = await fs.promises.readdir(dir);
 	
-			console.log(`\tOpenSource...`);
+			console.log();
+			console.log('\t----open.source.initialization-----------------');
 			
 			let file;
 			let importPath;
@@ -145,7 +146,7 @@ class UtilityService extends Service {
 					}
 						
 					importPath = ['@thzero', item, 'openSource.js'].join('/');
-					console.log(`\t${importPath}...`);
+					console.log(`\t\t${importPath}...`);
 					fileI = await import(importPath);
 					if (!fileI.default) {
 						console.log(`\t...failed to load.`);
@@ -172,7 +173,8 @@ class UtilityService extends Service {
 			this._logger.warn('UtilityService', '_initializeOopenSource', null, err, correlationId);
 		}
 		finally {
-			console.log(`\t...OpenSource`);
+			console.log('\t----open.source.initialization.complete--------');
+			console.log();
 		}
 
 		// response.results = await this._openSourceServer(correlationId);
