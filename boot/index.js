@@ -2,7 +2,7 @@ import { createTerminus } from '@godaddy/terminus';
 
 import config from 'config';
 
-import {internalIpV4} from '@thzero/library_server/utility/internalIp/index.js';
+import { internalIpV4 } from '@thzero/library_server/utility/internalIp/index.js';
 
 import LibraryServerConstants from '../constants.js';
 import LibraryCommonServiceConstants from '@thzero/library_common_service/constants.js';
@@ -91,17 +91,23 @@ class BootMain {
 
 		const results = await this._initApp(args, plugins);
 
-		function onSignal() {
-			this.loggerServiceI.info2(`server is starting cleanup`);
+		async function onSignal() {
+			console.log('server is starting cleanup');
+			this.loggerServiceI.info2('server is starting cleanup');
 			const cleanupFuncs = [];
 			this._initCleanup(cleanupFuncs);
 			this._initCleanupDiscovery(cleanupFuncs);
-			return Promise.all(cleanupFuncs);
+			await Promise.all(cleanupFuncs);
+			console.log('server is starting cleanup completed');
+			this.loggerServiceI.info2('server is starting cleanup completed');
 		}
 
-		function onShutdown() {
+		async function onShutdown() {
+			console.log('server is shutting down');
+			this.loggerServiceI.info2('server is shutting down');
 			this._initShutdown();
-			this.loggerServiceI.info2(`cleanup finished, server is shutting down`);
+			console.log('server is shutting down completed');
+			this.loggerServiceI.info2('server is shutting down completed');
 		}
 
 		function healthCheck() {
@@ -130,7 +136,7 @@ class BootMain {
 			healthChecks: healthCheckOptions,
 
 			// cleanup options
-			signals: [ 'SIGINT', 'SIGTERM' ],
+			signals: [ 'SIGINT', 'SIGTERM', 'SIGQUIT', 'SIGKILL' ],
 			onSignal: onSignal.bind(this), // [optional] cleanup function, returning a promise (used to be onSigterm)
 			onShutdown: onShutdown.bind(this) // [optional] called right before exiting
 		};
@@ -200,7 +206,7 @@ class BootMain {
 			self._initAppListen(results.app, results.server, address, port, (err) => {
 				if (err) {
 					reject(err);
-					return;
+					process.exit(1);
 				}
 
 				resolve();
