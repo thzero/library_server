@@ -136,7 +136,7 @@ class BootMain {
 			healthChecks: healthCheckOptions,
 
 			// cleanup options
-			signals: [ 'SIGINT', 'SIGTERM', 'SIGQUIT', 'SIGKILL' ],
+			signals: [ 'SIGINT', 'SIGTERM', 'SIGQUIT' ], // SIGKILL does not work with Linux
 			onSignal: onSignal.bind(this), // [optional] cleanup function, returning a promise (used to be onSigterm)
 			onShutdown: onShutdown.bind(this) // [optional] called right before exiting
 		};
