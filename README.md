@@ -67,7 +67,8 @@ The following setup for configuration is required for an application using this 
             "origin": "*"
         },
         "db": {
-            "atlas": {
+            "default": "mongo"
+            "mongo": {
                 "connection": "<mongo connection string>",
                 "name": "<environment name>"
             }
