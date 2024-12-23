@@ -59,15 +59,16 @@ The following setup for configuration is required for an application using this 
         "auth": {
           "apiKey": "<generate a GUID as key in standard nomeclature '#######-####-####-####-############'>",
           "claims": {
-            "check": false,
-            "useDefault": false
+            "check": <true of false, false by default>,
+            "useDefault": <true of false, false by default>
           }
         },
         "cors": {
             "origin": "*"
         },
         "db": {
-            "atlas": {
+            "default": "mongo"
+            "mongo": {
                 "connection": "<mongo connection string>",
                 "name": "<environment name>"
             }
@@ -80,6 +81,24 @@ The following setup for configuration is required for an application using this 
     }
 }
 ```
+
+##### Environment Variable overrides
+
+The following environmnent variables override the above configuration settings found in the config file.
+
+* AUTH_API_KEY
+* AUTH_CLAIMS_CHECK
+* AUTH_CLAIMS_USE_DEFAULT
+* CORS_ORIGIN
+* DB_DEFAULT
+* DB_CONNECTION_ATLAS
+* DB_NAME_ATLAS
+* DB_CONNECTION_MONGO
+* DB_NAME_MONGO
+* IP_ADDRESS
+* LOGGING_LEVEL
+* LOGGING_PRETTIFY
+* PORT
 
 ##### Development Tool Configuration
 
