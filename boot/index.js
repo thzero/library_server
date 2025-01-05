@@ -205,6 +205,7 @@ class BootMain {
 		const listen = async (port, address) => new Promise((resolve, reject) => {
 			self._initAppListen(results.app, results.server, address, port, (err) => {
 				if (err) {
+					console.log(err);
 					reject(err);
 					process.exit(1);
 				}
