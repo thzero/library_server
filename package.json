@@ -1,11 +1,11 @@
 {
   "name": "@thzero/library_server",
   "type": "module",
-  "version": "0.18.20",
+  "version": "0.18.21",
   "version_major": 0,
   "version_minor": 18,
-  "version_patch": 20,
-  "version_date": "06/23/2025",
+  "version_patch": 21,
+  "version_date": "07/27/2025",
   "description": "An opinionated library of common functionality to bootstrap an API using either Fastify or Koa as the web server.",
   "author": "thZero",
   "license": "MIT",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@godaddy/terminus": "^4.12.1",
     "async-mutex": "^0.5.0",
-    "config": "^4.0.0",
+    "config": "^4.1.0",
     "default-gateway": "^7.2.2",
     "easy-rbac": "^4.0.0",
     "ipaddr.js": "^2.2.0"
