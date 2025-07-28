@@ -87,7 +87,11 @@ class BaseUserService extends Service {
 		if (this._hasFailed(validationSettingsResponse))
 			return validationSettingsResponse;
 
-		const updateSettingsResponse = await this._updateSettings(correlationId, requestedSettings);
+		let updateSettingsResponse = await this._updateSettingsGamerTag(correlationId, requestedSettings);
+		if (this._hasFailed(updateSettingsResponse))
+			return updateSettingsResponse;
+
+		updateSettingsResponse = await this._updateSettings(correlationId, requestedSettings);
 		if (this._hasFailed(updateSettingsResponse))
 			return updateSettingsResponse;
 
@@ -95,7 +99,23 @@ class BaseUserService extends Service {
 		return respositoryResponse;
 	}
 
-	_updateSettings(correlationId, requestedSettings) {
+	async _updateSettings(correlationId, requestedSettings) {
+		return this._success(correlationId);
+	}
+
+	async _updateSettingsGamerTag(correlationId, requestedSettings) {
+		if (requestedSettings.settings.gamerTag) {
+			const gamerTag = requestedSettings.settings.gamerTag.trim();
+			const gamerTagDisplay = requestedSettings.settings.gamerTagDisplay.trim();
+			requestedSettings.settings.gamerTag = gamerTag;
+			requestedSettings.settings.gamerTagSearch = AppUtility.generateGamerTagSearch(gamerTagDisplay);
+		}
+		else {
+			requestedSettings.settings.gamerTag = null;
+			requestedSettings.settings.gamerTagDisplay = null;
+			requestedSettings.settings.gamerTagSearch = null;
+		}
+
 		return this._success(correlationId);
 	}
 
