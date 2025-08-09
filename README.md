@@ -10,11 +10,25 @@ An opinionated library of common functionality to bootstrap an API application u
 
 #### NodeJs
 
-Requires [NodeJs ](https://nodejs.org) version 18+.
+Requires [NodeJs ](https://nodejs.org) version 22+.
+
+### NodeMon
+
+```
+npm -g i nodemon
+```
 
 ### Installation
 
 [![NPM](https://nodei.co/npm/@thzero/library_server.png?compact=true)](https://npmjs.org/package/@thzero/library_server)
+
+#### NPM Dependencies
+
+Install the NPM dependencies for the server.
+
+```
+npm install
+```
 
 #### Mongo
 
@@ -44,6 +58,10 @@ Google Firebase (https://firebase.google.com) provides the social based authenti
   * Go to Project Overview->Settings->Service accounts
   * Select **Node.js** option
   * Click **Generate new private key**
+
+#### ServiceAccountKey.json
+
+* Copy the contents of the file that was downloaded when generating a new private key into the 'config\ServiceAccountKey.json' file.
 
 #### Configuration
 
@@ -110,3 +128,162 @@ The following environmnent variables override the above configuration settings f
   "version_patch": #,
   "version_date": "MM/DD/YYYY",
 ```
+
+## Development
+
+### Compile and hot-reloads for development
+
+#### NPM CLI
+
+Run the application server locally in debug mode with hot reloading via Nodemon.
+
+```
+npm run debug
+```
+
+#### Visual Code
+
+Install VisualCode, open the 'server' folder via 'Open Folder'.
+
+Using the Menu->Run->Start Debugging will launch the application in debug mode with hot reloading via Nodemon
+
+## Hosting
+
+See Google Cloud Hosting.
+
+## Google Cloud Hosting
+
+Login to Google Cloud hosting, select the same account that was setup for Firebase.
+
+Enable the following APIs in the Enable APIs & Services section for the project.
+
+* Cloud Source Repositories API
+* Cloud Build API
+
+### Project's cloudbuild.yaml
+
+Update the cloudbuild.yaml file in the source project and change the following based on your account name
+
+```
+https://source.developers.google.com/p/<account name>/r/github_thzero_rocket_sidekick-common
+```
+
+### Setup Google Cloud Source Repositories
+
+This is a mirror of the GitHub repo for the following repos:
+* https://img.shields.io/github/package-json/v/thzero/rocket_sidekick-common
+* https://img.shields.io/github/package-json/v/thzero/rocket_sidekick-server
+
+* Add Repository
+* Connect external repository
+* Select the project setup by Firebase, then GitHub
+* Select the web-common repo
+* Connect selected repositories
+
+Select repository, then permissions.  Verify that the Cloud Build Service Account is listed.
+
+### Deploy to CloudRun
+
+https://cloud.google.com/run/docs/continuous-deployment-with-cloud-build
+https://cloud.google.com/run/docs/deploying#service
+
+#### Settings for Cloud Run configuration
+
+##### Cloud Run
+* Continuously deploy new revisions from a source repository
+* Use Set Up With Cloud Build
+ * Select the Repository Provide and Repository
+ * Click Next
+ * Branch: ^master$
+ * Build Type: Dockerfile
+  * Source location: /Dockerfile
+ * Click Save
+
+##### CPU Allocation
+* CPU is only allocated during request processing
+
+##### Revision Autoscaling
+* Minimum 0
+* Maximum 1000
+
+##### Ingress Control
+* All
+
+##### Authentication
+* Allow unauthenticated invocations
+
+##### Capacity
+* 512mb 1 cpu
+* Requested Timeout 300
+* Max Request per Container 80
+
+##### Variables & Secrets
+
+Add these variables:
+
+* SERVICE_ACCOUNT_KEY - <Firebase servicecAccountKey.json file in local config folder>
+* AUTH_API_KEY - <guid>
+* DB_DEFAULT - atla
+* DB_CONNECTION_ALTAS - <connection string>
+* DB_NAME_ALTAS - production
+* DB_CONNECTION_MONGO - <connection string>
+  * optional
+* DB_NAME_MONGO - production
+  * optional
+* LOG_LEVEL - debug
+* IP_ADDRESS - 0.0.0.0
+
+#### Cloud Source Repository
+
+In Cloud Build, go to the Repositories section.
+
+* Select an appropriate region, should be for the same region as your Cloud Run is running on
+* Select 2nd Gen
+* Link Repository to create a link to your repository
+
+##### Link Repository
+
+###### Connection
+* Create a new Host Connection
+
+###### Region
+* Select the same region as your Cloud Run is running on
+
+###### Name
+* Set name for the connection
+
+* Click Connect to create the connection
+* You may require the Security Manager API to be enabled
+* Click Continue in the confirmation dialog
+
+###### Github Installation
+* Select an installation user or Install a new account
+
+#### Cloud Build Trigger
+
+##### Event
+* Push to branch
+
+###### Region
+* Select the same region as used with the Cloud Source Repository
+
+###### Repository Generation
+* Select 2nd
+
+##### Source
+* Select the repository
+* Select "^master$" branch
+
+##### Configuration
+
+###### Type
+* Cloud Build configuration file (yaml or json)
+
+###### Location
+* Repository
+* Cloud Build configuration file location
+ * / cloudbuild.yaml
+
+##### Deploy
+
+Run the trigger to kick of a deploy.
