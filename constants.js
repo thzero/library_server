@@ -29,7 +29,9 @@ const LibraryConstants = {
 		AuthKeys: {
 			API: 'x-api-key',
 			AUTH: 'authorization',
-			AUTH_BEARER: 'bearer'
+			AUTH_BEARER: 'Bearer',
+			AUTH_BEARER_LOWER_CASE: 'bearer',
+			AUTH_BEARER_UPPER_CASE: 'BEARER'
 		},
 		CorrelationId: 'correlation-id'
 	},
