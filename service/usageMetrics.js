@@ -8,7 +8,7 @@ class UsageMetricsService extends Service {
 	constructor() {
 		super();
 
-		this._ignore = [];
+		this._ignore = new Set();
 
 		this._repositoryUsageMetricsI = null;
 	}
@@ -25,12 +25,8 @@ class UsageMetricsService extends Service {
 				return;
 
 			const url = usageMetrics.url;
-			if (!String.isNullOrEmpty(url)) {
-				for (const ignore of this._ignore) {
-					if (url === ignore)
-						return;
-				}
-			}
+			if (!String.isNullOrEmpty(url) && this._ignore.has(url))
+				return;
 
 			usageMetrics.date = new Date(new Date(LibraryMomentUtility.getTimestamp()).toISOString());
 
@@ -43,10 +39,7 @@ class UsageMetricsService extends Service {
 	}
 
 	registerIgnore(url) {
-		if (this._ignore[url])
-			return;
-
-		this._ignore.push(url);
+		this._ignore.add(url);
 	}
 
 	async listing(correlationId, user, params) {

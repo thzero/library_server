@@ -5,7 +5,7 @@ class ServerConfigService extends ConfigService {
 		super(config);
 	}
 
-	getBackend(key) {
+	getBackend(key, correlationId) {
 		try {
 			if (String.isNullOrEmpty(key))
 				return null;

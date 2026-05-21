@@ -28,7 +28,7 @@ class BaseSecurityService extends Service {
 			if (!roles)
 				return true;
 
-			if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd) || (logical !== BaseSecurityService.logicalOr))
+			if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd && logical !== BaseSecurityService.logicalOr))
 				logical = BaseSecurityService.logicalOr;
 
 			let success = (logical === BaseSecurityService.logicalOr ? false : true);
@@ -80,7 +80,7 @@ class BaseSecurityService extends Service {
 
 			this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'logical', logical, correlationId);
 
-			if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd) || (logical !== BaseSecurityService.logicalOr))
+			if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd && logical !== BaseSecurityService.logicalOr))
 				logical = BaseSecurityService.logicalOr;
 
 			let success = (logical === BaseSecurityService.logicalOr ? false : true);
