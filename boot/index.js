@@ -79,7 +79,7 @@ class BootMain {
 		this._servicesPost = new Map();
 
 		const plugins = this._determinePlugins(args);
-		await await this._initPlugins(plugins);
+		await this._initPlugins(plugins);
 		
 		// this.ip = this._appConfig.get('ip', null);
 		// this.loggerServiceI.info2(`config.ip.override: ${this.ip}`);
@@ -163,24 +163,24 @@ class BootMain {
 		
 		console.log('----repositories.init.post-------------');
 
-		for (const [key, value] of this._repositoriesPost) {
+		await Promise.all([...this._repositoriesPost.entries()].map(async ([key, value]) => {
 			if (value.initPost) {
 				console.log(`repositories.init.post - ${key}`);
 				await value.initPost();
 			}
-		}
+		}));
 		
 		console.log('----repositories.init.post.complete----');
 		console.log();
 		
 		console.log('----services.init.post-----------------');
 
-		for (const [key, value] of this._servicesPost) {
+		await Promise.all([...this._servicesPost.entries()].map(async ([key, value]) => {
 			if (value.initPost) {
 				console.log(`services.init.post - ${key}`);
 				await value.initPost();
 			}
-		}
+		}));
 		
 		console.log('----services.init.post.complete--------');
 		console.log();
@@ -319,23 +319,21 @@ class BootMain {
 			console.log();
 
 			console.log('----repositories.injection.init------------------');
-			for (const [key, value] of this._repositories) {
+			await Promise.all([...this._repositories.entries()].map(async ([key, value]) => {
 				console.log(`repositories.init - ${key}`);
 				await value.init(injector);
-
 				this._repositoriesPost.set(key, value);
-			}
+			}));
 
 			console.log('----repositories.injection.init.complete---------');
 			console.log();
 
 			console.log('----services.injection.init----------------------');
-			for (const [key, value] of this._services) {
+			await Promise.all([...this._services.entries()].map(async ([key, value]) => {
 				console.log(`services.init - ${key}`);
 				await value.init(injector);
-
 				this._servicesPost.set(key, value);
-			}
+			}));
 
 			console.log('----services.injection.init.complete-------------');
 			console.log();
@@ -353,15 +351,13 @@ class BootMain {
 
 			console.log('----services.injection.initsecondary-------------');
 
-			for (const [key, value] of this._services) {
+			await Promise.all([...this._services.entries()].map(async ([key, value]) => {
 				if (value.initialized)
-					continue;
-
+					return;
 				console.log(`services.init.secondary - ${key}`);
 				await value.init(injector);
-
 				this._servicesPost.set(key, value);
-			}
+			}));
 
 			console.log('----services.injection.initsecondary.complete----');
 			console.log();
