@@ -1,11 +1,11 @@
 {
   "name": "@thzero/library_server",
   "type": "module",
-  "version": "0.18.38",
+  "version": "0.18.39",
   "version_major": 0,
   "version_minor": 18,
-  "version_patch": 38,
-  "version_date": "05/27/2026",
+  "version_patch": 39,
+  "version_date": "06/19/2026",
   "description": "An opinionated library of common functionality to bootstrap an API using either Fastify or Koa as the web server.",
   "author": "thZero",
   "author_url": "https://www.thzero.com",
@@ -32,7 +32,7 @@
     "config": "^4.4.1",
     "default-gateway": "^7.2.2",
     "easy-rbac": "^4.0.0",
-    "ipaddr.js": "^2.3.0"
+    "ipaddr.js": "^2.4.0"
   },
   "peerDependencies": {
     "@thzero/library_common": "^0.18",
