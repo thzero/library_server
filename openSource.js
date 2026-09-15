@@ -46,7 +46,7 @@ export default () => {
             category: 'server',
             name: 'default-gateway',
             url: 'https://github.com/silverwind/default-gateway',
-            licenseName: 'BSD 2',
+            licenseName: 'BSD-2-Clause',
             licenseUrl: 'https://github.com/silverwind/default-gateway/blob/master/LICENSE'
         },
         {
