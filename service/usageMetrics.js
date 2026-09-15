@@ -43,8 +43,10 @@ class UsageMetricsService extends Service {
 	}
 
 	async listing(correlationId, user, params) {
-		this._enforceNotNull('UsageMetricsService', 'listing', 'user', user, correlationId);
-
+		// No user enforcement here: the /usageMetrics/listing route requires the admin
+		// role, so access is settled before this is reached, and nothing below uses
+		// user. The enforcement that used to sit here was dead - value and name were
+		// transposed - and making it live 500'd the route.
 		const validationResponse = this._serviceValidation.check(correlationId, this._serviceValidation.usageMetricsMeasurementTagParams, params ?? {});
 		if (this._hasFailed(validationResponse))
 			return validationResponse;
@@ -53,8 +55,9 @@ class UsageMetricsService extends Service {
 	}
 
 	async tag(correlationId, user, tag) {
-		this._enforceNotNull('UsageMetricsService', 'tag', 'user', user, correlationId);
-		this._enforceNotNull('UsageMetricsService', 'tag', 'tag', tag, correlationId);
+		// No user enforcement: the route is anonymous, and the body below handles an
+		// absent user on purpose - `if (user)` and `user ? user.id : null`.
+		this._enforceNotNull('UsageMetricsService', 'tag', tag, 'tag', correlationId);
 
 		if (user) {
 			const validationResponsUser = this._validateUser(correlationId, user);
@@ -70,7 +73,7 @@ class UsageMetricsService extends Service {
 	}
 
 	get _repositoryUsageMetrics() {
-		return this._injector.getService(LibraryServerConstants.InjectorKeys.REPOSITORY_USAGE_METRIC)
+		return this._repositoryUsageMetricsI;
 	}
 }
 

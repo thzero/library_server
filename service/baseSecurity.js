@@ -31,35 +31,48 @@ class BaseSecurityService extends Service {
 			if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd && logical !== BaseSecurityService.logicalOr))
 				logical = BaseSecurityService.logicalOr;
 
-			let success = (logical === BaseSecurityService.logicalOr ? false : true);
-
+			// Same shape as authorizationCheckRoles: outer loop over the REQUIRED
+			// roles, inner over the claims. A required role is satisfied when ANY
+			// claim validates against it.
 			let result;
 			let roleAct;
 			let roleObj;
 			let roleParts;
-			for (const claim of claims) {
-				this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'authorization.claim', claim, correlationId);
+			let satisfied;
+			for (const role of roles) {
+				this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'role', role, correlationId);
 
-				for (const role of roles) {
-					this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'role', role, correlationId);
+				roleParts = role.split('.');
+				roleObj = roleParts[0];
+				roleAct = roleParts.length >= 2 ? roleParts[1] : null
 
-					roleParts = role.split('.');
-					if (roleParts && roleParts.length < 1)
-						success = false;
+				satisfied = false;
+				for (const claim of claims) {
+					this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'authorization.claim', claim, correlationId);
 
-					roleObj = roleParts[0];
-					roleAct = roleParts.length >= 2 ? roleParts[1] : null
-
-					result = await this.validate(claim, null, roleObj, roleAct);
+					// validate(correlationId, sub, dom, obj, act) - five parameters.
+					// This was called with four, so every argument shifted left and
+					// the subject reached the enforcer as null.
+					result = await this.validate(correlationId, claim, null, roleObj, roleAct);
 					this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'result', result, correlationId);
-					if (logical === BaseSecurityService.logicalOr)
-						success = success || result;
-					else
-						success = success && result;
+					if (result) {
+						satisfied = true;
+						break;
+					}
 				}
+
+				this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'satisfied', satisfied, correlationId);
+				// or  - any one required role is enough
+				// and - every required role must be satisfied
+				if (logical === BaseSecurityService.logicalOr) {
+					if (satisfied)
+						return true;
+				}
+				else if (!satisfied)
+					return false;
 			}
 
-			return success;
+			return (logical === BaseSecurityService.logicalAnd);
 		}
 		catch (err) {
 			this._error('BaseSecurityService', 'authorizationCheckClaims', null, err, null, null, correlationId);
@@ -83,39 +96,49 @@ class BaseSecurityService extends Service {
 			if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd && logical !== BaseSecurityService.logicalOr))
 				logical = BaseSecurityService.logicalOr;
 
-			let success = (logical === BaseSecurityService.logicalOr ? false : true);
-
+			// The outer loop is over the REQUIRED roles, the inner over the user's.
+			// A required role is satisfied when ANY of the user's roles validates
+			// against it. Previously the loops were nested the other way and the
+			// result accumulated across the cross product, so under logicalAnd every
+			// user role had to satisfy every required role - a user holding
+			// ['admin','user'] was denied a route requiring ['user'] as soon as
+			// 'admin' failed that check.
 			let result;
 			let roleAct;
 			let roleObj;
 			let roleParts;
-			for (const userRole of user.roles) {
-				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'userRole', userRole, correlationId);
+			let satisfied;
+			for (const role of roles) {
+				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'role', role, correlationId);
 
-				for (const role of roles) {
-					this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'role', role, correlationId);
+				roleParts = role.split('.');
+				roleObj = roleParts[0];
+				roleAct = roleParts.length >= 2 ? roleParts[1] : null
 
-					roleParts = role.split('.');
-					if (roleParts && roleParts.length < 1)
-						success = false;
-
-					roleObj = roleParts[0];
-					roleAct = roleParts.length >= 2 ? roleParts[1] : null
+				satisfied = false;
+				for (const userRole of user.roles) {
+					this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'userRole', userRole, correlationId);
 
 					result = await this.validate(correlationId, userRole, null, roleObj, roleAct);
 					this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'result', result, correlationId);
-					if (logical === BaseSecurityService.logicalOr) {
-						if (result)
-							return result;
-
-						success = false;
+					if (result) {
+						satisfied = true;
+						break;
 					}
-					else
-						success = success && result;
 				}
+
+				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'satisfied', satisfied, correlationId);
+				// or  - any one required role is enough
+				// and - every required role must be satisfied
+				if (logical === BaseSecurityService.logicalOr) {
+					if (satisfied)
+						return true;
+				}
+				else if (!satisfied)
+					return false;
 			}
 
-			return success;
+			return (logical === BaseSecurityService.logicalAnd);
 		}
 		catch (err) {
 			this._error('BaseSecurityService', 'authorizationCheckRoles', null, err, null, null, correlationId);
@@ -133,7 +156,9 @@ class BaseSecurityService extends Service {
 		if ((typeof(roles) === 'string') || (roles instanceof String)) {
 			// this._logger.debug('BaseSecurityService', 'initalizeRoles', 'roles1b', roles, correlationId);
 			requestRoles = roles.split(',');
-			requestRoles.map(item => item ? item.trim() : item);
+			// .map does not mutate; without capturing the result 'a, b' stayed as
+			// ['a', ' b'] and the leading space meant ' b' never matched a role.
+			requestRoles = requestRoles.map(item => item ? item.trim() : item);
 			return requestRoles;
 		}
 	}
@@ -143,7 +168,9 @@ class BaseSecurityService extends Service {
 			return BaseSecurityService.logicalOr;
 
 		let logical = options.logical;
-		if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd) || (logical !== BaseSecurityService.logicalOr))
+		// && , not || : logical cannot equal both values, so an || chain is always
+		// true and every caller asking for logicalAnd was silently given logicalOr.
+		if (String.isNullOrEmpty(logical) || ((logical !== BaseSecurityService.logicalAnd) && (logical !== BaseSecurityService.logicalOr)))
 			logical = BaseSecurityService.logicalOr;
 
 		return logical;
@@ -156,7 +183,7 @@ class BaseSecurityService extends Service {
 		return roles;
 	}
 
-	// eslint-disable-next-line
+	 
 	async validate(correlationId, sub, dom, obj, act) {
 		if (!this._enforcer)
 			throw Error('No enforcer found');

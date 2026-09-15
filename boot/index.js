@@ -2,7 +2,7 @@ import { createTerminus } from '@godaddy/terminus';
 
 import config from 'config';
 
-import { internalIpV4 } from '@thzero/library_server/utility/internalIp/index.js';
+import { internalIpV4 } from '../utility/internalIp/index.js';
 
 import LibraryServerConstants from '../constants.js';
 import LibraryCommonServiceConstants from '@thzero/library_common_service/constants.js';

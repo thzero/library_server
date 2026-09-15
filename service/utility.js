@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { Mutex as asyncMutex } from 'async-mutex';
 
-import LibraryServerConstants from '@thzero/library_server/constants.js';
+import LibraryServerConstants from '../constants.js';
 
 import LibraryMomentUtility from '@thzero/library_common/utility/moment.js';
 
@@ -78,7 +78,7 @@ class UtilityService extends Service {
 	async logger(content, correlationId) {
 		try {
 			if (!content)
-				return this._error('UtilityService', 'logger');
+				return this._error('UtilityService', 'logger', null, null, null, null, correlationId);
 	
 			const type = content.type;
 			switch(type) {
@@ -108,13 +108,13 @@ class UtilityService extends Service {
 			return this._success(correlationId);
 		}
 		catch (err) {
-			console.log(`UtilityService.initialize - ${correlationId}`, err);
-			return Response.error('ServerConfigService', 'getBackend', null, err, null, null, correlationId);
+			console.log(`UtilityService.logger - ${correlationId}`, err);
+			return Response.error('UtilityService', 'logger', null, err, null, null, correlationId);
 		}
 	}
 	
 	async openSource(correlationId) {
-		return this._openSourceResponse ? this._openSourceResponse : this._error();
+		return this._openSourceResponse ? this._openSourceResponse : this._error('UtilityService', 'openSource', null, null, null, null, correlationId);
 	}
 
 	_intialize(correlationId, response) {
@@ -157,7 +157,7 @@ class UtilityService extends Service {
 					items.forEach(element => {
 						if (element.category !== 'server')
 							return;
-						if (this._openSourceResponse.results.filter(l => l.name === element.name).length > 0)
+						if (this._openSourceResponse.results.some(l => l.name === element.name))
 							return;
 						this._openSourceResponse.results.push(element);
 					});

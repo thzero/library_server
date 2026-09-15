@@ -10,7 +10,6 @@ function findIp(gateway) {
 		for (const {cidr} of addresses) {
 			const net = ip.parseCIDR(cidr);
 
-			// eslint-disable-next-line unicorn/prefer-regexp-test
 			if (net[0] && net[0].kind() === gatewayIp.kind() && gatewayIp.match(net)) {
 				return net[0].toString();
 			}

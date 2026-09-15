@@ -24,7 +24,9 @@
   },
   "scripts": {
     "cli-update": "library-cli --updateversion --pi",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test \"test/*.test.js\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@godaddy/terminus": "^4.12.1",
@@ -37,5 +39,8 @@
   "peerDependencies": {
     "@thzero/library_common": "^0.18",
     "@thzero/library_common_service": "^0.18"
+  },
+  "devDependencies": {
+    "eslint": "^9"
   }
 }

@@ -6,15 +6,16 @@ import ExtractResponse from '@thzero/library_common/response/extract.js';
 class Repository {
 	async init(injector) {
 		this._injector = injector;
-	}
 
-	get _config() {
-		return this._injector.getService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_CONFIG)
+		// Resolved once here, as Service does. These were getters that hit the
+		// injector on every property access - _error() alone triggered four.
+		this._config = this._injector.getService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_CONFIG);
+		this._logger = this._injector.getService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_LOGGER);
 	}
 
 	_enforce(clazz, method, value, name, correlationId, message) {
 		if (!value) {
-			if (!String.isNullOrEmpty(message))
+			if (String.isNullOrEmpty(message))
 				message = `${name} is invalid.`;
 
 			this._logger.error(clazz, method, message, null, correlationId);
@@ -44,8 +45,12 @@ class Repository {
 
 	_enforceNotEmptyMultiple(clazz, method, values, names, correlationId) {
 		let valid = true;
-		for (const value of values)
-			valid &= String.isNullOrEmpty(value);
+		for (const value of values) {
+			if (String.isNullOrEmpty(value)) {
+				valid = false;
+				break;
+			}
+		}
 		if (!valid) {
 			names = names.join(', ');
 			this._logger.error(clazz, method, `None of the fields are not null: ${names}`, null, correlationId);
@@ -65,7 +70,7 @@ class Repository {
 	}
 
 	_enforceNotNull(clazz, method, value, name, correlationId) {
-		if (!value || value === undefined) {
+		if (!value) {
 			this._logger.error(clazz, method, `${name} is null.`, null, correlationId);
 			const error = Error(`${name} is null.`, true);
 			error.correlationId = correlationId;
@@ -74,7 +79,7 @@ class Repository {
 	}
 
 	_enforceNotNullEither(clazz, method, value1, value2, name1, name2, correlationId) {
-		if ((!value1 || value1 === undefined) && (!value2 || value2 == undefined)) {
+		if (!value1 && !value2) {
 			this._logger.error(clazz, method, `Either ${name1} or ${name2} is null.`, null, correlationId);
 			const error = Error(`Either ${name1} or ${name2} is null.`, true);
 			error.correlationId = correlationId;
@@ -84,8 +89,12 @@ class Repository {
 
 	_enforceNotNullMultiple(clazz, method, values, names, correlationId) {
 		let valid = true;
-		for (const value of values)
-			valid &= values;
+		for (const value of values) {
+			if ((value === null) || (value === undefined)) {
+				valid = false;
+				break;
+			}
+		}
 		if (!valid) {
 			names = names.join(', ');
 			this._logger.error(clazz, method, `None of the fields are not null: ${names}`, null, correlationId);
@@ -96,7 +105,7 @@ class Repository {
 	}
 
 	_enforceNotNullResponse(clazz, method, value, name, correlationId) {
-		if (!value || value === undefined) {
+		if (!value) {
 			this._logger.error(clazz, method, `${name} is null.`, null, correlationId);
 			return Response.error(clazz, method, `${name} is null.`, null, null, null, correlationId);
 		}
@@ -106,7 +115,7 @@ class Repository {
 
 	_enforceResponse(clazz, method, response, name, correlationId, message) {
 		if (!response || (response && !response.success)) {
-			if (!String.isNullOrEmpty(message))
+			if (String.isNullOrEmpty(message))
 				message = `Unsuccessful response for ${name}.`;
 
 			this._logger.error(clazz, method, message, null, correlationId);
@@ -152,10 +161,6 @@ class Repository {
 
 	_initResponseExtract(correlationId) {
 		return new ExtractResponse(correlationId);
-	}
-
-	get _logger() {
-		return this._injector.getService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_LOGGER)
 	}
 
 	_success(correlationId) {

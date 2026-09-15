@@ -104,18 +104,18 @@ class BaseUserService extends Service {
 	}
 
 	_getDefaultPlan() {
-		return new NotImplementedError();
+		throw new NotImplementedError();
 	}
 
 	_getDefaultUserRole() {
-		return new NotImplementedError();
+		throw new NotImplementedError();
 	}
 
 	_initializeUser(user) {
 	}
 
 	get _repositoryUser() {
-		return new NotImplementedError();
+		throw new NotImplementedError();
 	}
 }
 

@@ -1,6 +1,8 @@
+import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
+
 class BaseRoute {
 	constructor(prefix) {
-		if (prefix === null || prefix === undefined)
+		if (LibraryCommonUtility.isNull(prefix))
 			throw Error('Invalid prefix');
 
 		this.app = null;
@@ -20,7 +22,7 @@ class BaseRoute {
 			throw Error('Invalid injector for route.');
 		if (!config)
 			throw Error('Invalid config for route.');
-		if (this._prefix === null || this._prefix === undefined)
+		if (LibraryCommonUtility.isNull(this._prefix))
 			throw Error('Invalid prefix for route.');
 
 		this.app = app;
@@ -29,13 +31,13 @@ class BaseRoute {
 		const api = config.get('api', { });
 		let prefix = '';
 		if (!this._ignoreApi) {
-			prefix = api.prefix !== null && api.prefix !== undefined ? api.prefix : 'api';
+			prefix = api.prefix ?? 'api';
 			if (!String.isNullOrEmpty(prefix) && (prefix !== '/'))
 				prefix = '/' + prefix;
 		}
 		
 		let version = !String.isNullOrEmpty(api.version) ? api.version : null;
-		if (this._version !== null && this._version !== undefined)
+		if (LibraryCommonUtility.isNotNull(this._version))
 			version = this._version;
 		if (!String.isNullOrEmpty(this.id) && api.apis && Array.isArray(api.apis))
 			version = api.apis[this.id];
@@ -49,7 +51,7 @@ class BaseRoute {
 		this._prefix = prefix + this._prefix;
 
 		this._router = this._initializeRouter(app, config);
-		if (this._router === null || this._router === undefined)
+		if (LibraryCommonUtility.isNull(this._router))
 			throw Error('Invalid router.');
 
 		this._initializeRoutes(this._router);
