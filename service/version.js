@@ -6,12 +6,18 @@ import Service from './index.js';
 class VersionService extends Service {
 	async version(correlationId) {
 		try {
-			const filePath = path.join(process.cwd(), 'package.json');
-			const file = fs.readFileSync(filePath, 'utf8');
-			if (String.isNullOrEmpty(file))
-				throw Error('Invalid package.json file for versioning; expected in the <app root> folder.');
-	
-			const packageObj = JSON.parse(file);
+			// package.json cannot change while the process is running, so read and
+			// parse it once. This used to run a synchronous read on every call.
+			if (!this._packageObj) {
+				const filePath = path.join(process.cwd(), 'package.json');
+				const file = fs.readFileSync(filePath, 'utf8');
+				if (String.isNullOrEmpty(file))
+					throw Error('Invalid package.json file for versioning; expected in the <app root> folder.');
+
+				this._packageObj = JSON.parse(file);
+			}
+
+			const packageObj = this._packageObj;
 			if (!packageObj)
 				throw Error('Invalid package.json file for versioning.');
 	

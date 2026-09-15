@@ -1,3 +1,5 @@
+import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
+
 import LibraryServerConstants from '../../constants.js';
 
 import BaseAdminService from './index.js';
@@ -59,8 +61,8 @@ class BaseUsersAdminService extends BaseAdminService {
 
 		let userExisting = this._initializeData();
 		const fetchRespositoryResponse = await this._repository.fetch(correlationId, id);
-		if (this._hasSuceeded(fetchRespositoryResponse) && fetchRespositoryResponse.results)
-			userExisting = Utility.map(this._initializeData(), fetchRespositoryResponse.results, true);
+		if (this._hasSucceeded(fetchRespositoryResponse) && fetchRespositoryResponse.results)
+			userExisting = LibraryCommonUtility.map(this._initializeData(), fetchRespositoryResponse.results, true);
 
 		const validResponse = this._checkUpdatedTimestamp(correlationId, userExisting, requestedUser, 'users');
 		if (this._hasFailed(validResponse))
@@ -72,10 +74,13 @@ class BaseUsersAdminService extends BaseAdminService {
 		if (this._hasFailed(respositoryResponse))
 			return respositoryResponse;
 
-		if (!user.external && !user.external.id)
+		if (!user.external || !user.external.id)
 			return this._error('BaseUsersAdminService', 'update', null, null, null, null, correlationId);
 
-		const serviceAdminResponse = await this._serviceAuth.setClaims(correlationId, userExisting.external.id, requestedUser.roles, true)
+		const serviceAdminResponse = await this._serviceAuth.setClaims(correlationId, userExisting.external.id, requestedUser.roles, true);
+		if (this._hasFailed(serviceAdminResponse))
+			return serviceAdminResponse;
+
 		return respositoryResponse;
 	}
 

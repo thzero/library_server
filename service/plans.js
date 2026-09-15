@@ -20,7 +20,7 @@ class PlansService extends Service {
 			return await this._repositoryPlans.listing(correlationId);
 		}
 		catch (err) {
-			return this._error('PlansService', 'correlationId', null, err, null, null, correlationId);
+			return this._error('PlansService', 'listing', null, err, null, null, correlationId);
 		}
 	}
 

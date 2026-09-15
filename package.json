@@ -1,11 +1,11 @@
 {
   "name": "@thzero/library_server",
   "type": "module",
-  "version": "0.18.41",
+  "version": "0.19.1",
   "version_major": 0,
-  "version_minor": 18,
-  "version_patch": 41,
-  "version_date": "08/27/2026",
+  "version_minor": 19,
+  "version_patch": 1,
+  "version_date": "09/15/2026",
   "description": "An opinionated library of common functionality to bootstrap an API using either Fastify or Koa as the web server.",
   "author": "thZero",
   "author_url": "https://www.thzero.com",
@@ -24,7 +24,9 @@
   },
   "scripts": {
     "cli-update": "library-cli --updateversion --pi",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test \"test/*.test.js\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@godaddy/terminus": "^4.12.1",
@@ -35,7 +37,10 @@
     "ipaddr.js": "^2.5.0"
   },
   "peerDependencies": {
-    "@thzero/library_common": "^0.18",
-    "@thzero/library_common_service": "^0.18"
+    "@thzero/library_common": "^0.19",
+    "@thzero/library_common_service": "^0.19"
+  },
+  "devDependencies": {
+    "eslint": "^9"
   }
 }

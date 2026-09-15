@@ -1,4 +1,4 @@
-import BaseService from '@thzero/library_server/service/index.js';
+import BaseService from '../index.js';
 
 class DiscoveryService extends BaseService {
 }

@@ -33,7 +33,7 @@ class PriorityQueue {
 		const length = this._values.length;
 		const elementPriority = this._values[0].priority;
 		// loop breaks if no swaps are needed
-		// eslint-disable-next-line
+		 
 		while (true) {
 			// get indexes of child elements by following formula
 			let leftChildIndex = (2 * parentIndex) + 1;
