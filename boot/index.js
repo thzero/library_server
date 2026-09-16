@@ -97,6 +97,7 @@ class BootMain {
 			const cleanupFuncs = [];
 			this._initCleanup(cleanupFuncs);
 			this._initCleanupDiscovery(cleanupFuncs);
+			this._initCleanupRegistered(cleanupFuncs);
 			await Promise.all(cleanupFuncs);
 			console.log('server is starting cleanup completed');
 			this.loggerServiceI.info2('server is starting cleanup completed');
@@ -379,6 +380,31 @@ class BootMain {
 			cleanupFuncs.push(this.resourceDiscoveryServiceI.cleanup());
 		if (this.mdnsDiscoveryServiceI)
 			cleanupFuncs.push(this.mdnsDiscoveryServiceI.cleanup());
+	}
+
+	// Anything registered that holds something the process cannot exit through - a
+	// change stream, a timer, a socket - gets a cleanup() the same way it gets an
+	// initPost(). Without this every application had to remember to reach into its
+	// own services from _initCleanup, and forgetting left the thing running while
+	// the process tried to shut down.
+	_initCleanupRegistered(cleanupFuncs) {
+		// The discovery services are injected like anything else, so they are in here
+		// too - _initCleanupDiscovery has already claimed them.
+		const claimed = [ this.resourceDiscoveryServiceI, this.mdnsDiscoveryServiceI ];
+		const registered = [ ...this._repositoriesPost.entries(), ...this._servicesPost.entries() ];
+		for (const [ key, value ] of registered) {
+			if (!value || typeof value.cleanup !== 'function')
+				continue;
+			if (claimed.includes(value))
+				continue;
+
+			console.log(`cleanup - ${key}`);
+			// One failing cleanup must not abort the rest of them, and must not take
+			// the shutdown down with it.
+			cleanupFuncs.push(Promise.resolve()
+				.then(() => value.cleanup(null))
+				.catch((err) => this.loggerServiceI.exception2(err)));
+		}
 	}
 
 	_initPostAuth(app) {
