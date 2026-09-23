@@ -7,6 +7,9 @@ class BaseSecurityService extends Service {
 		super();
 
 		this._enforcer = null;
+		// role string -> { obj, act }. Roles come from route config, so the same
+		// handful of strings arrive on every request; split each once.
+		this._roleParts = new Map();
 	}
 
 	async init(injector) {
@@ -31,37 +34,37 @@ class BaseSecurityService extends Service {
 			if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd && logical !== BaseSecurityService.logicalOr))
 				logical = BaseSecurityService.logicalOr;
 
+			// This runs on every protected request, with the loop below inside it.
+			// Ask once whether debug is on rather than paying for each call.
+			const debug = this._debugEnabled();
+
 			// Same shape as authorizationCheckRoles: outer loop over the REQUIRED
 			// roles, inner over the claims. A required role is satisfied when ANY
 			// claim validates against it.
-			let result;
-			let roleAct;
-			let roleObj;
-			let roleParts;
+			let parts;
 			let satisfied;
 			for (const role of roles) {
-				this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'role', role, correlationId);
+				if (debug)
+					this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'role', role, correlationId);
 
-				roleParts = role.split('.');
-				roleObj = roleParts[0];
-				roleAct = roleParts.length >= 2 ? roleParts[1] : null
+				parts = this._roleSplit(role);
 
 				satisfied = false;
 				for (const claim of claims) {
-					this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'authorization.claim', claim, correlationId);
+					if (debug)
+						this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'authorization.claim', claim, correlationId);
 
 					// validate(correlationId, sub, dom, obj, act) - five parameters.
 					// This was called with four, so every argument shifted left and
 					// the subject reached the enforcer as null.
-					result = await this.validate(correlationId, claim, null, roleObj, roleAct);
-					this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'result', result, correlationId);
-					if (result) {
+					if (await this.validate(correlationId, claim, null, parts.obj, parts.act)) {
 						satisfied = true;
 						break;
 					}
 				}
 
-				this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'satisfied', satisfied, correlationId);
+				if (debug)
+					this._logger.debug('BaseSecurityService', 'authorizationCheckClaims', 'satisfied', satisfied, correlationId);
 				// or  - any one required role is enough
 				// and - every required role must be satisfied
 				if (logical === BaseSecurityService.logicalOr) {
@@ -87,11 +90,18 @@ class BaseSecurityService extends Service {
 			if (!roles)
 				return true;
 
-			this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'user', user, correlationId);
+			// This runs on every protected request, with the loop below inside it.
+			// Ask once whether debug is on rather than paying for each call; the
+			// user line in particular hands the whole user object to the logger.
+			const debug = this._debugEnabled();
+
+			if (debug)
+				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'user', user, correlationId);
 			if (!(user && user.roles && Array.isArray(user.roles)))
 				return false;
 
-			this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'logical', logical, correlationId);
+			if (debug)
+				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'logical', logical, correlationId);
 
 			if (String.isNullOrEmpty(logical) || (logical !== BaseSecurityService.logicalAnd && logical !== BaseSecurityService.logicalOr))
 				logical = BaseSecurityService.logicalOr;
@@ -103,31 +113,27 @@ class BaseSecurityService extends Service {
 			// user role had to satisfy every required role - a user holding
 			// ['admin','user'] was denied a route requiring ['user'] as soon as
 			// 'admin' failed that check.
-			let result;
-			let roleAct;
-			let roleObj;
-			let roleParts;
+			let parts;
 			let satisfied;
 			for (const role of roles) {
-				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'role', role, correlationId);
+				if (debug)
+					this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'role', role, correlationId);
 
-				roleParts = role.split('.');
-				roleObj = roleParts[0];
-				roleAct = roleParts.length >= 2 ? roleParts[1] : null
+				parts = this._roleSplit(role);
 
 				satisfied = false;
 				for (const userRole of user.roles) {
-					this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'userRole', userRole, correlationId);
+					if (debug)
+						this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'userRole', userRole, correlationId);
 
-					result = await this.validate(correlationId, userRole, null, roleObj, roleAct);
-					this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'result', result, correlationId);
-					if (result) {
+					if (await this.validate(correlationId, userRole, null, parts.obj, parts.act)) {
 						satisfied = true;
 						break;
 					}
 				}
 
-				this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'satisfied', satisfied, correlationId);
+				if (debug)
+					this._logger.debug('BaseSecurityService', 'authorizationCheckRoles', 'satisfied', satisfied, correlationId);
 				// or  - any one required role is enough
 				// and - every required role must be satisfied
 				if (logical === BaseSecurityService.logicalOr) {
@@ -183,24 +189,34 @@ class BaseSecurityService extends Service {
 		return roles;
 	}
 
-	 
 	async validate(correlationId, sub, dom, obj, act) {
 		if (!this._enforcer)
 			throw Error('No enforcer found');
 
-		const array = [];
-		if (dom)
-			array.push(dom);
-		array.push(obj)
-		if (act)
-			array.push(act);
-
-		const role = array.join(':');
+		// dom:obj:act with the absent parts left out. Built as a string rather
+		// than an array and join, since this is once per role per request.
+		const role = (dom ? `${dom}:` : '') + (obj ?? '') + (act ? `:${act}` : '');
 		return await this._enforcer.can(sub, role);
+	}
+
+	// A logger facade without the check (an older one, or a stub) logs as before.
+	_debugEnabled() {
+		return !this._logger.isDebugEnabled || this._logger.isDebugEnabled();
 	}
 
 	_initModel() {
 		return null;
+	}
+
+	_roleSplit(role) {
+		let parts = this._roleParts.get(role);
+		if (parts)
+			return parts;
+
+		const split = role.split('.');
+		parts = { obj: split[0], act: split.length >= 2 ? split[1] : null };
+		this._roleParts.set(role, parts);
+		return parts;
 	}
 
 	static logicalAnd = 'and';

@@ -1,7 +1,5 @@
 import LibraryServerConstants from '../constants.js';
 
-import LibraryMomentUtility from '@thzero/library_common/utility/moment.js';
-
 import Service from './index.js';
 
 class UsageMetricsService extends Service {
@@ -28,7 +26,7 @@ class UsageMetricsService extends Service {
 			if (!String.isNullOrEmpty(url) && this._ignore.has(url))
 				return;
 
-			usageMetrics.date = new Date(new Date(LibraryMomentUtility.getTimestamp()).toISOString());
+			usageMetrics.date = new Date();
 
 			await this._repositoryUsageMetrics.register(usageMetrics);
 			return this._success(usageMetrics.correlationId);

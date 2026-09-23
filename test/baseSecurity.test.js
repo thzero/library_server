@@ -147,6 +147,94 @@ describe('authorizationCheckClaims', () => {
 	});
 });
 
+// The checks above run on every protected request, and each used to make four
+// debug calls per required role, three inside the inner loop, with one of them
+// handing the whole user object to the logger. Now they ask once.
+describe('debug logging in the checks', () => {
+	const user = { roles: [ 'user' ] };
+	let debugs;
+
+	beforeEach(() => {
+		debugs = 0;
+		service._logger = { debug() { debugs++; }, error() {}, warn() {}, exception() {}, isDebugEnabled: () => false };
+	});
+
+	it('makes no debug call when the logger says debug is off', async () => {
+		await service.authorizationCheckRoles('cid', user, [ 'user' ], OR);
+		await service.authorizationCheckClaims('cid', [ 'user' ], [ 'user' ], OR);
+		assert.equal(debugs, 0);
+	});
+
+	it('still logs when it is on', async () => {
+		service._logger.isDebugEnabled = () => true;
+		await service.authorizationCheckRoles('cid', user, [ 'user' ], OR);
+		assert.ok(debugs > 0);
+	});
+
+	it('logs as before through a logger without the check', async () => {
+		delete service._logger.isDebugEnabled;
+		await service.authorizationCheckRoles('cid', user, [ 'user' ], OR);
+		assert.ok(debugs > 0);
+	});
+
+	it('never logs the result of each validate call', async () => {
+		service._logger.isDebugEnabled = () => true;
+		const messages = [];
+		service._logger.debug = (clazz, method, message) => messages.push(message);
+		await service.authorizationCheckRoles('cid', { roles: [ 'a', 'b', 'user' ] }, [ 'user' ], OR);
+		assert.equal(messages.includes('result'), false);
+	});
+});
+
+describe('role parsing', () => {
+	it('splits obj.act into the object and the action', async () => {
+		await service.authorizationCheckRoles('cid', { roles: [ 'admin' ] }, [ 'thing.read' ], OR);
+		assert.equal(service.validateCalls[0].obj, 'thing');
+		assert.equal(service.validateCalls[0].act, 'read');
+	});
+
+	it('leaves the action null when there is none', async () => {
+		await service.authorizationCheckRoles('cid', { roles: [ 'admin' ] }, [ 'thing' ], OR);
+		assert.equal(service.validateCalls[0].obj, 'thing');
+		assert.equal(service.validateCalls[0].act, null);
+	});
+
+	// Roles come from route config, so the same strings arrive on every request.
+	it('splits each role string once and reuses it', async () => {
+		await service.authorizationCheckRoles('cid', { roles: [ 'admin' ] }, [ 'thing.read' ], OR);
+		const first = service._roleParts.get('thing.read');
+		await service.authorizationCheckClaims('cid', [ 'admin' ], [ 'thing.read' ], OR);
+		await service.authorizationCheckRoles('cid', { roles: [ 'admin' ] }, [ 'thing.read' ], OR);
+		assert.equal(service._roleParts.get('thing.read'), first);
+		assert.equal(service._roleParts.size, 1);
+	});
+});
+
+describe('validate', () => {
+	let base;
+	let asked;
+
+	beforeEach(() => {
+		base = new BaseSecurityService();
+		asked = [];
+		base._enforcer = { async can(sub, role) { asked.push({ sub, role }); return true; } };
+	});
+
+	it('joins dom, obj and act with colons, leaving out the absent ones', async () => {
+		await base.validate('cid', 's', 'd', 'o', 'a');
+		await base.validate('cid', 's', null, 'o', 'a');
+		await base.validate('cid', 's', null, 'o', null);
+		await base.validate('cid', 's', 'd', 'o', null);
+		assert.deepEqual(asked.map(a => a.role), [ 'd:o:a', 'o:a', 'o', 'd:o' ]);
+		assert.equal(asked[0].sub, 's');
+	});
+
+	it('throws without an enforcer', async () => {
+		base._enforcer = null;
+		await assert.rejects(() => base.validate('cid', 's', null, 'o', null), /No enforcer/);
+	});
+});
+
 describe('initializeOptionsRoles', () => {
 	it('returns the roles when present', () => {
 		assert.deepEqual(service.initializeOptionsRoles('cid', { roles: ['a'] }), ['a']);
