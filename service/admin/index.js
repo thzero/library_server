@@ -60,10 +60,12 @@ class BaseAdminService extends Service {
 		if (this._hasFailed(validationCheckValueUpdateResponse))
 			return validationCheckValueUpdateResponse;
 
-		let value = this._initializeData();
+		// One model: the fetched document mapped onto a new one, or an empty one.
+		// This built one up front and, on the usual path, threw it away for a second.
 		const fetchRespositoryResponse = await this._repository.fetch(correlationId, id);
-		if (this._hasSucceeded(fetchRespositoryResponse) && fetchRespositoryResponse.results)
-			value = LibraryCommonUtility.map(this._initializeData(), fetchRespositoryResponse.results, true);
+		let value = (this._hasSucceeded(fetchRespositoryResponse) && fetchRespositoryResponse.results) ?
+			LibraryCommonUtility.map(this._initializeData(), fetchRespositoryResponse.results, true) :
+			this._initializeData();
 
 		const validResponse = this._checkUpdatedTimestamp(correlationId, value, requestedValue, 'value');
 		if (this._hasFailed(validResponse))

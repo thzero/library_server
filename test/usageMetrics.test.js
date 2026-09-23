@@ -14,12 +14,13 @@ let calls;
 
 beforeEach(() => {
 	service = new UsageMetricsService();
-	calls = { listing: [], tag: [] };
+	calls = { listing: [], register: [], tag: [] };
 	inject(service, '_logger', { debug() {}, info() {}, info2() {}, warn() {}, error() {}, exception() {}, fatal() {}, trace() {} });
 	inject(service, '_config', { get: () => null });
 	service._serviceValidation = { check: (correlationId) => service._success(correlationId) };
 	service._repositoryUsageMetricsI = {
 		async listing(correlationId, params) { calls.listing.push({ correlationId, params }); return service._success(correlationId); },
+		async register(usageMetrics) { calls.register.push(usageMetrics); return service._success(usageMetrics.correlationId); },
 		async tag(correlationId, userId, tag) { calls.tag.push({ correlationId, userId, tag }); return service._success(correlationId); }
 	};
 });
@@ -73,9 +74,29 @@ describe('tag', () => {
 	});
 });
 
+describe('register', () => {
+	it('stamps the date and hands the record to the repository', async () => {
+		const before = Date.now();
+		const response = await service.register({ correlationId: 'cid', url: '/users' });
+		assert.equal(service._hasSucceeded(response), true);
+		assert.equal(calls.register.length, 1);
+		// This used to be new Date(new Date(ts).toISOString()): a Date, an ISO
+		// string, a parse and a second Date, on every response, to get "now".
+		assert.ok(calls.register[0].date instanceof Date);
+		assert.ok(calls.register[0].date.getTime() >= before);
+	});
+
+	it('records nothing for a null record', async () => {
+		await service.register(null);
+		assert.equal(calls.register.length, 0);
+	});
+});
+
 describe('registerIgnore', () => {
 	it('exempts a url from being recorded', async () => {
 		service.registerIgnore('/health');
 		assert.equal(service._ignore.has('/health'), true);
+		await service.register({ correlationId: 'cid', url: '/health' });
+		assert.equal(calls.register.length, 0);
 	});
 });

@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { Mutex as asyncMutex } from 'async-mutex';
 
 import LibraryServerConstants from '../constants.js';
 
@@ -19,8 +18,8 @@ class UtilityService extends Service {
 
 		this._openSourceResponse = null;
 
+		this._initializePending = null;
 		this._initializeResponse = null;
-		this._mutexInitialize = new asyncMutex();
 		this._ttlInitialize = null;
 		this._ttlInitializeDiff = 1000 * 30;
 	}
@@ -34,30 +33,38 @@ class UtilityService extends Service {
 		await this._initializeOopenSource();
 	}
 
+	// Stale-while-revalidate. A cached response is always served at once; once it
+	// is past its TTL, one refresh runs in the background and the next call after
+	// it lands gets the new one. Only a cold cache makes callers wait, and they
+	// all wait on the same build.
+	//
+	// This used to take a mutex once the TTL had passed, and the check inside the
+	// lock ignored the TTL. So from 30s after the first call every request queued
+	// on the mutex to be handed the same response, which never refreshed.
 	async initialize(correlationId) {
-		const now = LibraryMomentUtility.getTimestamp();
-		const ttlInitialize = this._ttlInitialize ? this._ttlInitialize : 0;
-		const delta = now - ttlInitialize;
-		if (this._initializeResponse && (delta <= this._ttlInitializeDiff))
+		if (this._initializeResponse) {
+			if (this._initializeExpired())
+				this._initializeRefresh(correlationId);
 			return this._initializeResponse;
+		}
 
-		const release = await this._mutexInitialize.acquire();
+		return await this._initializeRefresh(correlationId);
+	}
+
+	async _initializeBuild(correlationId) {
 		try {
-			if (this._initializeResponse)
-				return this._initializeResponse;
-
 			const response = this._initResponse(correlationId);
 			response.results = {};
 
 			const responsePlans = await this._servicePlans.listing(correlationId);
 			if (this._hasFailed(responsePlans))
-				return responsePlans;
+				return this._initializeFailed(correlationId, responsePlans);
 
 			response.results.plans = responsePlans.results;
 
 			const responseVersion = await this._serviceVersion.version(correlationId);
 			if (this._hasFailed(responseVersion))
-				return responseVersion;
+				return this._initializeFailed(correlationId, responseVersion);
 
 			response.results.version = responseVersion.results;
 
@@ -68,11 +75,37 @@ class UtilityService extends Service {
 			return response;
 		}
 		catch (err) {
-			return this._error('UtilityService', 'initialize', null, err, null, null, correlationId);
+			return this._initializeFailed(correlationId, this._error('UtilityService', 'initialize', null, err, null, null, correlationId));
 		}
-		finally {
-			release();
+	}
+
+	_initializeExpired() {
+		const ttlInitialize = this._ttlInitialize ? this._ttlInitialize : 0;
+		return (LibraryMomentUtility.getTimestamp() - ttlInitialize) > this._ttlInitializeDiff;
+	}
+
+	// A refresh that fails leaves the last good response in service and pushes
+	// the next attempt out by one TTL, so a struggling backend is not asked again
+	// on every call. With nothing cached the failure goes back to the callers.
+	_initializeFailed(correlationId, response) {
+		if (this._initializeResponse) {
+			this._ttlInitialize = LibraryMomentUtility.getTimestamp();
+			this._logger.warn('UtilityService', 'initialize', 'Refresh failed; serving the previous response.', response, correlationId);
 		}
+		return response;
+	}
+
+	// One build at a time; concurrent callers share the one in flight. Never
+	// rejects, so the background caller can drop the promise.
+	_initializeRefresh(correlationId) {
+		if (this._initializePending)
+			return this._initializePending;
+
+		this._initializePending = this._initializeBuild(correlationId)
+			.finally(() => {
+				this._initializePending = null;
+			});
+		return this._initializePending;
 	}
 
 	async logger(content, correlationId) {
@@ -120,52 +153,72 @@ class UtilityService extends Service {
 	_intialize(correlationId, response) {
 	}
 
+	// Where the open source lists are looked for, and how one is loaded. Both are
+	// separate so they can be pointed elsewhere.
+	_openSourceDir() {
+		return path.join(path.resolve(), 'node_modules', '@thzero');
+	}
+
+	async _openSourceImport(importPath) {
+		return await import(importPath);
+	}
+
 	async _initializeOopenSource(correlationId) {
 		this._openSourceResponse = this._initResponse(correlationId);
 		this._openSourceResponse.results = [];
 
 		try {
-			const __dirname = path.resolve();
-			const dir = path.join(path.resolve(__dirname), 'node_modules', '@thzero');
+			const dir = this._openSourceDir();
 			const dirs = await fs.promises.readdir(dir);
-	
+
 			console.log();
 			console.log('\t----open.source.initialization-----------------');
-			
-			let file;
-			let importPath;
-			let fileI;
-			let items;
-			for (const item of dirs) {
+
+			// Every package is looked at together rather than one after another, and
+			// the existence check is async rather than a blocking stat. Promise.all
+			// keeps the order of dirs, so the result is the same as the serial loop.
+			const lists = await Promise.all(dirs.map(async (item) => {
+				const file = path.join(dir, item, 'openSource.js');
+				console.log(`\t${file}...`);
 				try {
-					file = path.join(dir, item, 'openSource.js');
-					console.log(`\t${file}...`);
-					if (!fs.existsSync(file)){
-						console.log(`\t...not found.`);
-						continue;
-					}
-						
-					importPath = ['@thzero', item, 'openSource.js'].join('/');
+					await fs.promises.access(file);
+				}
+				catch {
+					console.log(`\t...not found.`);
+					return null;
+				}
+
+				try {
+					const importPath = ['@thzero', item, 'openSource.js'].join('/');
 					console.log(`\t\t${importPath}...`);
-					fileI = await import(importPath);
-					if (!fileI.default) {
+					const fileI = await this._openSourceImport(importPath);
+					if (!fileI || !fileI.default) {
 						console.log(`\t...failed to load.`);
-						continue;
+						return null;
 					}
 
-					items = fileI.default();
-					items.forEach(element => {
-						if (element.category !== 'server')
-							return;
-						if (this._openSourceResponse.results.some(l => l.name === element.name))
-							return;
-						this._openSourceResponse.results.push(element);
-					});
 					console.log(`\t...processed.`);
+					return fileI.default();
 				}
 				catch(err) {
 					console.log(`\t...failed.`, err);
 					this._logger.warn('UtilityService', '_initializeOopenSource', null, err, correlationId);
+					return null;
+				}
+			}));
+
+			// A Set of names, not a scan of the results for each entry.
+			const names = new Set();
+			for (const items of lists) {
+				if (!items)
+					continue;
+				for (const element of items) {
+					if (element.category !== 'server')
+						continue;
+					if (names.has(element.name))
+						continue;
+					names.add(element.name);
+					this._openSourceResponse.results.push(element);
 				}
 			}
 		}
