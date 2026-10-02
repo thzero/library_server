@@ -118,9 +118,17 @@ describe('_awaitCleanup', () => {
 	});
 
 	it('gives up on a cleanup that never settles', async () => {
-		const started = Date.now();
-		assert.equal(await awaitCleanup([ new Promise(() => {}) ], 20), false);
-		assert.ok(Date.now() - started < 2000, 'it waited past the deadline');
+		// The deadline timer is unref'd, and a promise that never settles holds nothing open,
+		// so without a ref'd handle of our own the loop drains and the runner cancels the test.
+		const keepAlive = setTimeout(() => {}, 5000);
+		try {
+			const started = Date.now();
+			assert.equal(await awaitCleanup([ new Promise(() => {}) ], 20), false);
+			assert.ok(Date.now() - started < 2000, 'it waited past the deadline');
+		}
+		finally {
+			clearTimeout(keepAlive);
+		}
 	});
 
 	it('does not reject when a cleanup rejects', async () => {
