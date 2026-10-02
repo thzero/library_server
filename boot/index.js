@@ -91,6 +91,13 @@ class BootMain {
 
 		const results = await this._initApp(args, plugins);
 
+		// terminus awaits onSignal before it runs onShutdown or re-raises the signal, and
+		// its own isShuttingDown guard swallows every later SIGINT, so a single cleanup that
+		// never settles wedges the process with no way to Ctrl+C out of it. Its 'timeout'
+		// option does not cover this - that one only goes to stoppable, for the sockets.
+		const cleanupTimeoutMs = this._appConfig.get('shutdown.cleanupTimeoutMs', 15000);
+		const exitTimeoutMs = this._appConfig.get('shutdown.exitTimeoutMs', 5000);
+
 		async function onSignal() {
 			console.log('server is starting cleanup');
 			this.loggerServiceI.info2('server is starting cleanup');
@@ -98,7 +105,15 @@ class BootMain {
 			this._initCleanup(cleanupFuncs);
 			this._initCleanupDiscovery(cleanupFuncs);
 			this._initCleanupRegistered(cleanupFuncs);
-			await Promise.all(cleanupFuncs);
+			// Past the deadline the remaining cleanups are abandoned and the exit carries on.
+			// Whatever they were holding is lost either way; the difference is whether the
+			// process stops.
+			const completed = await this._awaitCleanup(cleanupFuncs, cleanupTimeoutMs);
+			if (!completed) {
+				const message = `server cleanup did not complete within ${cleanupTimeoutMs}ms; abandoning it and continuing shutdown`;
+				console.log(message);
+				this.loggerServiceI.error2(message);
+			}
 			console.log('server is starting cleanup completed');
 			this.loggerServiceI.info2('server is starting cleanup completed');
 		}
@@ -107,6 +122,18 @@ class BootMain {
 			console.log('server is shutting down');
 			this.loggerServiceI.info2('server is shutting down');
 			this._initShutdown();
+			// Nothing in the cleanup sweep closes the Mongo clients, and an open pool keeps
+			// the event loop alive, so the signal terminus re-raises after this can land on a
+			// process that will not exit. Unref'd, so it only ever fires when something
+			// really is still holding the loop open.
+			if (exitTimeoutMs > 0) {
+				const handle = setTimeout(() => {
+					console.log('server did not exit on its own; forcing exit');
+					process.exit(0);
+				}, exitTimeoutMs);
+				if (handle.unref)
+					handle.unref();
+			}
 			console.log('server is shutting down completed');
 			this.loggerServiceI.info2('server is shutting down completed');
 		}
@@ -387,6 +414,30 @@ class BootMain {
 	// initPost(). Without this every application had to remember to reach into its
 	// own services from _initCleanup, and forgetting left the thing running while
 	// the process tried to shut down.
+	// Resolves true when the sweep finished, false when the deadline passed first. Never
+	// rejects: every entry already carries its own catch, and a throw out of here would
+	// leave terminus to exit(1) without running onShutdown. A timeoutMs that is not a
+	// positive number waits however long the sweep takes, which is the old behavior.
+	async _awaitCleanup(cleanupFuncs, timeoutMs) {
+		const settled = Promise.all(cleanupFuncs).then(() => true).catch(() => true);
+		if (!Number.isFinite(timeoutMs) || timeoutMs <= 0)
+			return await settled;
+
+		let handle = null;
+		const expired = new Promise((resolve) => {
+			handle = setTimeout(() => resolve(false), timeoutMs);
+			// Unref'd, so a sweep that finished leaves nothing holding the loop open, and a
+			// process with nothing left to do exits rather than waiting out the deadline.
+			if (handle.unref)
+				handle.unref();
+		});
+
+		const completed = await Promise.race([ settled, expired ]);
+		if (handle)
+			clearTimeout(handle);
+		return completed;
+	}
+
 	_initCleanupRegistered(cleanupFuncs) {
 		// The discovery services are injected like anything else, so they are in here
 		// too - _initCleanupDiscovery has already claimed them.

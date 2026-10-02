@@ -101,3 +101,40 @@ describe('_initCleanupRegistered', () => {
 		assert.equal(host.exceptions.length, 1);
 	});
 });
+
+// terminus awaits onSignal before it runs onShutdown or re-raises the signal, and its
+// isShuttingDown guard swallows every later SIGINT, so one cleanup that never settles
+// used to wedge the process with no way out of it.
+describe('_awaitCleanup', () => {
+	const awaitCleanup = (cleanupFuncs, timeoutMs) =>
+		BootMain.prototype._awaitCleanup.call({}, cleanupFuncs, timeoutMs);
+
+	it('reports the sweep finished when every cleanup settles', async () => {
+		assert.equal(await awaitCleanup([ Promise.resolve(), Promise.resolve() ], 1000), true);
+	});
+
+	it('reports nothing to wait for on an empty sweep', async () => {
+		assert.equal(await awaitCleanup([], 1000), true);
+	});
+
+	it('gives up on a cleanup that never settles', async () => {
+		const started = Date.now();
+		assert.equal(await awaitCleanup([ new Promise(() => {}) ], 20), false);
+		assert.ok(Date.now() - started < 2000, 'it waited past the deadline');
+	});
+
+	it('does not reject when a cleanup rejects', async () => {
+		assert.equal(await awaitCleanup([ Promise.reject(new Error('nope')) ], 1000), true);
+	});
+
+	it('waits however long it takes when there is no usable deadline', async () => {
+		let resolve;
+		const slow = new Promise((r) => { resolve = r; });
+		for (const timeoutMs of [ 0, -1, null, undefined, NaN ]) {
+			const pending = awaitCleanup([ slow ], timeoutMs);
+			const raced = await Promise.race([ pending, new Promise((r) => setTimeout(() => r('still waiting'), 30)) ]);
+			assert.equal(raced, 'still waiting', 'timeoutMs ' + String(timeoutMs) + ' cut the sweep short');
+		}
+		resolve();
+	});
+});
