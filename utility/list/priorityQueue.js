@@ -4,6 +4,9 @@ class PriorityQueue {
 	}
 
 	dequeue() {
+		if (this._values.length === 0)
+			return undefined;
+
 		// swap first and last element
 		this._swap(0, this._values.length - 1);
 		// pop max value off of values

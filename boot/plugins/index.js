@@ -49,12 +49,14 @@ class BootPlugin {
 	}
 
 	_injectRepository(key, repository) {
+		this._injectCheck('repositories', key);
 		console.log(`repositories.inject - ${key}`);
 		this._repositories.set(key, repository);
 		this._injector.addSingleton(key, repository);
 	}
 
 	_injectService(key, service) {
+		this._injectCheck('services', key);
 		console.log(`services.inject - ${key}`);
 		this._services.set(key, service);
 		this._injector.addSingleton(key, service);
@@ -64,6 +66,11 @@ class BootPlugin {
 	}
 
 	async _initServicesSecondary() {
+	}
+
+	_injectCheck(kind, key) {
+		if (this._injector.getInjector()[key])
+			throw Error(`${kind}.inject - '${key}' is already registered.`);
 	}
 }
 

@@ -72,14 +72,16 @@ describe('initialize, cold', () => {
 		assert.deepEqual(response.results.plans, [ { id: 'free' } ]);
 		assert.equal(response.results.version.version, '1.0.0');
 		assert.equal(builds, 1);
-		assert.equal(service._initializeResponse, response);
+		assert.equal(service._initializeResponse.results, response.results);
+		assert.equal(response.correlationId, 'cid');
 	});
 
 	it('shares one build between concurrent callers', async () => {
 		const responses = await Promise.all([ service.initialize('a'), service.initialize('b'), service.initialize('c') ]);
 		assert.equal(builds, 1);
-		assert.equal(responses[1], responses[0]);
-		assert.equal(responses[2], responses[0]);
+		assert.equal(responses[1].results, responses[0].results);
+		assert.equal(responses[2].results, responses[0].results);
+		assert.deepEqual(responses.map(r => r.correlationId), [ 'a', 'b', 'c' ]);
 	});
 
 	it('returns a failed build to the caller and caches nothing', async () => {
@@ -108,7 +110,7 @@ describe('initialize, within the TTL', () => {
 		const first = await service.initialize('cid');
 		mock.timers.tick(TTL);
 		const second = await service.initialize('cid');
-		assert.equal(second, first);
+		assert.equal(second.results, first.results);
 		assert.equal(builds, 1);
 	});
 });
@@ -126,14 +128,14 @@ describe('initialize, past the TTL', () => {
 		gate = new Promise((resolve) => { release = resolve; });
 
 		const stale = await service.initialize('cid');
-		assert.equal(stale, first, 'the caller is not made to wait on the refresh');
+		assert.equal(stale.results, first.results, 'the caller is not made to wait on the refresh');
 		assert.equal(builds, 2, 'the refresh has started');
 
 		release();
 		await settle();
 
 		const fresh = await service.initialize('cid');
-		assert.notEqual(fresh, first);
+		assert.notEqual(fresh.results, first.results);
 		assert.deepEqual(fresh.results.plans, [ { id: 'free' }, { id: 'pro' } ]);
 		assert.equal(builds, 2);
 	});
@@ -146,7 +148,7 @@ describe('initialize, past the TTL', () => {
 		gate = new Promise((resolve) => { release = resolve; });
 
 		const responses = await Promise.all([ service.initialize('a'), service.initialize('b'), service.initialize('c') ]);
-		assert.deepEqual(responses, [ first, first, first ]);
+		assert.deepEqual(responses.map(r => r.results), [ first.results, first.results, first.results ]);
 		assert.equal(builds, 2);
 
 		release();
@@ -178,8 +180,8 @@ describe('initialize, failed refresh', () => {
 		planFailure = 'plans down';
 		const stale = await service.initialize('cid');
 		await settle();
-		assert.equal(stale, first);
-		assert.equal(service._initializeResponse, first);
+		assert.equal(stale.results, first.results);
+		assert.equal(service._initializeResponse.results, first.results);
 		assert.equal(warnings.length, 1);
 		assert.match(warnings[0].message, /previous response/);
 	});
@@ -205,5 +207,83 @@ describe('initialize, failed refresh', () => {
 		assert.equal(builds, 3);
 		const fresh = await service.initialize('cid');
 		assert.deepEqual(fresh.results.plans, [ { id: 'pro' } ]);
+	});
+});
+
+describe('logger', () => {
+	let logged;
+	const newLoggerService = (config) => {
+		const instance = new UtilityService();
+		logged = [];
+		const record = (level) => (clazz, method, message, data, correlationId, isClient) => logged.push({ level, message, data, correlationId, isClient });
+		inject(instance, '_logger', {
+			debug: record('debug'), info: record('info'), warn: record('warn'), error: record('error'), fatal: record('fatal'), trace: record('trace'),
+			exception: (clazz, method, ex, correlationId, isClient) => logged.push({ level: 'exception', data: ex, correlationId, isClient })
+		});
+		inject(instance, '_config', { get: (key, defaultValue) => (key === 'logging.client') ? (config ?? defaultValue) : defaultValue });
+		instance._initLoggerClient();
+		return instance;
+	};
+
+	it('logs what the routes send, in the order they send it', async () => {
+		const instance = newLoggerService();
+		const response = await instance.logger('cid', { type: 'WARN', message: 'hello', data: { a: 1 } });
+		assert.equal(instance._hasSucceeded(response), true);
+		assert.deepEqual(logged, [ { level: 'warn', message: 'hello', data: { a: 1 }, correlationId: 'cid', isClient: true } ]);
+	});
+
+	it('refuses missing content', async () => {
+		const instance = newLoggerService();
+		assert.equal(instance._hasFailed(await instance.logger('cid', null)), true);
+		assert.equal(instance._hasFailed(await instance.logger('cid', 'text')), true);
+		assert.equal(logged.filter(l => l.isClient).length, 0, 'nothing written as a client entry');
+	});
+
+	it('records a client FATAL as fatal', async () => {
+		const instance = newLoggerService();
+		await instance.logger('cid', { type: 'FATAL', message: 'boom' });
+		assert.equal(logged[0].level, 'fatal');
+	});
+
+	it('cuts a long message to the configured length', async () => {
+		const instance = newLoggerService({ maxMessageLength: 10 });
+		await instance.logger('cid', { type: 'INFO', message: 'x'.repeat(50) });
+		assert.match(logged[0].message, /^x{10}\.\.\. \[truncated, 50 characters\]$/);
+	});
+
+	it('replaces data that is too large with a preview', async () => {
+		const instance = newLoggerService({ maxDataLength: 20 });
+		await instance.logger('cid', { type: 'INFO', message: 'm', data: { big: 'y'.repeat(100) } });
+		assert.equal(logged[0].data.truncated, true);
+		assert.equal(logged[0].data.preview.length, 20);
+		assert.ok(logged[0].data.length > 100);
+	});
+
+	it('limits an exception payload the same way as data', async () => {
+		const instance = newLoggerService({ maxDataLength: 20 });
+		await instance.logger('cid', { type: 'EXCEPTION', ex: { message: 'z'.repeat(100) } });
+		assert.equal(logged[0].level, 'exception');
+		assert.equal(logged[0].data.truncated, true);
+	});
+
+	it('drops entries past the rate, answers success, and warns once with the count', async () => {
+		const instance = newLoggerService({ maxPerSecond: 2 });
+		for (let i = 0; i < 5; i++)
+			assert.equal(instance._hasSucceeded(await instance.logger('cid', { type: 'INFO', message: `m${i}` })), true);
+		assert.deepEqual(logged.map(l => l.message), [ 'm0', 'm1' ]);
+
+		mock.timers.tick(1000);
+		await instance.logger('cid', { type: 'INFO', message: 'next' });
+		assert.equal(logged[2].level, 'warn');
+		assert.match(logged[2].message, /Dropped 3 client log entries/);
+		assert.equal(logged[3].message, 'next');
+	});
+
+	it('a limit of 0 turns it off', async () => {
+		const instance = newLoggerService({ maxPerSecond: 0, maxMessageLength: 0 });
+		for (let i = 0; i < 100; i++)
+			await instance.logger('cid', { type: 'INFO', message: 'x'.repeat(5000) });
+		assert.equal(logged.length, 100);
+		assert.equal(logged[0].message.length, 5000);
 	});
 });

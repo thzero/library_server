@@ -42,10 +42,15 @@ class BaseUsersAdminService extends BaseAdminService {
 			return response;
 
 		const respositoryResponse = await this._repository.delete(correlationId, id);
+		if (this._hasFailed(respositoryResponse))
+			this._logger.error('BaseUsersAdminService', 'delete', `Auth user '${id}' was deleted but the user record was not; run the delete again to remove it.`, respositoryResponse, correlationId);
 		return respositoryResponse;
 	}
 
 	async update(correlationId, user, id, requestedUser) {
+		if (!this._allowsUpdate)
+			return this._error('BaseUsersAdminService', 'update', null, null, null, null, correlationId);
+
 		const validationResponse = this._validateUser(correlationId, user);
 		if (this._hasFailed(validationResponse))
 			return validationResponse;
@@ -59,29 +64,35 @@ class BaseUsersAdminService extends BaseAdminService {
 		if (this._hasFailed(validationCheckUsersUpdateResponse))
 			return validationCheckUsersUpdateResponse;
 
-		// One model: the fetched document mapped onto a new one, or an empty one.
-		// This built one up front and, on the usual path, threw it away for a second.
 		const fetchRespositoryResponse = await this._repository.fetch(correlationId, id);
-		let userExisting = (this._hasSucceeded(fetchRespositoryResponse) && fetchRespositoryResponse.results) ?
-			LibraryCommonUtility.map(this._initializeData(), fetchRespositoryResponse.results, true) :
-			this._initializeData();
+		const fetchFailedResponse = this._fetchFailed('BaseUsersAdminService', fetchRespositoryResponse, correlationId);
+		if (fetchFailedResponse)
+			return fetchFailedResponse;
+
+		const userExisting = LibraryCommonUtility.map(this._initializeData(), fetchRespositoryResponse.results, true);
+
+		if (!userExisting.external || !userExisting.external.id)
+			return this._error('BaseUsersAdminService', 'update', 'User has no external id.', null, null, null, correlationId);
 
 		const validResponse = this._checkUpdatedTimestamp(correlationId, userExisting, requestedUser, 'users');
 		if (this._hasFailed(validResponse))
 			return validResponse;
 
+		const rolesPrevious = Array.isArray(userExisting.roles) ? [ ...userExisting.roles ] : [];
+
 		userExisting.map(requestedUser);
-
-		const respositoryResponse = await this._repository.update(correlationId, user.id, userExisting);
-		if (this._hasFailed(respositoryResponse))
-			return respositoryResponse;
-
-		if (!user.external || !user.external.id)
-			return this._error('BaseUsersAdminService', 'update', null, null, null, null, correlationId);
 
 		const serviceAdminResponse = await this._serviceAuth.setClaims(correlationId, userExisting.external.id, requestedUser.roles, true);
 		if (this._hasFailed(serviceAdminResponse))
 			return serviceAdminResponse;
+
+		const respositoryResponse = await this._repository.update(correlationId, user.id, userExisting);
+		if (this._hasFailed(respositoryResponse)) {
+			const rollbackResponse = await this._serviceAuth.setClaims(correlationId, userExisting.external.id, rolesPrevious, true);
+			if (this._hasFailed(rollbackResponse))
+				this._logger.error('BaseUsersAdminService', 'update', `User '${id}' record update failed and the claims could not be restored; claims and record now disagree.`, rollbackResponse, correlationId);
+			return respositoryResponse;
+		}
 
 		return respositoryResponse;
 	}
@@ -95,7 +106,7 @@ class BaseUsersAdminService extends BaseAdminService {
 	}
 
 	get _allowsUpdate() {
-		return false
+		return true
 	}
 
 	_initializeData() {
