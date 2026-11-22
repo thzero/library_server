@@ -8,13 +8,13 @@ import utilityService from '../../service/utility.js';
 
 class FrontApiBootPlugin extends ApiBootPlugin {
 	async _initRoutesPre() {
-		super._initRoutesPre();
+		await super._initRoutesPre();
 
 		this._initRoute(this._initRoutesUtility());
 	}
 
 	async _initServices() {
-		super._initServices();
+		await super._initServices();
 
 		this._injectService(LibraryServerConstants.InjectorKeys.SERVICE_UTILITY, this._initServicesUtility());
 	}

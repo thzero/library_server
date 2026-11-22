@@ -60,12 +60,12 @@ class BaseAdminService extends Service {
 		if (this._hasFailed(validationCheckValueUpdateResponse))
 			return validationCheckValueUpdateResponse;
 
-		// One model: the fetched document mapped onto a new one, or an empty one.
-		// This built one up front and, on the usual path, threw it away for a second.
 		const fetchRespositoryResponse = await this._repository.fetch(correlationId, id);
-		let value = (this._hasSucceeded(fetchRespositoryResponse) && fetchRespositoryResponse.results) ?
-			LibraryCommonUtility.map(this._initializeData(), fetchRespositoryResponse.results, true) :
-			this._initializeData();
+		const fetchFailedResponse = this._fetchFailed('BaseAdminService', fetchRespositoryResponse, correlationId);
+		if (fetchFailedResponse)
+			return fetchFailedResponse;
+
+		const value = LibraryCommonUtility.map(this._initializeData(), fetchRespositoryResponse.results, true);
 
 		const validResponse = this._checkUpdatedTimestamp(correlationId, value, requestedValue, 'value');
 		if (this._hasFailed(validResponse))
@@ -87,6 +87,16 @@ class BaseAdminService extends Service {
 
 	get _allowsUpdate() {
 		return true
+	}
+
+	_fetchFailed(clazz, fetchResponse, correlationId) {
+		if (this._hasSucceeded(fetchResponse) && fetchResponse.results)
+			return null;
+
+		if (this._hasFailed(fetchResponse) && (fetchResponse.err || fetchResponse.message || (Array.isArray(fetchResponse.errors) && fetchResponse.errors.length > 0)))
+			return fetchResponse;
+
+		return this._error(clazz, 'update', 'Not found.', null, null, null, correlationId);
 	}
 
 	_initializeData() {

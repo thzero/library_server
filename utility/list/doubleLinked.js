@@ -7,7 +7,10 @@ class DoubleLinkedList {
 	}
 
 	add(processId, proxy) {
-		const node = { processId: processId, proxy: proxy };
+		if (this._map.has(processId))
+			this.remove(processId);
+
+		const node = { processId: processId, proxy: proxy, next: null, previous: null };
 		this._map.set(processId, node);
 
 		// no element in list
@@ -25,6 +28,8 @@ class DoubleLinkedList {
 	}
 
 	decrementPointer() {
+		if (!this._pointer)
+			return null;
 		this._pointer = this._pointer.previous ? this._pointer.previous : this._tail;
 		return this._pointer;
 	}
@@ -38,6 +43,8 @@ class DoubleLinkedList {
 	}
 
 	incrementPointer() {
+		if (!this._pointer)
+			return null;
 		this._pointer = this._pointer.next ? this._pointer.next : this._head;
 
 		return this._pointer;
@@ -63,6 +70,9 @@ class DoubleLinkedList {
 			if (!this._pointer)
 				this._pointer = this._head;
 		}
+
+		node.next = null;
+		node.previous = null;
 
 		this._map.delete(processId);
 	}

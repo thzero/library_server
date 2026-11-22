@@ -9,7 +9,7 @@ class ResourcesDiscoveryService extends DiscoveryService {
 
 	async cleanup(correlationId) {
 		try {
-			return this._cleanup(correlationId);
+			return await this._cleanup(correlationId);
 		}
 		catch(err) {
 			return this._error('ResourceDiscoveryService', 'cleanup', null, err, null, null, correlationId);
@@ -20,7 +20,7 @@ class ResourcesDiscoveryService extends DiscoveryService {
 		try {
 			this._enforceNotEmpty('ResourceDiscoveryService', 'deregister', name, 'name', correlationId);
 
-			return this._deregister(correlationId);
+			return await this._deregister(correlationId, name);
 		}
 		catch(err) {
 			return this._error('ResourceDiscoveryService', 'deregister', null, err, null, null, correlationId);
@@ -31,7 +31,7 @@ class ResourcesDiscoveryService extends DiscoveryService {
 		try {
 			this._enforceNotEmpty('ResourceDiscoveryService', 'getService', name, 'name', correlationId);
 
-			return this._getService(correlationId, name);
+			return await this._getService(correlationId, name);
 		}
 		catch(err) {
 			return this._error('ResourceDiscoveryService', 'getService', null, err, null, null, correlationId);
@@ -53,7 +53,12 @@ class ResourcesDiscoveryService extends DiscoveryService {
 	}
 
 	async listing(correlationId) {
-		return this._listing(correlationId);
+		try {
+			return await this._listing(correlationId);
+		}
+		catch(err) {
+			return this._error('ResourceDiscoveryService', 'listing', null, err, null, null, correlationId);
+		}
 	}
 
 	// options { name, ttl, description }

@@ -52,10 +52,7 @@ import usageMetricsService from '../service/usageMetrics.js';
 
 class BootMain {
 	async start(...args) {
-		process.on('uncaughtException', function(err) {
-			console.log('Caught exception', err);
-			return process.exit(99);
-		});
+		process.on('uncaughtException', (err) => this._crash(err));
 
 		const idGeneratorOverride = this._initIdGenerator();
 		if (idGeneratorOverride)
@@ -99,6 +96,7 @@ class BootMain {
 		const exitTimeoutMs = this._appConfig.get('shutdown.exitTimeoutMs', 5000);
 
 		async function onSignal() {
+			this._shuttingDown = true;
 			console.log('server is starting cleanup');
 			this.loggerServiceI.info2('server is starting cleanup');
 			const cleanupFuncs = [];
@@ -116,6 +114,7 @@ class BootMain {
 			}
 			console.log('server is starting cleanup completed');
 			this.loggerServiceI.info2('server is starting cleanup completed');
+			await this._flushLogger(BootMain.FlushTimeoutMs);
 		}
 
 		async function onShutdown() {
@@ -145,9 +144,7 @@ class BootMain {
 			)
 		}
 
-		let healthcheckPath = this._appConfig.get('healthcheck.path', LibraryServerConstants.HealthCheck.DefaultPath);
-		if (!healthcheckPath.startsWith('/'))
-			healthcheckPath = '/' + healthcheckPath;
+		const healthcheckPath = this._healthcheckPath();
 
 		const healthCheckOptions = {
 			verbatim: true // [optional = false] use object returned from /healthcheck verbatim in response
@@ -215,7 +212,7 @@ class BootMain {
 		
 		console.log('----services.init.app.post-------------');
 
-		this._initAppPost(results.app, args);
+		await this._initAppPost(results.app, args);
 		
 		console.log('----services.init.app.post.complete----');
 		console.log();
@@ -403,10 +400,15 @@ class BootMain {
 	}
 
 	_initCleanupDiscovery(cleanupFuncs) {
-		if (this.resourceDiscoveryServiceI)
-			cleanupFuncs.push(this.resourceDiscoveryServiceI.cleanup());
-		if (this.mdnsDiscoveryServiceI)
-			cleanupFuncs.push(this.mdnsDiscoveryServiceI.cleanup());
+		for (const [ key, service ] of [ [ 'discovery.resources', this.resourceDiscoveryServiceI ], [ 'discovery.mdns', this.mdnsDiscoveryServiceI ] ]) {
+			if (!service || typeof service.cleanup !== 'function')
+				continue;
+
+			console.log(`cleanup - ${key}`);
+			cleanupFuncs.push(Promise.resolve()
+				.then(() => service.cleanup(null))
+				.catch((err) => this.loggerServiceI.exception2(err)));
+		}
 	}
 
 	// Anything registered that holds something the process cannot exit through - a
@@ -419,7 +421,7 @@ class BootMain {
 	// leave terminus to exit(1) without running onShutdown. A timeoutMs that is not a
 	// positive number waits however long the sweep takes, which is the old behavior.
 	async _awaitCleanup(cleanupFuncs, timeoutMs) {
-		const settled = Promise.all(cleanupFuncs).then(() => true).catch(() => true);
+		const settled = Promise.allSettled(cleanupFuncs).then(() => true);
 		if (!Number.isFinite(timeoutMs) || timeoutMs <= 0)
 			return await settled;
 
@@ -436,6 +438,62 @@ class BootMain {
 		if (handle)
 			clearTimeout(handle);
 		return completed;
+	}
+
+	async _crash(err) {
+		console.log('Caught exception', err);
+		process.exitCode = 99;
+		if (this._crashing) {
+			console.log('exception while handling a crash; exiting');
+			process.exit(99);
+			return;
+		}
+		this._crashing = true;
+
+		try {
+			if (this.loggerServiceI)
+				this.loggerServiceI.exception2(err);
+
+			let timeoutMs = BootMain.CrashTimeoutMs;
+			if (this._appConfig)
+				timeoutMs = Number(this._appConfig.get('shutdown.crashTimeoutMs', BootMain.CrashTimeoutMs));
+			if (!Number.isFinite(timeoutMs) || (timeoutMs < 0))
+				timeoutMs = BootMain.CrashTimeoutMs;
+
+			if ((timeoutMs > 0) && !this._shuttingDown && this.loggerServiceI && this._repositoriesPost && this._servicesPost) {
+				const cleanupFuncs = [];
+				this._initCleanup(cleanupFuncs);
+				this._initCleanupDiscovery(cleanupFuncs);
+				this._initCleanupRegistered(cleanupFuncs);
+				const completed = await this._awaitCleanup(cleanupFuncs, timeoutMs);
+				if (!completed)
+					console.log(`crash cleanup did not complete within ${timeoutMs}ms; exiting`);
+			}
+
+			await this._flushLogger(BootMain.FlushTimeoutMs);
+		}
+		catch (errCleanup) {
+			console.log('crash cleanup failed', errCleanup);
+		}
+
+		process.exit(99);
+	}
+
+	async _flushLogger(timeoutMs) {
+		if (!this.loggerServiceI || (typeof this.loggerServiceI.flush !== 'function'))
+			return;
+
+		const flushed = Promise.resolve().then(() => this.loggerServiceI.flush()).catch(() => {});
+		await this._awaitCleanup([ flushed ], timeoutMs);
+	}
+
+	_healthcheckPath() {
+		let healthcheckPath = this._appConfig.get('healthcheck.path', LibraryServerConstants.HealthCheck.DefaultPath);
+		if (String.isNullOrEmpty(healthcheckPath))
+			healthcheckPath = LibraryServerConstants.HealthCheck.DefaultPath;
+		if (!healthcheckPath.startsWith('/'))
+			healthcheckPath = '/' + healthcheckPath;
+		return healthcheckPath;
 	}
 
 	_initCleanupRegistered(cleanupFuncs) {
@@ -541,7 +599,7 @@ class BootMain {
 		const opts = {
 			address: this.address,
 			port: this.port,
-			healthCheck: 'healthcheck',
+			healthCheck: this._healthcheckPath().substring(1),
 			secure: secure ? secure : false,
 			dns: dns
 		};
@@ -574,13 +632,20 @@ class BootMain {
 	async _initServerStart(injector) {
 	}
 
+	_injectCheck(kind, key) {
+		if (injector.getInjector()[key])
+			throw Error(`${kind}.inject - '${key}' is already registered.`);
+	}
+
 	_injectRepository(key, repository) {
+		this._injectCheck('repositories', key);
 		console.log(`repositories.inject - ${key}`);
 		this._repositories.set(key, repository);
 		injector.addSingleton(key, repository);
 	}
 
 	_injectService(key, service) {
+		this._injectCheck('services', key);
 		console.log(`services.inject - ${key}`);
 		this._services.set(key, service);
 		injector.addSingleton(key, service);
@@ -588,6 +653,9 @@ class BootMain {
 
 	_initShutdown() {
 	}
+
+	static CrashTimeoutMs = 3000;
+	static FlushTimeoutMs = 1000;
 
 	_isObject(objValue) {
 		return objValue && typeof objValue === 'object';

@@ -71,10 +71,21 @@ describe('update', () => {
 		assert.equal(service.updates[0].name, 'after');
 	});
 
-	it('builds one model when there is nothing fetched', async () => {
+	it('reports not found when there is nothing fetched, without building a model or writing', async () => {
 		service = newService(null);
-		await service.update('cid', user, 'thing-1', { name: 'after', updatedTimestamp: 0 });
-		assert.equal(service.initialized, 1);
+		const response = await service.update('cid', user, 'thing-1', { name: 'after', updatedTimestamp: 10 });
+		assert.equal(service._hasFailed(response), true);
+		assert.equal(response.message, 'Not found.');
+		assert.equal(service.initialized, 0);
+		assert.equal(service.updates.length, 0);
+	});
+
+	it('hands back a fetch that failed with a reason as it is', async () => {
+		service = newService(null);
+		const failed = service._error('Repo', 'fetch', 'database down', new Error('down'), null, null, 'cid');
+		Object.defineProperty(service, '_repository', { get: () => ({ fetch: async () => failed, update: async () => assert.fail('wrote') }) });
+		const response = await service.update('cid', user, 'thing-1', { name: 'after', updatedTimestamp: 10 });
+		assert.equal(response, failed);
 	});
 
 	// The timestamp check as it stands: a request is refused when its

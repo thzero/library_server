@@ -74,7 +74,7 @@ class BaseUserService extends Service {
 			}
 		}
 
-		const respositoryExternalResponse = await this._repositoryUser.updateFromExternal(correlationId, user.id, user);
+		const respositoryExternalResponse = await this._repositoryUser.updateFromExternal(correlationId, user.id, user, [ 'external', 'email' ]);
 		return respositoryExternalResponse;
 	}
 
@@ -93,6 +93,71 @@ class BaseUserService extends Service {
 
 		const respositoryResponse = await this._repositoryUser.updateSettings(correlationId, requestedSettings.userId, requestedSettings.settings);
 		return respositoryResponse;
+	}
+
+	async fetchByExternalIdForUser(correlationId, user, externalUserId) {
+		return this._publicUnlessOwner(user, await this.fetchByExternalId(correlationId, externalUserId));
+	}
+
+	async fetchByGamerIdForUser(correlationId, user, requestedGamerId) {
+		return this._publicUnlessOwner(user, await this.fetchByGamerId(correlationId, requestedGamerId));
+	}
+
+	async fetchByGamerTagForUser(correlationId, user, requestedUserGamerTag) {
+		return this._publicUnlessOwner(user, await this.fetchByGamerTag(correlationId, requestedUserGamerTag));
+	}
+
+	async refreshSettingsForUser(correlationId, user, params) {
+		const ownerResponse = this._validateOwner(correlationId, user, params ? params.userId : null, 'refreshSettingsForUser');
+		if (this._hasFailed(ownerResponse))
+			return ownerResponse;
+
+		return await this.refreshSettings(correlationId, params);
+	}
+
+	async updateForUser(correlationId, user, externalUser) {
+		const externalId = (user && user.external && user.external.id) ? user.external.id : (user ? user.id : null);
+		if (!user || !externalUser || String.isNullOrEmpty(externalId) || (externalUser.id !== externalId))
+			return this._error('BaseUserService', 'updateForUser', 'Not authorized.', null, null, null, correlationId);
+
+		return await this.update(correlationId, externalUser);
+	}
+
+	async updateSettingsForUser(correlationId, user, requestedSettings) {
+		const ownerResponse = this._validateOwner(correlationId, user, requestedSettings ? requestedSettings.userId : null, 'updateSettingsForUser');
+		if (this._hasFailed(ownerResponse))
+			return ownerResponse;
+
+		return await this.updateSettings(correlationId, requestedSettings);
+	}
+
+	_publicUser(value) {
+		if (!value)
+			return value;
+
+		return {
+			id: value.id,
+			gamerId: value.gamerId ?? null,
+			settings: { gamerTag: (value.settings && value.settings.gamerTag) ? value.settings.gamerTag : null },
+			external: value.external ? { name: value.external.name ?? null, picture: value.external.picture ?? null } : null
+		};
+	}
+
+	_publicUnlessOwner(user, response) {
+		if (this._hasFailed(response) || !response.results)
+			return response;
+		if (user && !String.isNullOrEmpty(user.id) && (user.id === response.results.id))
+			return response;
+
+		response.results = this._publicUser(response.results);
+		return response;
+	}
+
+	_validateOwner(correlationId, user, userId, method) {
+		if (!user || String.isNullOrEmpty(user.id) || (user.id !== userId))
+			return this._error('BaseUserService', method, 'Not authorized.', null, null, null, correlationId);
+
+		return this._success(correlationId);
 	}
 
 	_updateSettings(correlationId, requestedSettings) {
